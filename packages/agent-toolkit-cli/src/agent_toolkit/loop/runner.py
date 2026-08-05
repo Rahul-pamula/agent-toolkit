@@ -1890,7 +1890,21 @@ def _close_loop(run_dir: Path, rid: str) -> None:
 def cmd_status(args: list[str]) -> int:
     """Show loop status."""
     target = args[0] if args else None
-    loops = ([resolve_loop_dir(target)] if target else list_loops())
+    if target:
+        loops = [resolve_loop_dir(target)]
+    else:
+        loops = list_loops()
+        # No user instances yet — show bundled templates so uvx/pip installs
+        # still discover the 10 reference loops (validate.yml uvx job).
+        if not loops:
+            bundled = toolkit_loops_dir()
+            if bundled.is_dir():
+                loops = [
+                    d
+                    for d in sorted(bundled.iterdir())
+                    if d.is_dir()
+                    and ((d / "loop.yaml").exists() or (d / "LOOP.md").exists())
+                ]
 
     if not loops:
         print("No loops found. Run: agent-toolkit loop init <pattern>")

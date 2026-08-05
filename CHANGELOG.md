@@ -196,8 +196,15 @@ The canonical compiler pipeline now generates native artifacts for 9 AI coding t
 
 ## [Unreleased]
 
+## [1.2.1] — 2026-08-05
+
+### Fixed
+- `loop status` falls back to bundled templates when no workspace instances exist (uvx/pip installs)
+- Release CI: `uv sync --package agent-toolkit-cli --extra all` and current SBOM action pins
+
 ---
 
-[Unreleased]: https://github.com/ulises-jeremias/agent-toolkit/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/ulises-jeremias/agent-toolkit/compare/v1.2.1...HEAD
+[1.2.1]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.2.1
 [1.2.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.2.0
 [1.1.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.1.0
