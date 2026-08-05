@@ -185,6 +185,11 @@ The canonical compiler pipeline now generates native artifacts for 9 AI coding t
 - Replaced private LAN URLs in OpenCode profile with portable defaults
 - Updated schema `$id` to remove stale agentic-workstation references
 
+## [1.2.2] — 2026-08-05
+
+### Changed
+- Elevate package README for PyPI: banners, badges, install paths, consumer/advanced CLI surfaces, tool matrix, and ecosystem docs (absolute GitHub links)
+
 ## [Unreleased]
 
 ### Added
