@@ -105,7 +105,7 @@ jobs:
     name: Generate SBOM
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Generate CycloneDX SBOM with syft
@@ -114,8 +114,18 @@ jobs:
           path: .
           format: cyclonedx-json
           output-file: sbom.cyclonedx.json
+          upload-release-assets: false
       - name: Upload SBOM artifact
         uses: actions/upload-artifact@v4
         with:
           name: sbom
           path: sbom.cyclonedx.json
+      - name: Attach SBOM to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          if [ -f sbom.cyclonedx.json ]; then
+            gh release upload "${GITHUB_REF_NAME}" sbom.cyclonedx.json --clobber
+          fi
