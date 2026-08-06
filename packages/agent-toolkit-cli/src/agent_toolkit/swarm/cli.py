@@ -311,11 +311,19 @@ def cmd_plan(args: list[str]) -> int:
     # If autodetected via prompt but workspace flag overrides, workspace already handled
     # Validate git repo and give actionable error
     import subprocess as _sp
+
     try:
-        _r = _sp.run(["git", "rev-parse", "--is-inside-work-tree"], cwd=str(repo), capture_output=True, text=True, timeout=5)
+        _r = _sp.run(
+            ["git", "rev-parse", "--is-inside-work-tree"],
+            cwd=str(repo),
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
         if _r.returncode != 0:
             # Try to give hint with autodetected owner/repo
             from .config import _resolve_owner_repo_from_prompt
+
             owner_repo = _resolve_owner_repo_from_prompt(task_text)
             hint = f"Resolved repo: {repo} (not a git repo). "
             if owner_repo:
@@ -519,10 +527,18 @@ def cmd_start(args: list[str]) -> int:
     workspace_flag = ns.workspace or ns.repo or ns.workspace_C
     repo = _need_repo(prompt_text=task_text, workspace=workspace_flag)
     import subprocess as _sp2
+
     try:
-        _r = _sp2.run(["git", "rev-parse", "--is-inside-work-tree"], cwd=str(repo), capture_output=True, text=True, timeout=5)
+        _r = _sp2.run(
+            ["git", "rev-parse", "--is-inside-work-tree"],
+            cwd=str(repo),
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
         if _r.returncode != 0:
             from .config import _resolve_owner_repo_from_prompt
+
             owner_repo = _resolve_owner_repo_from_prompt(task_text)
             hint = f"Resolved repo: {repo} (not a git repo). "
             if owner_repo:
@@ -721,10 +737,12 @@ def cmd_list(args: list[str]) -> int:
     # If run from .ai-workspace with no explicit workspace, aggregate across clones
     if workspace_flag:
         from .config import find_repo_root
+
         repo = find_repo_root(workspace=workspace_flag)
         runs = list_runs(repo)
     else:
         from .config import list_all_runs
+
         runs = list_all_runs()
     items = []
     for rd in runs:
@@ -763,14 +781,18 @@ def cmd_status(args: list[str]) -> int:
         # Show all
         ws_flag = ns.workspace or ns.repo or ns.workspace_C
         if ws_flag:
-            return cmd_list(["--json", "--workspace", ws_flag] if ns.json else ["--workspace", ws_flag])
+            return cmd_list(
+                ["--json", "--workspace", ws_flag] if ns.json else ["--workspace", ws_flag]
+            )
         return cmd_list(["--json"] if ns.json else [])
     workspace_flag = ns.workspace or ns.repo or ns.workspace_C
     from .config import find_run_dir_by_id
+
     run_dir = find_run_dir_by_id(ns.run_id, workspace=workspace_flag)
     if run_dir is None or not run_dir.is_dir():
         # Fallback to old path for error hint
         from .config import find_repo_root
+
         repo = find_repo_root(workspace=workspace_flag)
         run_dir = run_dir_for(repo, ns.run_id)
     if not run_dir.is_dir():
@@ -840,6 +862,9 @@ def cmd_status(args: list[str]) -> int:
 def cmd_watch(args: list[str]) -> int:
     parser = argparse.ArgumentParser(prog="agent-toolkit swarm watch")
     parser.add_argument("run_id", nargs="?", default=None)
+    parser.add_argument("--workspace", default=None, help="Repo path or OWNER/REPO")
+    parser.add_argument("--repo", default=None, help="Alias for --workspace")
+    parser.add_argument("-C", dest="workspace_C", default=None, help="Alias for --workspace")
     parser.add_argument("--current", action="store_true")
     ns = parser.parse_args(args)
     if ns.current:
@@ -859,6 +884,9 @@ def cmd_watch(args: list[str]) -> int:
 def cmd_report(args: list[str]) -> int:
     parser = argparse.ArgumentParser(prog="agent-toolkit swarm report")
     parser.add_argument("run_id", nargs="?", default=None)
+    parser.add_argument("--workspace", default=None, help="Repo path or OWNER/REPO")
+    parser.add_argument("--repo", default=None, help="Alias for --workspace")
+    parser.add_argument("-C", dest="workspace_C", default=None, help="Alias for --workspace")
     parser.add_argument("--json", action="store_true")
     ns = parser.parse_args(args)
     if not ns.run_id:
@@ -900,6 +928,9 @@ def cmd_report(args: list[str]) -> int:
 def cmd_artifacts(args: list[str]) -> int:
     parser = argparse.ArgumentParser(prog="agent-toolkit swarm artifacts")
     parser.add_argument("run_id")
+    parser.add_argument("--workspace", default=None, help="Repo path or OWNER/REPO")
+    parser.add_argument("--repo", default=None, help="Alias for --workspace")
+    parser.add_argument("-C", dest="workspace_C", default=None, help="Alias for --workspace")
     parser.add_argument("--json", action="store_true")
     ns = parser.parse_args(args)
     repo = _need_repo()
@@ -926,6 +957,9 @@ def cmd_artifacts(args: list[str]) -> int:
 def cmd_handoffs(args: list[str]) -> int:
     parser = argparse.ArgumentParser(prog="agent-toolkit swarm handoffs")
     parser.add_argument("run_id")
+    parser.add_argument("--workspace", default=None, help="Repo path or OWNER/REPO")
+    parser.add_argument("--repo", default=None, help="Alias for --workspace")
+    parser.add_argument("-C", dest="workspace_C", default=None, help="Alias for --workspace")
     parser.add_argument("--json", action="store_true")
     ns = parser.parse_args(args)
     repo = _need_repo()
@@ -950,6 +984,9 @@ def cmd_handoffs(args: list[str]) -> int:
 def cmd_logs(args: list[str]) -> int:
     parser = argparse.ArgumentParser(prog="agent-toolkit swarm logs")
     parser.add_argument("run_id")
+    parser.add_argument("--workspace", default=None, help="Repo path or OWNER/REPO")
+    parser.add_argument("--repo", default=None, help="Alias for --workspace")
+    parser.add_argument("-C", dest="workspace_C", default=None, help="Alias for --workspace")
     parser.add_argument("role", nargs="?", default=None)
     parser.add_argument("--json", action="store_true")
     ns = parser.parse_args(args)
@@ -999,6 +1036,9 @@ def _change_run_state(repo: Path, run_id: str, new_state: str) -> int:
 def cmd_pause(args: list[str]) -> int:
     parser = argparse.ArgumentParser(prog="agent-toolkit swarm pause")
     parser.add_argument("run_id")
+    parser.add_argument("--workspace", default=None, help="Repo path or OWNER/REPO")
+    parser.add_argument("--repo", default=None, help="Alias for --workspace")
+    parser.add_argument("-C", dest="workspace_C", default=None, help="Alias for --workspace")
     ns = parser.parse_args(args)
     return _change_run_state(_need_repo(), ns.run_id, "paused")
 
@@ -1006,6 +1046,9 @@ def cmd_pause(args: list[str]) -> int:
 def cmd_resume(args: list[str]) -> int:
     parser = argparse.ArgumentParser(prog="agent-toolkit swarm resume")
     parser.add_argument("run_id")
+    parser.add_argument("--workspace", default=None, help="Repo path or OWNER/REPO")
+    parser.add_argument("--repo", default=None, help="Alias for --workspace")
+    parser.add_argument("-C", dest="workspace_C", default=None, help="Alias for --workspace")
     ns = parser.parse_args(args)
     # resume from paused or budget_exhausted or failed
     repo = _need_repo()
@@ -1031,9 +1074,20 @@ def cmd_resume(args: list[str]) -> int:
 def cmd_stop(args: list[str]) -> int:
     parser = argparse.ArgumentParser(prog="agent-toolkit swarm stop")
     parser.add_argument("run_id")
+    parser.add_argument("--workspace", default=None, help="Repo path or OWNER/REPO")
+    parser.add_argument("--repo", default=None, help="Alias for --workspace")
+    parser.add_argument("-C", dest="workspace_C", default=None, help="Alias for --workspace")
     ns = parser.parse_args(args)
-    repo = _need_repo()
-    run_dir = run_dir_for(repo, ns.run_id)
+    workspace_flag = ns.workspace or ns.repo or ns.workspace_C
+    from .config import find_run_dir_by_id
+
+    run_dir = find_run_dir_by_id(ns.run_id, workspace=workspace_flag)
+    if run_dir is None:
+        from .config import find_repo_root
+        from .store import run_dir_for as _rdf
+
+        repo = find_repo_root(workspace=workspace_flag)
+        run_dir = _rdf(repo, ns.run_id)
     if not run_dir.is_dir():
         return _error(f"Run not found: {ns.run_id}")
     state = read_state(run_dir) or {}
@@ -1056,6 +1110,9 @@ def cmd_stop(args: list[str]) -> int:
 def cmd_cancel(args: list[str]) -> int:
     parser = argparse.ArgumentParser(prog="agent-toolkit swarm cancel")
     parser.add_argument("run_id")
+    parser.add_argument("--workspace", default=None, help="Repo path or OWNER/REPO")
+    parser.add_argument("--repo", default=None, help="Alias for --workspace")
+    parser.add_argument("-C", dest="workspace_C", default=None, help="Alias for --workspace")
     ns = parser.parse_args(args)
     return _change_run_state(_need_repo(), ns.run_id, "cancelled")
 
@@ -1066,9 +1123,28 @@ def cmd_cleanup(args: list[str]) -> int:
     parser.add_argument("--force", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--keep-branches", action="store_true", default=True)
+    parser.add_argument("--workspace", default=None, help="Repo path or OWNER/REPO")
+    parser.add_argument("--repo", default=None, help="Alias for --workspace")
+    parser.add_argument("-C", dest="workspace_C", default=None, help="Alias for --workspace")
     ns = parser.parse_args(args)
-    repo = _need_repo()
-    run_dir = run_dir_for(repo, ns.run_id)
+    workspace_flag = ns.workspace or ns.repo or ns.workspace_C
+    from .config import find_repo_root, find_run_dir_by_id
+    from .store import run_dir_for as _rdf2
+
+    run_dir = find_run_dir_by_id(ns.run_id, workspace=workspace_flag)
+    if run_dir is None:
+        repo = find_repo_root(workspace=workspace_flag)
+        run_dir = _rdf2(repo, ns.run_id)
+    else:
+        repo = find_repo_root(workspace=workspace_flag) if workspace_flag else find_repo_root()
+        # Try to resolve repo from run_dir's parent
+        try:
+            # run_dir is .../.agent-toolkit/swarm/runs/<id>, so repo is 4 parents up
+            maybe_repo = run_dir.parents[3]
+            if (maybe_repo / ".git").exists():
+                repo = maybe_repo
+        except Exception:
+            pass
     if not run_dir.is_dir():
         return _error(f"Run not found: {ns.run_id}")
     state = read_state(run_dir) or {}
@@ -1136,9 +1212,24 @@ def cmd_cleanup(args: list[str]) -> int:
 def cmd_attach(args: list[str]) -> int:
     parser = argparse.ArgumentParser(prog="agent-toolkit swarm attach")
     parser.add_argument("run_id")
+    parser.add_argument("--workspace", default=None, help="Repo path or OWNER/REPO")
+    parser.add_argument("--repo", default=None, help="Alias for --workspace")
+    parser.add_argument("-C", dest="workspace_C", default=None, help="Alias for --workspace")
     ns = parser.parse_args(args)
-    repo = _need_repo()
-    run_dir = run_dir_for(repo, ns.run_id)
+    workspace_flag = (
+        getattr(ns, "workspace", None)
+        or getattr(ns, "repo", None)
+        or getattr(ns, "workspace_C", None)
+    )
+    from .config import find_run_dir_by_id
+
+    run_dir = find_run_dir_by_id(ns.run_id, workspace=workspace_flag)
+    if run_dir is None:
+        from .config import find_repo_root
+        from .store import run_dir_for as _rdf3
+
+        repo = find_repo_root(workspace=workspace_flag)
+        run_dir = _rdf3(repo, ns.run_id)
     if not run_dir.is_dir():
         return _error(f"Run not found: {ns.run_id}")
     state = read_state(run_dir) or {}
