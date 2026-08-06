@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- markdownlint-disable MD024 -->
 ## [Unreleased]
 
+## [1.7.2] — 2026-08-06
+
+### Fixed
+- **Swarm workspace UX polish** — fix `swarm list` duplicate entries when aggregating from `~/.ai-workspace`, make `swarm status/stop/cleanup/attach/report/artifacts/handoffs/logs` workspace-aware via `find_run_dir_by_id` (works from `~/.ai-workspace` without `--workspace` and with `--workspace OWNER/REPO`/`-C`), and ensure prompt autodetect works for all Create-Node-App aliases. Ensures `agent-toolkit swarm start "Fix https://github.com/Create-Node-App/..."` from workspace root creates worktree in correct repo with isolated tmux `-L agent-toolkit-swarm-<id>` N-windows like `swarm-forge` `./swarm`.
+
 ## [1.7.1] — 2026-08-06
 
 ### Added
