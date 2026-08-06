@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- markdownlint-disable MD024 -->
 ## [Unreleased]
 
+## [1.6.0] — 2026-08-06
+
+### Added
+
+- **Loop `list` command** — `agent-toolkit loop list` (alias `ls`) lists detected loops in the same places `loop run <name>` searches (`workspace/loops/` → bundled `data/loops/`), showing `source`, `tier`, `cadence`.
+
 ## [1.5.1] — 2026-08-06
 
 ### Fixed

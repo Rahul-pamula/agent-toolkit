@@ -1,5 +1,5 @@
 {
-  "generatorVersion": "1.5.1",
+  "generatorVersion": "1.6.0",
   "product": "agent-toolkit-forge",
   "target": "claude-code",
   "artifacts": [
