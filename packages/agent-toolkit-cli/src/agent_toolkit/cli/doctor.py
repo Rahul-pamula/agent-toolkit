@@ -184,6 +184,25 @@ def _check_profiles() -> list[CheckResult]:
             _profile_installed("profiles", "pi skills/", home / ".pi" / "agent" / "skills")
         )
 
+    # muse (Meta) — ~/.config/muse/skills and project .agents/skills
+    if shutil.which("muse") or (home / ".config" / "muse").is_dir() or (home / ".agents").is_dir():
+        results.append(
+            _profile_installed("profiles", "muse skills (user)", home / ".config" / "muse" / "skills")
+        )
+        # project scope: .agents/skills in CWD or workspace root
+        # check CWD .agents/skills and toolkit-relative if available
+        cwd_agents = Path.cwd() / ".agents" / "skills"
+        if cwd_agents.is_dir() or (home / ".agents").is_dir():
+            # use CWD if present, else home fallback for display
+            agents_path = cwd_agents if cwd_agents.is_dir() else home / ".agents" / "skills"
+            results.append(
+                _profile_installed("profiles", "muse skills (project)", agents_path)
+            )
+        else:
+            results.append(
+                CheckResult("profiles", "muse skills (project)", CheckResult.STATUS_WARN, "Not found: .agents/skills (project scope — optional)")
+            )
+
     return results
 
 
@@ -500,6 +519,7 @@ def cmd_doctor(args: list[str]) -> int:
         ("cursor", "cursor"),
         ("opencode", "opencode"),
         ("windsurf", "windsurf"),
+        ("muse", "muse"),
     ]:
         all_results.append(_check_ai_tool(tool_name, cmd))
 
