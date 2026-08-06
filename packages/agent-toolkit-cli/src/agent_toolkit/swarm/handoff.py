@@ -49,7 +49,7 @@ def validate_handoff(data: dict[str, Any], run_dir: Path, roles: set[str]) -> li
             errors.append("artifact must be string")
         else:
             try:
-                p = validate_artifact_path(run_dir, artifact)
+                validate_artifact_path(run_dir, artifact)
                 # ensure stays under run_dir, no traversal — already checked
                 if artifact.startswith("/") or ".." in artifact:
                     errors.append("artifact traversal")
@@ -85,9 +85,13 @@ def write_handoff_outbox(run_dir: Path, data: dict[str, Any]) -> Path:
     outbox.mkdir(parents=True, exist_ok=True)
     # Ensure unique hid if file exists in any state
     tried = 0
-    while any((run_dir / "handoffs" / st / f"{hid}.json").exists() for st in ["outbox", "queued", "active", "completed", "failed"]):
+    while any(
+        (run_dir / "handoffs" / st / f"{hid}.json").exists()
+        for st in ["outbox", "queued", "active", "completed", "failed"]
+    ):
         # Append random suffix
         import secrets
+
         hid = handoff_id_for(data) + secrets.token_hex(2)
         data["handoff_id"] = hid
         tried += 1
@@ -133,8 +137,15 @@ def list_handoffs(run_dir: Path, state: str) -> list[dict[str, Any]]:
 
 def validate_commit_exists(repo_root: Path, sha: str) -> bool:
     import subprocess
+
     try:
-        res = subprocess.run(["git", "cat-file", "-t", sha], cwd=str(repo_root), capture_output=True, text=True, timeout=5)
+        res = subprocess.run(
+            ["git", "cat-file", "-t", sha],
+            cwd=str(repo_root),
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
         return res.returncode == 0 and "commit" in res.stdout
     except Exception:
         return False
@@ -142,9 +153,16 @@ def validate_commit_exists(repo_root: Path, sha: str) -> bool:
 
 def resolve_sha(repo_root: Path, abbrev: str) -> str | None:
     import subprocess
+
     # Use git rev-parse to resolve ambiguous abbreviations
     try:
-        res = subprocess.run(["git", "rev-parse", "--verify", abbrev + "^{commit}"], cwd=str(repo_root), capture_output=True, text=True, timeout=5)
+        res = subprocess.run(
+            ["git", "rev-parse", "--verify", abbrev + "^{commit}"],
+            cwd=str(repo_root),
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
         if res.returncode != 0:
             return None
         sha = res.stdout.strip()

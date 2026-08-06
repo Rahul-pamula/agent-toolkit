@@ -82,7 +82,12 @@ def validate_run_id(run_id: str) -> str:
 
 
 def validate_branch(branch: str) -> str:
-    if not _BRANCH_SAFE_RE.match(branch) or ".." in branch or branch.startswith("/") or branch.endswith("/"):
+    if (
+        not _BRANCH_SAFE_RE.match(branch)
+        or ".." in branch
+        or branch.startswith("/")
+        or branch.endswith("/")
+    ):
         raise ValueError(f"Invalid branch: {branch!r}")
     return branch
 

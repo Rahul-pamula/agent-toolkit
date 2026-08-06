@@ -32,7 +32,17 @@ def run_dir_for(repo_root: Path, run_id: str) -> Path:
 
 
 def ensure_run_dirs(run_dir: Path) -> None:
-    for sub in ["artifacts", "handoffs/outbox", "handoffs/queued", "handoffs/active", "handoffs/completed", "handoffs/failed", "prompts", "worktrees", "runner/opencode/agents"]:
+    for sub in [
+        "artifacts",
+        "handoffs/outbox",
+        "handoffs/queued",
+        "handoffs/active",
+        "handoffs/completed",
+        "handoffs/failed",
+        "prompts",
+        "worktrees",
+        "runner/opencode/agents",
+    ]:
         (run_dir / sub).mkdir(parents=True, exist_ok=True)
 
 
@@ -110,7 +120,9 @@ def write_state(run_dir: Path, state: dict[str, Any]) -> None:
     state["version"] = STATE_VERSION
     state["updated_at"] = now_ts()
     atomic_write_json(run_dir / "state.json", state)
-    append_trace(run_dir, {"ts": now_ts(), "kind": "state_changed", "state": state.get("run_state")})
+    append_trace(
+        run_dir, {"ts": now_ts(), "kind": "state_changed", "state": state.get("run_state")}
+    )
 
 
 def read_state(run_dir: Path) -> dict[str, Any] | None:

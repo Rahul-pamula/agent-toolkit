@@ -15,7 +15,9 @@ DEFAULTS = {
 }
 
 
-def resolve_budget(spec_budget: dict[str, Any] | None, cli_overrides: dict[str, Any] | None = None) -> dict[str, Any]:
+def resolve_budget(
+    spec_budget: dict[str, Any] | None, cli_overrides: dict[str, Any] | None = None
+) -> dict[str, Any]:
     merged = dict(DEFAULTS)
     if spec_budget:
         merged.update({k: v for k, v in spec_budget.items() if v is not None})
@@ -34,7 +36,9 @@ def check_limits(budget: dict[str, Any], usage: dict[str, Any]) -> list[str]:
     total_tokens = usage.get("total_tokens", 0) or 0
     cost = usage.get("cost_usd", 0) or 0
     wall = usage.get("wall_seconds", 0) or 0
-    if budget.get("max_total_tokens") is not None and total_tokens >= int(budget["max_total_tokens"]):
+    if budget.get("max_total_tokens") is not None and total_tokens >= int(
+        budget["max_total_tokens"]
+    ):
         violated.append("max_total_tokens")
     if budget.get("max_cost_usd") is not None and cost >= float(budget["max_cost_usd"]):
         violated.append("max_cost_usd")
@@ -68,6 +72,7 @@ def load_budget(run_dir: Path) -> dict[str, Any]:
 
 def save_budget(run_dir: Path, budget: dict[str, Any], usage: dict[str, Any]) -> None:
     from .store import atomic_write_json
+
     data = {"budget": budget, "usage": usage}
     atomic_write_json(run_dir / "budget.json", data)
 

@@ -10,6 +10,7 @@ from typing import Any
 
 ROLE_RE = re.compile(r"^[a-z][a-z0-9_-]{1,31}$")
 
+
 def branch_for_run_role(run_id: str, role: str) -> str:
     if not ROLE_RE.match(role):
         raise ValueError(f"Invalid role: {role!r}")
@@ -29,7 +30,9 @@ def git_run(args: list[str], cwd: Path, check: bool = True) -> subprocess.Comple
     return subprocess.run(["git"] + args, cwd=str(cwd), capture_output=True, text=True, check=False)
 
 
-def create_worktree(repo_root: Path, run_dir: Path, role: str, run_id: str, base_ref: str = "HEAD") -> dict[str, Any]:
+def create_worktree(
+    repo_root: Path, run_dir: Path, role: str, run_id: str, base_ref: str = "HEAD"
+) -> dict[str, Any]:
     branch = branch_for_run_role(run_id, role)
     wt_path = worktree_path_for(run_dir, role)
     if wt_path.exists():
@@ -57,7 +60,11 @@ def remove_worktree(repo_root: Path, wt_path: Path, force: bool = False) -> bool
     if res.returncode == 0 and res.stdout.strip() and not force:
         raise RuntimeError(f"Worktree dirty, refusing removal without --force: {wt_path}")
     # Remove worktree
-    git_run(["worktree", "remove", str(wt_path), "--force" if force else str(wt_path)], cwd=repo_root, check=False)
+    git_run(
+        ["worktree", "remove", str(wt_path), "--force" if force else str(wt_path)],
+        cwd=repo_root,
+        check=False,
+    )
     # Clean up directory if still exists
     if wt_path.exists():
         shutil.rmtree(wt_path, ignore_errors=True)

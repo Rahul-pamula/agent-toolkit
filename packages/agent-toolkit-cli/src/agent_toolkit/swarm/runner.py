@@ -9,17 +9,61 @@ from pathlib import Path
 from typing import Any
 
 RUNNER_CAPS: dict[str, dict[str, Any]] = {
-    "opencode": {"interactive": True, "resume": True, "per_role_model": True, "usage_data": True, "herdr": "official"},
-    "claude": {"interactive": True, "resume": True, "per_role_model": True, "usage_data": True, "herdr": "official"},
-    "codex": {"interactive": True, "resume": True, "per_role_model": True, "usage_data": True, "herdr": "official"},
-    "cursor": {"interactive": True, "resume": True, "per_role_model": True, "usage_data": True, "herdr": "official"},
-    "copilot": {"interactive": True, "resume": False, "per_role_model": False, "usage_data": False, "herdr": "custom"},
-    "muse": {"interactive": True, "resume": True, "per_role_model": True, "usage_data": True, "herdr": "detect"},
-    "skeleton": {"interactive": False, "resume": False, "per_role_model": False, "usage_data": False, "herdr": "none"},
+    "opencode": {
+        "interactive": True,
+        "resume": True,
+        "per_role_model": True,
+        "usage_data": True,
+        "herdr": "official",
+    },
+    "claude": {
+        "interactive": True,
+        "resume": True,
+        "per_role_model": True,
+        "usage_data": True,
+        "herdr": "official",
+    },
+    "codex": {
+        "interactive": True,
+        "resume": True,
+        "per_role_model": True,
+        "usage_data": True,
+        "herdr": "official",
+    },
+    "cursor": {
+        "interactive": True,
+        "resume": True,
+        "per_role_model": True,
+        "usage_data": True,
+        "herdr": "official",
+    },
+    "copilot": {
+        "interactive": True,
+        "resume": False,
+        "per_role_model": False,
+        "usage_data": False,
+        "herdr": "custom",
+    },
+    "muse": {
+        "interactive": True,
+        "resume": True,
+        "per_role_model": True,
+        "usage_data": True,
+        "herdr": "detect",
+    },
+    "skeleton": {
+        "interactive": False,
+        "resume": False,
+        "per_role_model": False,
+        "usage_data": False,
+        "herdr": "none",
+    },
 }
+
 
 def list_runners() -> list[str]:
     return sorted(RUNNER_CAPS.keys())
+
 
 def runner_available(name: str) -> bool:
     bin_map = {
@@ -34,15 +78,46 @@ def runner_available(name: str) -> bool:
     binary = bin_map.get(name, name)
     return shutil.which(binary) is not None
 
+
 def capability_matrix() -> dict[str, dict[str, Any]]:
     return {k: dict(v, available=runner_available(k)) for k, v in RUNNER_CAPS.items()}
 
+
 MODEL_PROFILES = {
-    "economy": {"planning": "anthropic/claude-3-5-haiku-20241022", "coding": "anthropic/claude-3-5-haiku-20241022", "review": "openai/gpt-4o-mini", "architecture": "anthropic/claude-3-5-haiku-20241022", "hardening": "anthropic/claude-3-5-haiku-20241022", "qa": "openai/gpt-4o-mini"},
-    "balanced": {"planning": "anthropic/claude-sonnet-4-20250514", "coding": "anthropic/claude-sonnet-4-20250514", "review": "openai/gpt-4o", "architecture": "anthropic/claude-sonnet-4-20250514", "hardening": "openai/gpt-4o", "qa": "anthropic/claude-3-5-haiku-20241022"},
-    "quality": {"planning": "anthropic/claude-opus-4-20250514", "coding": "anthropic/claude-opus-4-20250514", "review": "openai/gpt-4o", "architecture": "anthropic/claude-opus-4-20250514", "hardening": "anthropic/claude-opus-4-20250514", "qa": "openai/gpt-4o"},
-    "private": {"planning": "ollama/llama3.1", "coding": "ollama/llama3.1", "review": "ollama/llama3.1", "architecture": "ollama/llama3.1", "hardening": "ollama/llama3.1", "qa": "ollama/llama3.1"},
+    "economy": {
+        "planning": "anthropic/claude-3-5-haiku-20241022",
+        "coding": "anthropic/claude-3-5-haiku-20241022",
+        "review": "openai/gpt-4o-mini",
+        "architecture": "anthropic/claude-3-5-haiku-20241022",
+        "hardening": "anthropic/claude-3-5-haiku-20241022",
+        "qa": "openai/gpt-4o-mini",
+    },
+    "balanced": {
+        "planning": "anthropic/claude-sonnet-4-20250514",
+        "coding": "anthropic/claude-sonnet-4-20250514",
+        "review": "openai/gpt-4o",
+        "architecture": "anthropic/claude-sonnet-4-20250514",
+        "hardening": "openai/gpt-4o",
+        "qa": "anthropic/claude-3-5-haiku-20241022",
+    },
+    "quality": {
+        "planning": "anthropic/claude-opus-4-20250514",
+        "coding": "anthropic/claude-opus-4-20250514",
+        "review": "openai/gpt-4o",
+        "architecture": "anthropic/claude-opus-4-20250514",
+        "hardening": "anthropic/claude-opus-4-20250514",
+        "qa": "openai/gpt-4o",
+    },
+    "private": {
+        "planning": "ollama/llama3.1",
+        "coding": "ollama/llama3.1",
+        "review": "ollama/llama3.1",
+        "architecture": "ollama/llama3.1",
+        "hardening": "ollama/llama3.1",
+        "qa": "ollama/llama3.1",
+    },
 }
+
 
 def resolve_model(profile: str, task_class: str, override: str | None = None) -> str | None:
     if override:
@@ -51,6 +126,7 @@ def resolve_model(profile: str, task_class: str, override: str | None = None) ->
         return override
     mapping = MODEL_PROFILES.get(profile) or MODEL_PROFILES["balanced"]
     return mapping.get(task_class)
+
 
 def discover_models(runner: str) -> list[str]:
     # Try to list models via runner CLI if available
@@ -83,6 +159,7 @@ def discover_models(runner: str) -> list[str]:
         vals2.update(m.values())
     return sorted(vals2)
 
+
 # OpenCode permission generation
 OPENCODE_PERMISSIONS = {
     "read-only": {
@@ -95,7 +172,17 @@ OPENCODE_PERMISSIONS = {
     "writer": {
         "edit": "allow",
         "external_directory": "deny",
-        "bash": {"*": "ask", "git status *": "allow", "git diff *": "allow", "git log *": "allow", "git add *": "allow", "git commit *": "ask", "git push *": "deny", "git reset --hard*": "deny", "git clean *": "deny"},
+        "bash": {
+            "*": "ask",
+            "git status *": "allow",
+            "git diff *": "allow",
+            "git log *": "allow",
+            "git add *": "allow",
+            "git commit *": "ask",
+            "git push *": "deny",
+            "git reset --hard*": "deny",
+            "git clean *": "deny",
+        },
     },
     "reviewer-writer": {
         "edit": "allow",
@@ -105,11 +192,28 @@ OPENCODE_PERMISSIONS = {
     "integrator": {
         "edit": "allow",
         "external_directory": "deny",
-        "bash": {"*": "ask", "git status *": "allow", "git diff *": "allow", "git log *": "allow", "git merge *": "ask", "git push *": "deny"},
+        "bash": {
+            "*": "ask",
+            "git status *": "allow",
+            "git diff *": "allow",
+            "git log *": "allow",
+            "git merge *": "ask",
+            "git push *": "deny",
+        },
     },
 }
 
-def generate_opencode_agent(run_dir: Path, role: str, persona: str, policy: str, model: str, recipe_name: str, run_id: str, worktree: str | None) -> Path:
+
+def generate_opencode_agent(
+    run_dir: Path,
+    role: str,
+    persona: str,
+    policy: str,
+    model: str,
+    recipe_name: str,
+    run_id: str,
+    worktree: str | None,
+) -> Path:
     agents_dir = run_dir / "runner" / "opencode" / "agents"
     agents_dir.mkdir(parents=True, exist_ok=True)
     perm = OPENCODE_PERMISSIONS.get(policy, OPENCODE_PERMISSIONS["read-only"])
@@ -118,8 +222,8 @@ description: "Swarm role {role} ({persona}) for recipe {recipe_name}, run {run_i
 mode: primary
 model: {model}
 permission:
-  edit: {perm.get('edit','deny')}
-  external_directory: {perm.get('external_directory','deny')}
+  edit: {perm.get("edit", "deny")}
+  external_directory: {perm.get("external_directory", "deny")}
 ---
 
 # Role: {role} ({persona})
@@ -128,7 +232,7 @@ You are the **{role}** role in the Agent Toolkit Swarm `{recipe_name}` (run `{ru
 
 ## Policy
 - Policy: {policy}
-- Worktree: {worktree or 'read-only (no worktree)'}
+- Worktree: {worktree or "read-only (no worktree)"}
 - Permissions: {json.dumps(perm)}
 
 ## Workflow

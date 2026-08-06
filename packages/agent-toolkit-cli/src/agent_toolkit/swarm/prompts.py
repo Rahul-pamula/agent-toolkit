@@ -15,10 +15,12 @@ GLOBAL_PROTOCOL = """# Agent Toolkit Swarm — Global Protocol
 - Record decisions in artifacts and trace events.
 """
 
+
 def load_persona_text(persona: str) -> str:
     # Load from bundled data/agents/<persona>/AGENT.md if exists
     try:
         from agent_toolkit._paths import find_toolkit_root
+
         root = find_toolkit_root()
         # Try package data
         candidates = [
@@ -31,6 +33,7 @@ def load_persona_text(persona: str) -> str:
     except Exception:
         pass
     return f"# Persona: {persona}\nAct as {persona} per Toolkit guidance."
+
 
 def compose_role_prompt(
     recipe: dict[str, Any],
@@ -66,7 +69,14 @@ def compose_role_prompt(
         "persona": persona,
         "policy": policy,
         "recipe": recipe_name,
-        "includes": ["global_protocol", "recipe_workflow", "persona", "task_contract" if task_contract else None, "handoff" if handoff else None, "skills" if included_skills else None],
+        "includes": [
+            "global_protocol",
+            "recipe_workflow",
+            "persona",
+            "task_contract" if task_contract else None,
+            "handoff" if handoff else None,
+            "skills" if included_skills else None,
+        ],
         "size_chars": len(text),
         "model_profile_task": role_def.get("model_profile"),
     }

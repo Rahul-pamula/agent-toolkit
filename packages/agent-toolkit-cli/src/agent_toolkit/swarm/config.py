@@ -24,10 +24,12 @@ def load_yaml_file(path: Path) -> dict[str, Any]:
     text = path.read_text(encoding="utf-8")
     try:
         import yaml  # type: ignore
+
         data = yaml.safe_load(text)
         return data if isinstance(data, dict) else {}
     except ImportError:
         import json
+
         try:
             return json.loads(text)
         except Exception:
@@ -51,7 +53,11 @@ def resolve_config(repo_root: Path, cli_overrides: dict[str, Any] | None = None)
     user_cfg = load_yaml_file(user_cfg_path)
     # Workspace: repo/.agent-toolkit/swarm.yaml OR swarm.yaml
     ws_cfg = {}
-    for p in [repo_root / ".agent-toolkit" / "swarm.yaml", repo_root / "swarm.yaml", repo_root / ".agent-toolkit" / "swarm" / "config.yaml"]:
+    for p in [
+        repo_root / ".agent-toolkit" / "swarm.yaml",
+        repo_root / "swarm.yaml",
+        repo_root / ".agent-toolkit" / "swarm" / "config.yaml",
+    ]:
         if p.is_file():
             ws_cfg = load_yaml_file(p)
             break

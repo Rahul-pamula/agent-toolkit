@@ -21,11 +21,25 @@ def default_gates_for_recipe(recipe: dict[str, Any]) -> list[dict[str, Any]]:
     gates_cfg = spec.get("gates", {}) if isinstance(spec.get("gates"), dict) else {}
     gates: list[dict[str, Any]] = []
     if gates_cfg.get("require_plan_approval"):
-        gates.append({"id": "plan", "description": GATE_DESCRIPTIONS["plan"], "required": True, "approved": False})
+        gates.append(
+            {
+                "id": "plan",
+                "description": GATE_DESCRIPTIONS["plan"],
+                "required": True,
+                "approved": False,
+            }
+        )
     # architecture gate is on-demand, not default
     # cost gate is on-demand
     if gates_cfg.get("require_final_approval", True):
-        gates.append({"id": "final", "description": GATE_DESCRIPTIONS["final"], "required": True, "approved": False})
+        gates.append(
+            {
+                "id": "final",
+                "description": GATE_DESCRIPTIONS["final"],
+                "required": True,
+                "approved": False,
+            }
+        )
     return gates
 
 
@@ -57,7 +71,13 @@ def request_approval(run_dir: Path, gate_id: str, description: str | None = None
     for g in gates:
         if g.get("id") == gate_id:
             return g
-    gate = {"id": gate_id, "description": description or GATE_DESCRIPTIONS.get(gate_id, gate_id), "required": True, "approved": False, "requested_at": now_ts()}
+    gate = {
+        "id": gate_id,
+        "description": description or GATE_DESCRIPTIONS.get(gate_id, gate_id),
+        "required": True,
+        "approved": False,
+        "requested_at": now_ts(),
+    }
     gates.append(gate)
     save_approvals(run_dir, gates)
     append_trace(run_dir, {"ts": now_ts(), "kind": "approval_requested", "gate": gate_id})
@@ -85,7 +105,10 @@ def reject_gate(run_dir: Path, gate_id: str, reason: str) -> dict[str, Any] | No
             g["reason"] = reason
             g["rejected_at"] = now_ts()
             save_approvals(run_dir, gates)
-            append_trace(run_dir, {"ts": now_ts(), "kind": "approval_rejected", "gate": gate_id, "reason": reason})
+            append_trace(
+                run_dir,
+                {"ts": now_ts(), "kind": "approval_rejected", "gate": gate_id, "reason": reason},
+            )
             return g
     return None
 
