@@ -53,6 +53,25 @@ If pricing unknown: "Pricing unavailable, estimate not calculated."
 
 See `SWARMS.md`. Enforcement reuses loop budget primitives where possible.
 
+## Herdr / tmux & Runners
+
+Model selection is runner-agnostic — any of `opencode`/`claude`/`codex`/`cursor`/`copilot`/`muse` (plus `skeleton` for offline) can host the `provider/model` chosen via profile. Herdr ([SWARM_HERDR.md](SWARM_HERDR.md)) and tmux ([SWARM_TMUX.md](SWARM_TMUX.md)) both respect the same `model_profiles` mapping via `--model-profile economy|balanced|quality|private` or per-role override; discovery `agent-toolkit swarm models --runner opencode` delegates to `opencode models` (or runner equivalent) and falls back to profile defaults offline.
+
+## Privacy & Cleanup
+
+- **Privacy:** pricing cache is local, no cloud upload, redacted logs; `--profile private` (`ollama/*`) keeps data on-device.
+- **Cleanup:** budgets do not affect worktree cleanup semantics — dirty worktrees preserved, branches kept; `budget_exhausted` is resumable.
+
+Related: [SWARMS.md](SWARMS.md) · [SWARM_ARCHITECTURE.md](SWARM_ARCHITECTURE.md) · [SWARM_RECIPES.md](SWARM_RECIPES.md) · [SWARM_HANDOFFS.md](SWARM_HANDOFFS.md) · [SWARM_SECURITY.md](SWARM_SECURITY.md) · [SWARM_HERDR.md](SWARM_HERDR.md) · [SWARM_TMUX.md](SWARM_TMUX.md) · [HOW_TO_CREATE_SWARM_RECIPE.md](HOW_TO_CREATE_SWARM_RECIPE.md)
+
+## Offline / Fake Demo
+
+```bash
+agent-toolkit swarm models --runner skeleton --profile balanced  # no binary needed
+agent-toolkit swarm plan --recipe pair --runner skeleton "demo" --json  # side-effect free
+agent-toolkit swarm start --runner skeleton --ui tmux "offline demo"     # no LLM, no Herdr
+```
+
 ## Updating Advisor
 
 `llm-cost-advisor` should read current availability/pricing, not hardcoded prices.

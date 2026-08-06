@@ -69,6 +69,18 @@ spec:
 
 Topology created logically, only `planner` or `implementer` starts eagerly; others inactive until handoff. `promote RUN_ID --to team|full` preserves run ID, artifacts, branches, budget, trace. Events: `recipe_promoted`, `role_activated`, `role_deactivated`.
 
+## UI Backends & Runners
+
+Recipes are backend-neutral: `spec.ui` (`auto`/`herdr`/`tmux`/`headless`) selects the UI adapter, `transport: filesystem` keeps state authoritative. At runtime `agent-toolkit swarm start --ui herdr|tmux|auto` overrides the recipe default. Herdr is recommended ([SWARM_HERDR.md](SWARM_HERDR.md) — `herdr workspace create` + `herdr agent start/prompt/wait/read`), tmux is the portable fallback ([SWARM_TMUX.md](SWARM_TMUX.md) — isolated server `agent-toolkit-swarm-<run-id>`, never mutates user sessions, works over SSH). Runner (`spec` does not bind runner; choose at start via `--runner opencode|claude|codex|cursor|copilot|muse|skeleton`) and model profile (`economy`/`balanced`/`quality`/`private` → task classes `planning`/`coding`/`review`/`architecture`/`hardening`/`qa`) are resolved separately in [SWARM_MODELS_AND_COSTS.md](SWARM_MODELS_AND_COSTS.md). `--runner skeleton` is always available for offline/fake demo (`swarm plan` side-effect free, no Herdr/LLM needed).
+
+## Privacy, Cleanup & Extension
+
+- **Privacy:** no telemetry; handoff artifacts are local files under `runs/<run-id>/artifacts/`; secrets redacted (see [SWARM_SECURITY.md](SWARM_SECURITY.md)).
+- **Cleanup:** only Toolkit-owned `worktrees/<role>` and backend windows are removed by `swarm cleanup`; dirty worktrees preserved, branches never auto-deleted (see [SWARMS.md](SWARMS.md) and [SWARM_TMUX.md](SWARM_TMUX.md)).
+- **Extension:** see [HOW_TO_CREATE_SWARM_RECIPE.md](HOW_TO_CREATE_SWARM_RECIPE.md) for full guide, config precedence (`CLI → swarm.yaml → ~/.config/agent-toolkit/swarm.yaml → defaults`), and offline validation via `swarm plan --runner skeleton`.
+
+Related: [SWARMS.md](SWARMS.md) · [SWARM_ARCHITECTURE.md](SWARM_ARCHITECTURE.md) (diagrams: ecosystem boundaries, runtime layers, pair/team/full, handoff/run state machines, Herdr/tmux separation) · [SWARM_HANDOFFS.md](SWARM_HANDOFFS.md) · [SWARM_MODELS_AND_COSTS.md](SWARM_MODELS_AND_COSTS.md) · [SWARM_SECURITY.md](SWARM_SECURITY.md) · [HOW_TO_CREATE_SWARM_RECIPE.md](HOW_TO_CREATE_SWARM_RECIPE.md)
+
 ## Creating Custom Recipes
 
-See `docs/HOW_TO_CREATE_SWARM_RECIPE.md`.
+See [HOW_TO_CREATE_SWARM_RECIPE.md](HOW_TO_CREATE_SWARM_RECIPE.md).

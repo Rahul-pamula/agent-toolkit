@@ -25,6 +25,29 @@ Optional but recommended:
 - **node** / **npm** — for MCP server installation and `npx skills`
 - **git** + **bash** — only needed for git-clone or install-script methods below
 
+#### Swarms — `agent-toolkit swarm` prerequisites
+
+Swarms are backend-neutral: the orchestration engine is filesystem-based, no cloud required. You need a **UI backend** and a **runner**:
+
+- **UI backend (one required):**
+  - **[Herdr](https://herdr.dev/docs/install/)** — recommended. Rich workspace/tabs UI: `brew install herdr` or `curl -fsSL https://herdr.dev/install.sh | sh`. Verify `herdr --version` and `herdr integration install opencode`. See [SWARM_HERDR.md](SWARM_HERDR.md).
+  - **`tmux`** — portable fallback, works over SSH/headless Linux. Install `tmux` via your package manager (`brew install tmux`, `apt install tmux`, etc.). Swarm uses an isolated server/socket per run `agent-toolkit-swarm-<run-id>` and never mutates your normal tmux sessions. See [SWARM_TMUX.md](SWARM_TMUX.md).
+  - Use `--ui auto` (Herdr → tmux fallback) or explicitly `--ui herdr` / `--ui tmux` / `--ui headless`. `swarm doctor` reports `herdr available`, `tmux available`, versions, and `opencode integration installed/outdated`.
+- **Runner (one required — provides the LLM):**
+  - **[OpenCode](https://opencode.ai)** — primary recommended runner (`opencode models` to list `provider/model`). Alternatives: `claude`, `codex`, `cursor-agent`, `copilot`, `muse`. Discover via `agent-toolkit swarm models --runner opencode` or `agent-toolkit swarm runners`. See [SWARM_MODELS_AND_COSTS.md](SWARM_MODELS_AND_COSTS.md).
+  - **Offline/fake demo:** no runner or Herdr needed — use `--runner skeleton` (always available) and `swarm plan` is side-effect free. Example: `agent-toolkit swarm start --runner skeleton --ui tmux "demo task"` or `agent-toolkit swarm plan --runner skeleton "demo"` for CI/air-gapped exploration.
+- **Git:** required for worktree isolation. Each writing role gets `worktrees/<role>` on branch `agent-toolkit-swarm/<run-id>/<role>`; code moves via validated full 40-char SHAs.
+- **Agentic-workstation auto-provision:** if you use [agentic-workstation](https://github.com/ulises-jeremias/agentic-workstation), set `agent_swarms.enabled=true` to install tmux + Herdr + integrations automatically.
+
+Check everything at once:
+
+```bash
+agent-toolkit swarm doctor
+agent-toolkit swarm doctor --json
+agent-toolkit swarm backends --json
+agent-toolkit swarm runners --json
+```
+
 ---
 
 ## Primary install (recommended)

@@ -119,7 +119,33 @@ agent-toolkit swarm handoffs RUN_ID
 # Then choose: resume with higher limit, promote to team, or human intervention
 ```
 
-See `docs/SWARMS.md`.
+See [SWARMS.md](SWARMS.md) and [SWARM_ARCHITECTURE.md](SWARM_ARCHITECTURE.md) (handoffs, worktrees, budgets). Cross-links: [SWARM_HERDR.md](SWARM_HERDR.md) (Herdr plugin), [SWARM_TMUX.md](SWARM_TMUX.md) (tmux fallback), [SWARM_SECURITY.md](SWARM_SECURITY.md) (privacy), [SWARM_MODELS_AND_COSTS.md](SWARM_MODELS_AND_COSTS.md) (offline/skeleton).
+
+## 10. Swarm: Privacy / Secrets in logs
+
+**Symptom:** worried about credentials in `state.json` / `trace.jsonl`.
+
+**Fix:** secrets are redacted by `sanitize_args()` (`token`/`secret`/`key`/`password` → `[REDACTED]`), credentials never serialized, env scoped per process, generic UI wake-ups only. No cloud upload or transcript storage by default (opt-in with warning). See [SWARM_SECURITY.md](SWARM_SECURITY.md).
+
+## 11. Swarm: Cleanup safety
+
+**Symptom:** unsure if `cleanup` will delete user branches/worktrees.
+
+**Fix:** `cleanup` removes only Toolkit-owned worktrees under `.agent-toolkit/swarm/runs/<run-id>/worktrees/`; refuses dirty (`git status --porcelain`) without `--force`; never deletes branches or user worktrees; fail-closed on unclear ownership. `stop` preserves state. See [SWARM_TMUX.md](SWARM_TMUX.md) and [SWARM_SECURITY.md](SWARM_SECURITY.md).
+
+## 12. Swarm: Offline / Fake demo
+
+**Symptom:** want to explore swarms without Herdr or LLM (air-gapped, CI).
+
+**Fix:**
+
+```bash
+agent-toolkit swarm plan --recipe pair --ui tmux --runner skeleton "demo" --json   # side-effect free
+agent-toolkit swarm start --runner skeleton --ui tmux "offline demo"
+agent-toolkit swarm models --runner skeleton --profile balanced
+```
+
+`--runner skeleton` (always available) + `--ui tmux` works fully offline. `plan` never creates worktrees. See [SWARMS.md](SWARMS.md) and [SWARM_TMUX.md](SWARM_TMUX.md).
 
 ---
 

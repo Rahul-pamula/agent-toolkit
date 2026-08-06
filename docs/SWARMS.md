@@ -91,9 +91,71 @@ Semantic profiles `economy`, `balanced`, `quality`, `private` map task classes `
 
 Each run under `.agent-toolkit/swarm/runs/<run-id>/` produces `run.yaml`, `state.json` (versioned), `trace.jsonl`, `budget.json`, `ownership.json`, `artifacts/`, `handoffs/`, `prompts/`, `runner/opencode/agents/`. Events: `run_created`, `worktree_created`, `handoff_created`, `approval_requested`, `budget_exhausted`, etc. Machine-readable JSON via `status --json`, `watch`, `report`.
 
-## Security
+## Conceptual Architecture & Repo Ownership
 
-See `docs/SWARM_SECURITY.md`. Validate identifiers, use full SHAs, atomically write state, redact secrets, deny external-directory writes/push/release/base-merge by default, fail closed on unclear ownership.
+- **Conceptual architecture:** orchestration engine owns *what* work exists (recipes, roles, handoffs, budgets, worktrees, gates, runners, prompts, artifacts); UI backends (Herdr/tmux/headless) only display sessions; runner adapters (OpenCode, Muse, Claude, Codex, Cursor, Copilot) only run agents. Filesystem state is authoritative. See [SWARM_ARCHITECTURE.md](SWARM_ARCHITECTURE.md) and [ARCHITECTURE.md](ARCHITECTURE.md).
+- **Repo ownership:** **agent-toolkit** (this repo) owns all runtime behavior — recipes, handoffs, state, worktrees, budgets, runners, Herdr/tmux adapters, prompts, artifacts — sole source of truth (ADR-008). **agentic-workstation** installs dependencies (tmux, Herdr, integrations) via `agent_swarms.enabled=true`, not orchestration. **agentic-harness** demonstrates usage, not implementation. Diagrams: ecosystem boundaries, runtime layers, Herdr/tmux adapter separation in [SWARM_ARCHITECTURE.md](SWARM_ARCHITECTURE.md).
+
+## Security, Permissions & Human Gates
+
+See [SWARM_SECURITY.md](SWARM_SECURITY.md). Validate identifiers, use full SHAs, atomically write state, redact secrets, deny external-directory writes/push/release/base-merge by default, fail closed on unclear ownership.
+
+- **Permissions:** planner `read-only`; implementer `writer`; reviewer `reviewer-writer` (optional); integrator `merge: ask`. Runner defaults: `external_directory: deny`, `git push: deny`, `git reset --hard: deny`, `git clean: deny`. `allow_direct_base_merge: false`, `allow_push: false`.
+- **Human gates:** plan approval, architecture decision, cost escalation, final integration. No auto-merge. `agent-toolkit swarm approve` / `reject`.
+
+## State Locations & Observability
+
+State files, trace, and ownership on filesystem:
+
+```
+.agent-toolkit/swarm/runs/<run-id>/
+  run.yaml | state.json (versioned, atomic) | trace.jsonl (append-only)
+  budget.json | ownership.json | approvals.json
+  artifacts/ | handoffs/{outbox,queued,active,completed,failed}/ | prompts/
+  worktrees/<role>/ | runner/opencode/agents/
+```
+
+See [SWARM_ARCHITECTURE.md](SWARM_ARCHITECTURE.md) for run/role/handoff state machines.
+
+## Privacy
+
+No mandatory cloud, no telemetry, no transcript storage by default (opt-in with warning). Secrets redacted via `sanitize_args()` (`token`/`secret`/`key`/`password` → `[REDACTED]`); credentials never serialized; env scoped per process; generic UI wake-up notifications only. See [SWARM_SECURITY.md](SWARM_SECURITY.md) and [ARCHITECTURE.md](ARCHITECTURE.md).
+
+## Cleanup
+
+- `agent-toolkit swarm stop RUN_ID` — kills backend windows (Herdr/tmux), preserves filesystem state.
+- `agent-toolkit swarm cleanup RUN_ID` — removes only Toolkit-owned worktrees under `runs/<run-id>/worktrees/`, checks `git status --porcelain` dirty and refuses without `--force`, never deletes branches automatically, never removes user worktrees, fail-closed on unclear ownership. See [SWARM_TMUX.md](SWARM_TMUX.md) and [SWARM_HERDR.md](SWARM_HERDR.md).
+
+## Herdr Plugin & tmux Fallback
+
+- **Herdr plugin:** thin plugin at `integrations/herdr/agent-toolkit-swarm/` (`herdr-plugin.toml`, `min_herdr_version`, actions Start Pair/Team/Full, Open Status/Handoff Queue/Final Report, Pause/Resume/Stop/Clean Up) — no orchestration logic, delegates to `agent-toolkit swarm`. Local dev: `herdr plugin link ./integrations/herdr/agent-toolkit-swarm`. See [SWARM_HERDR.md](SWARM_HERDR.md).
+- **tmux fallback:** isolated server/socket per run `agent-toolkit-swarm-<run-id>`, never mutates user sessions, works over SSH, `shlex.quote` safe quoting, parity via `SwarmUIBackend` interface. See [SWARM_TMUX.md](SWARM_TMUX.md).
+- `--ui auto` falls back Herdr → tmux; `--ui herdr` fails with install guidance if missing.
+
+## Offline / Fake Demo
+
+No Herdr or LLM needed to explore swarms offline:
+
+```bash
+# Fully offline — plan is side-effect free, skeleton needs no binary
+agent-toolkit swarm plan --recipe pair --ui tmux --runner skeleton "Demo: add hello endpoint" --json
+agent-toolkit swarm plan --recipe team --ui tmux --runner skeleton "Design API" --json
+agent-toolkit swarm start --runner skeleton --ui tmux "Offline demo"
+agent-toolkit swarm models --runner opencode   # fallback to profile models when runner missing
+```
+
+`--runner skeleton` uses `true` binary, writes `task-contract.md` only, always available. Pricing unknown is reported honestly; expensive fallback requires explicit approval.
+
+## Extension Guide
+
+1. Create a recipe `apiVersion: agent-toolkit.dev/v1alpha1`, `kind: SwarmRecipe` — see [HOW_TO_CREATE_SWARM_RECIPE.md](HOW_TO_CREATE_SWARM_RECIPE.md).
+2. Place under `~/.config/agent-toolkit/swarm/recipes/` or `.agent-toolkit/swarm/recipes/` and reference via config.
+3. Reuse personas from `agents/` (planner, architect, code-reviewer, etc.) and map `model_profile` to task classes (`planning`/`coding`/`review`/`architecture`/`hardening`/`qa`) in [SWARM_MODELS_AND_COSTS.md](SWARM_MODELS_AND_COSTS.md).
+4. Test offline: `agent-toolkit swarm plan --recipe your-recipe --runner skeleton "task"` should be side-effect free.
+
+Mermaid diagrams for ecosystem boundaries, runtime layers, pair/team/full workflows, handoff/role/run state machines, and Herdr/tmux adapter separation are in [SWARM_ARCHITECTURE.md](SWARM_ARCHITECTURE.md).
+
+Related: [SWARM_RECIPES.md](SWARM_RECIPES.md) · [SWARM_HANDOFFS.md](SWARM_HANDOFFS.md) · [SWARM_MODELS_AND_COSTS.md](SWARM_MODELS_AND_COSTS.md) · [SWARM_HERDR.md](SWARM_HERDR.md) · [SWARM_TMUX.md](SWARM_TMUX.md) · [SWARM_SECURITY.md](SWARM_SECURITY.md) · [HOW_TO_CREATE_SWARM_RECIPE.md](HOW_TO_CREATE_SWARM_RECIPE.md) · [ARCHITECTURE.md](ARCHITECTURE.md) · [adr/ADR-008-swarm-orchestration.md](adrs/ADR-008-swarm-orchestration.md)
 
 ## Configuration Precedence
 

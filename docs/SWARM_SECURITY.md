@@ -38,6 +38,14 @@ Threat model for `agent-toolkit swarm`.
 
 Unit tests for injection: role injection (`"; rm -rf /"`), branch injection, path traversal (`../../etc/passwd`), commit tampering, handoff replay, oversized artifact (>1MB).
 
+## Herdr / tmux & Runner Separation
+
+- **Backend separation:** Herdr ([SWARM_HERDR.md](SWARM_HERDR.md)) and tmux ([SWARM_TMUX.md](SWARM_TMUX.md)) are adapters implementing `SwarmUIBackend` — no recipe/handoff/budget/git logic in adapters. Orchestrator never branches on backend for correctness; backend metadata stays in backend state. See adapter separation diagram in [SWARM_ARCHITECTURE.md](SWARM_ARCHITECTURE.md).
+- **Runner isolation:** permissions above apply uniformly regardless of `--runner opencode|claude|codex|cursor|copilot|muse|skeleton` or `--model-profile economy|balanced|quality|private`. `--runner skeleton` is safe for offline/CI (no LLM, no external calls).
+- **State & privacy:** state under `.agent-toolkit/swarm/runs/<run-id>/` is filesystem-authoritative; no cloud. Cleanup only Toolkit-owned `worktrees/` with dirty/branch preservation; Herdr plugin never handles secrets.
+
+Related: [SWARMS.md](SWARMS.md) · [SWARM_ARCHITECTURE.md](SWARM_ARCHITECTURE.md) (security boundaries, runtime layers) · [SWARM_RECIPES.md](SWARM_RECIPES.md) · [SWARM_HANDOFFS.md](SWARM_HANDOFFS.md) · [SWARM_MODELS_AND_COSTS.md](SWARM_MODELS_AND_COSTS.md) · [SWARM_HERDR.md](SWARM_HERDR.md) · [SWARM_TMUX.md](SWARM_TMUX.md) · [HOW_TO_CREATE_SWARM_RECIPE.md](HOW_TO_CREATE_SWARM_RECIPE.md)
+
 ## References
 
-ADR-008, `swarm/store.py`, `swarm/handoff.py`, `swarm/worktree.py`, `swarm/runner.py` permissions.
+ADR-008, `swarm/store.py`, `swarm/handoff.py`, `swarm/worktree.py`, `swarm/runner.py` permissions, [ARCHITECTURE.md](ARCHITECTURE.md), [CONCEPTS.md](CONCEPTS.md).

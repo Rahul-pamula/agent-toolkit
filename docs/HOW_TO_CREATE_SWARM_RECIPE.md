@@ -60,3 +60,17 @@ spec:
 6. Place file under `~/.config/agent-toolkit/swarm/recipes/` or repo `.agent-toolkit/swarm/recipes/` and reference via config, or contribute built-in via PR.
 
 Reuse personas from `agents/` (planner, architect, code-reviewer, etc.), don't create duplicate `swarm-*` personas unless overlay needed.
+
+## Herdr / tmux & Offline
+
+- Recipes declare `ui: auto` (Herdr preferred, tmux fallback). At runtime `agent-toolkit swarm start --ui herdr|tmux|auto` overrides; validation via `swarm doctor` and `swarm backends`. See [SWARM_HERDR.md](SWARM_HERDR.md) and [SWARM_TMUX.md](SWARM_TMUX.md) for isolated-server vs workspace semantics.
+- Model profiles (`economy`/`balanced`/`quality`/`private` → task classes `planning`/`coding`/`review`/`architecture`/`hardening`/`qa`) are separate from recipes; set via `--model-profile` and [SWARM_MODELS_AND_COSTS.md](SWARM_MODELS_AND_COSTS.md).
+- Offline test does not need Herdr/LLM: `agent-toolkit swarm plan --recipe your-recipe --runner skeleton --ui tmux "task"` is side-effect free; full offline demo uses `--runner skeleton --ui tmux`.
+
+## Privacy, State & Cleanup
+
+- **Privacy:** artifacts under `.agent-toolkit/swarm/runs/<run-id>/artifacts/` are local; secrets redacted; no telemetry (see [SWARM_SECURITY.md](SWARM_SECURITY.md)).
+- **State:** `state.json`, `trace.jsonl`, `budget.json`, `handoffs/` under `.agent-toolkit/swarm/runs/<run-id>/` — see [SWARM_ARCHITECTURE.md](SWARM_ARCHITECTURE.md) (run/role/handoff state machines, runtime layers) and [SWARMS.md](SWARMS.md).
+- **Cleanup:** only Toolkit-owned `worktrees/<role>` removed by `swarm cleanup`; dirty preserved, branches never auto-deleted.
+
+Related: [SWARMS.md](SWARMS.md) · [SWARM_ARCHITECTURE.md](SWARM_ARCHITECTURE.md) · [SWARM_RECIPES.md](SWARM_RECIPES.md) · [SWARM_HANDOFFS.md](SWARM_HANDOFFS.md) · [SWARM_MODELS_AND_COSTS.md](SWARM_MODELS_AND_COSTS.md) · [SWARM_SECURITY.md](SWARM_SECURITY.md) · [SWARM_HERDR.md](SWARM_HERDR.md) · [SWARM_TMUX.md](SWARM_TMUX.md)

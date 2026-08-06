@@ -62,4 +62,10 @@ agent-toolkit swarm task next --role reviewer --run-id <run-id>
 agent-toolkit swarm task complete --handoff <id> --run-id <run-id>
 ```
 
-See `SWARM_ARCHITECTURE.md` for state machine.
+See [SWARM_ARCHITECTURE.md](SWARM_ARCHITECTURE.md) for handoff/run/role state machines (Mermaid: handoff `outbox → queued → active → {completed,failed}`, run, role).
+
+## Backend-Neutral & Extension
+
+Handoffs are transport-agnostic (`transport: filesystem`) and UI-agnostic — Herdr ([SWARM_HERDR.md](SWARM_HERDR.md)) and tmux ([SWARM_TMUX.md](SWARM_TMUX.md)) both use the same durable queue under `.agent-toolkit/swarm/runs/<run-id>/handoffs/` with parity via `SwarmUIBackend`. No LLM or Herdr required: `swarm plan` + `--runner skeleton` works offline for handoff prototyping.
+
+Related: [SWARMS.md](SWARMS.md) · [SWARM_ARCHITECTURE.md](SWARM_ARCHITECTURE.md) · [SWARM_RECIPES.md](SWARM_RECIPES.md) · [SWARM_MODELS_AND_COSTS.md](SWARM_MODELS_AND_COSTS.md) · [SWARM_SECURITY.md](SWARM_SECURITY.md) · [HOW_TO_CREATE_SWARM_RECIPE.md](HOW_TO_CREATE_SWARM_RECIPE.md) · [SWARM_TMUX.md](SWARM_TMUX.md) · [SWARM_HERDR.md](SWARM_HERDR.md)

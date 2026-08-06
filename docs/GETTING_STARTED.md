@@ -49,12 +49,55 @@ In your AI tool, invoke an existing core skill — e.g. `core/assistant`:
 
 You should see the assistant skill instructions load. Browse the full catalog: `catalogs/skill-catalog.yaml` (52 skills), regenerate with `python3 scripts/generate-catalogs.py`.
 
+## 6. Try Swarms (optional — multi-agent orchestration)
+
+Swarms coordinate multiple coding-agent sessions with isolated Git worktrees and durable handoffs. Herdr is recommended, tmux is the portable fallback, and `--runner skeleton` lets you explore fully offline.
+
+```bash
+# Check swarm prerequisites (Herdr, tmux, runners, git)
+agent-toolkit swarm doctor
+agent-toolkit swarm backends --json
+agent-toolkit swarm runners
+
+# Explore recipes: pair (default), team, full
+agent-toolkit swarm recipes
+agent-toolkit swarm recipe show pair
+agent-toolkit swarm models --runner opencode   # provider/model discovery
+
+# Side-effect free dry-run — no worktrees, no LLM needed
+agent-toolkit swarm plan --recipe pair --ui tmux --runner skeleton "Demo: add hello endpoint"
+
+# Start a swarm — Herdr (recommended)
+agent-toolkit swarm start --recipe pair --ui herdr --runner opencode --model-profile balanced "Implement issue #123"
+# tmux fallback (works over SSH/headless)
+agent-toolkit swarm start --recipe pair --ui tmux --runner opencode --model-profile balanced "Fix bug #42"
+
+# Observe & operate
+agent-toolkit swarm list
+agent-toolkit swarm status RUN_ID --json
+agent-toolkit swarm handoffs RUN_ID
+agent-toolkit swarm artifacts RUN_ID
+agent-toolkit swarm logs RUN_ID implementer
+agent-toolkit swarm promote RUN_ID --to team   # elastic pair→team→full
+agent-toolkit swarm approve RUN_ID --gate plan # human gate
+```
+
+- ** pair ** — implementer → reviewer/integrator → human approval (bugs, features).
+- ** team ** — planner → implementer → reviewer → architect → human approval (medium features, requires plan approval).
+- ** full ** — planner → implementer → refactorer → architect → hardener → qa → human approval (security/releases).
+- Budgets: `max_total_tokens`, `max_cost_usd`, `max_wall_seconds`, concurrency/round-trip limits. Human gates: plan, architecture, cost escalation, final integration. State under `.agent-toolkit/swarm/runs/<run-id>/`.
+
+Details: [SWARMS.md](SWARMS.md) (overview + quickstart), [SWARM_ARCHITECTURE.md](SWARM_ARCHITECTURE.md) (diagrams + state machines), [SWARM_HERDR.md](SWARM_HERDR.md) (Herdr UI), [SWARM_TMUX.md](SWARM_TMUX.md) (tmux fallback), [SWARM_MODELS_AND_COSTS.md](SWARM_MODELS_AND_COSTS.md) (models/budgets), [SWARM_SECURITY.md](SWARM_SECURITY.md) (permissions/privacy).
+
+Prerequisites: see [INSTALLATION.md — Swarms prerequisites](INSTALLATION.md#swarms--agent-toolkit-swarm-prerequisites) for Herdr/tmux/runner setup, or `agent_swarms.enabled=true` in [agentic-workstation](https://github.com/ulises-jeremias/agentic-workstation) for auto-provision. Offline: `--runner skeleton` + `--ui tmux` works without Herdr or LLM.
+
 ## Next steps
 
 * **Agents:** see `agents/` (16 personas) and `catalogs/agent-catalog.yaml`
 * **MCP:** see `mcp/` templates (placeholders only, add credentials locally)
 * **Advanced CLI:** see [docs/SCOPE.md](SCOPE.md) and [docs/CLI_SURFACES.md](CLI_SURFACES.md) for the single-binary progressive disclosure model
 * **Loops:** see `loops/` (10 templates) and `docs/HOW_TO_CREATE_LOOP.md`
+* **Swarms:** see `docs/SWARMS.md`, `docs/SWARM_ARCHITECTURE.md`, `docs/HOW_TO_CREATE_SWARM_RECIPE.md`
 * **Contributing:** see [CONTRIBUTING.md](../CONTRIBUTING.md) for CI parity (`uv sync --all-extras`, `AGENT_TOOLKIT_ROOT=$PWD uv run pytest tests/ -v`)
 
 ## Troubleshooting
