@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- markdownlint-disable MD024 -->
 ## [Unreleased]
 
+## [1.5.1] — 2026-08-06
+
+### Fixed
+
+- **Release 1.5.0 plugin bundles**: sync `plugins/*/.claude-plugin|*.cursor-plugin|*.codex-plugin|gemini-extension|pi-package|.provenance` versions to `1.5.1` — fixes `test_diff_no_changes_returns_0` (Validate `diff`).
+
 ## [1.5.0] — 2026-08-06
 
 ### Added

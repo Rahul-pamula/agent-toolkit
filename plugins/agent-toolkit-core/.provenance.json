@@ -1,5 +1,5 @@
 {
-  "generatorVersion": "1.5.0",
+  "generatorVersion": "1.5.1",
   "product": "agent-toolkit-core",
   "target": "claude-code",
   "artifacts": [
