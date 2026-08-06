@@ -516,6 +516,14 @@ def cmd_start(args: list[str]) -> int:
     parser.add_argument("--workspace", default=None, help="Repo path or OWNER/REPO shorthand")
     parser.add_argument("--repo", default=None, help="Alias for --workspace")
     parser.add_argument("-C", dest="workspace_C", default=None, help="Alias for --workspace")
+    parser.add_argument(
+        "--attach",
+        action="store_true",
+        help="Attach to tmux/herdr session after start (blocks, like swarm-forge)",
+    )
+    parser.add_argument(
+        "--no-attach", dest="no_attach", action="store_true", help="Do not attach even if default"
+    )
     ns, rest = parser.parse_known_args(args)
     if rest and rest[0] == "--":
         rest = rest[1:]
@@ -817,6 +825,40 @@ def cmd_start(args: list[str]) -> int:
     else:
         print("  status: running")
     print(f"Inspect: agent-toolkit swarm status {run_id}")
+    if not ns.json and not ns.dry_run and ns.attach and not ns.no_attach:
+        # Auto-attach to the created session (tmux/herdr)
+        backend_name_eff = cfg.get("ui", "auto")
+        # Resolve actual backend if auto
+        if backend_name_eff == "auto":
+            # prefer tmux if available, else herdr
+            import shutil as _shutil2
+
+            if _shutil2.which("tmux"):
+                backend_name_eff = "tmux"
+            elif _shutil2.which("herdr"):
+                backend_name_eff = "herdr"
+            else:
+                backend_name_eff = "tmux"
+        if backend_name_eff == "tmux":
+            sock = f"agent-toolkit-swarm-{run_id}"
+            session = f"swarm-{run_id}"
+            print(f"Attaching to tmux: tmux -L {sock} attach -t {session}")
+            import os as _os
+
+            try:
+                _os.execvp("tmux", ["tmux", "-L", sock, "attach", "-t", session])
+            except Exception as e:
+                print(f"[attach] tmux attach failed: {e}")
+        elif backend_name_eff == "herdr":
+            print(f"Attaching to herdr: herdr workspace open swarm-{run_id}")
+            import os as _os
+            import shutil as _shutil3
+
+            if _shutil3.which("herdr"):
+                try:
+                    _os.execvp("herdr", ["herdr", "workspace", "open", f"swarm-{run_id}"])
+                except Exception as e:
+                    print(f"[attach] herdr attach failed: {e}")
     return 0
 
 
