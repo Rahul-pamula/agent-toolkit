@@ -27,13 +27,14 @@ loop run options:
     --runner NAME           Force a runner (default: auto, or $AGENT_TOOLKIT_LOOP_RUNNER)
 
 Runners (auto tries in order until one is available):
-    auto        Try harness → claude → opencode → cursor → copilot → codex → queue
+    auto        Try harness → claude → opencode → cursor → copilot → codex → muse → queue
     harness     agentic-workstation / dots-ai-devcompanion runner (HARNESS_RUNNER_DIR)
     claude      Claude Code CLI (`claude --print`)
     opencode    OpenCode CLI (`opencode run`)
     cursor      Cursor Agent CLI (`cursor-agent` / `agent` / `cursor` --print)
     copilot     GitHub Copilot CLI (`copilot -p`)
     codex       OpenAI Codex CLI (`codex exec`)
+    muse        Muse CLI (`muse exec`)
     queue       Queue via agent-toolkit devcompanion (async worker)
     skeleton    Write plan.md only (no LLM)
 
@@ -87,6 +88,7 @@ RUNNER_NAMES = (
     "cursor",
     "copilot",
     "codex",
+    "muse",
     "queue",
     "skeleton",
 )
@@ -97,6 +99,7 @@ RUNNER_ALIASES = {
     "cursor-agent": "cursor",
     "github-copilot": "copilot",
     "openai-codex": "codex",
+    "muse-code": "muse",
 }
 
 
@@ -1056,6 +1059,70 @@ def _try_codex_runner(
     return False
 
 
+def _try_muse_runner(
+    prompt: str,
+    run_dir: Path,
+    meta: dict[str, Any] | None = None,
+    *,
+    trace_file: Path | None = None,
+    wall_timeout: int | None = None,
+    max_tokens: int | None = None,
+) -> bool:
+    """Invoke Muse CLI headless (``muse exec``) as a loop runner.
+
+    See https://developer.meta.com/ai/products/muse-code/
+    Muse uses Agent Skills spec: ``~/.config/muse/skills`` (user) and ``.agents/skills``.
+    """
+    muse_bin = shutil.which("muse")
+    if not muse_bin:
+        return False
+
+    from agent_toolkit.loop.budget import DEFAULT_WALL_SECONDS
+
+    timeout = wall_timeout if wall_timeout is not None else DEFAULT_WALL_SECONDS
+    env = _install_gate_into_environ(run_dir, meta or {})
+
+    # Write prompt to file to avoid shell quoting limits (muse exec supports --prompt-file)
+    prompt_file = run_dir / "prompt.md"
+    try:
+        prompt_file.write_text(prompt, encoding="utf-8")
+    except OSError:
+        # Fallback: pass prompt directly if file write fails
+        prompt_file = None
+
+    if prompt_file is not None and prompt_file.exists():
+        cmd = [muse_bin, "exec", "--yolo", "--prompt-file", str(prompt_file)]
+    else:
+        cmd = [muse_bin, "exec", "--yolo", prompt]
+
+    try:
+        result = _run_with_live_output(
+            cmd,
+            input_text="",
+            cwd=str(workspace_root()),
+            env=env,
+            trace_file=trace_file or (run_dir / "trace.jsonl"),
+            timeout=timeout,
+            max_tokens=max_tokens,
+        )
+    except subprocess.TimeoutExpired:
+        warn(f"muse runner hit budget limit (wall={timeout}s or max_tokens)")
+        return False
+
+    if result.returncode == 0:
+        report_md = run_dir / "report.md"
+        if not report_md.exists() and result.stdout.strip():
+            report_md.write_text(result.stdout, encoding="utf-8")
+        ok("muse runner completed")
+        return True
+
+    error_output = (result.stderr + result.stdout).strip()[:400]
+    warn(f"muse runner exited {result.returncode}: {error_output or '(no output)'}")
+    if result.returncode != 0 and not error_output:
+        warn("  Hint: Muse CLI may not be authenticated — run: muse auth login or set MUSE_API_KEY")
+    return False
+
+
 def _queue_via_devcompanion(
     request: str,
     run_dir: Path,
@@ -1357,7 +1424,7 @@ def _write_skeleton_plan(
         f"⚠ {reason}\n\n"
         "Options:\n"
         "  1. `agent-toolkit loop run <loop> --runner claude` (Claude Code CLI in PATH)\n"
-        "  2. `--runner opencode` / `cursor` / `copilot` / `codex`\n"
+        "  2. `--runner opencode` / `cursor` / `copilot` / `codex` / `muse`\n"
         "  3. `--runner harness` with `HARNESS_RUNNER_DIR` set\n"
         "  4. `--runner queue` for async devcompanion processing\n"
         "See: `agent-toolkit loop help`\n",
@@ -1418,6 +1485,10 @@ def _dispatch_loop_runner(
             if not shutil.which("codex"):
                 return False
             return True if _try_codex_runner(prompt, run_dir, meta, **kwargs) else None
+        if name == "muse":
+            if not shutil.which("muse"):
+                return False
+            return True if _try_muse_runner(prompt, run_dir, meta, **kwargs) else None
         if name == "queue":
             return (
                 True
@@ -1449,7 +1520,7 @@ def _dispatch_loop_runner(
                 prompt, run_dir, rid, meta, wall_timeout=wall_timeout
             )
             return False, budget_exhausted
-        for name in ("claude", "opencode", "cursor", "copilot", "codex", "queue"):
+        for name in ("claude", "opencode", "cursor", "copilot", "codex", "muse", "queue"):
             result = _one(name)
             if result is True:
                 if name == "queue":
@@ -1510,6 +1581,7 @@ def _dispatch_loop_runner(
             "cursor": "install Cursor Agent CLI (`cursor-agent` / `agent` on PATH); set CURSOR_API_KEY",
             "copilot": "install GitHub Copilot CLI (`copilot` on PATH); set COPILOT_GITHUB_TOKEN",
             "codex": "install Codex CLI (`codex` on PATH); set OPENAI_API_KEY or CODEX_API_KEY",
+            "muse": "install Muse CLI (`muse` on PATH); run: muse auth login",
             "queue": "ensure workspace queue dirs are writable (HARNESS_DC_HOME / workspace)",
         }
         raise ValueError(
@@ -1532,7 +1604,7 @@ def cmd_run(args: list[str]) -> int:
 
     usage = (
         "Usage: loop run <loop-name> [--force] [--quiet] [--pack PATH] [--runner NAME]\n"
-        "  --runner  auto|harness|claude|opencode|cursor|copilot|codex|queue|skeleton\n"
+        "  --runner  auto|harness|claude|opencode|cursor|copilot|codex|muse|queue|skeleton\n"
         "  (default: auto, or $AGENT_TOOLKIT_LOOP_RUNNER)\n"
         "See: agent-toolkit loop help"
     )

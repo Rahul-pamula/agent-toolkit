@@ -10,7 +10,7 @@ User-facing loop behavior lives in `docs/LOOPS.md`. This note covers **internals
 ## Summary
 
 `loop/runner.py` is the tribal harness that turns `loops/<name>/loop.yaml` into a durable run with:
-- multi-runner dispatch (Claude / Cursor / Codex / Copilot / OpenCode / harness / queue skeleton)
+- multi-runner dispatch (Claude / Cursor / Codex / Copilot / OpenCode / Muse / harness / queue skeleton)
 - three-tier gates (L1 observe-only, L2 assisted, L3 merge/close)
 - GitHub mutation gate (`loop-gh-gate` shim)
 - token + wall-clock budgets plus `max_runs_per_day`
@@ -23,13 +23,14 @@ Runner selection is in `RUNNER_NAMES` / `RUNNER_ALIASES` (`runner.py`):
 
 | Runner | Binary / entry | Env / auth | When selected |
 |--------|----------------|------------|---------------|
-| `auto` | — | `AGENT_TOOLKIT_LOOP_RUNNER` default | Tries in order `harness → claude → opencode → cursor → copilot → codex → queue` until available |
+| `auto` | — | `AGENT_TOOLKIT_LOOP_RUNNER` default | Tries in order `harness → claude → opencode → cursor → copilot → codex → muse → queue` until available |
 | `harness` | `dots-ai-devcompanion` `HARNESS_RUNNER_DIR` | `HARNESS_DC_HOME` | Workspace harness queue |
 | `claude` | `claude --print` | `CLAUDE_API_KEY` / `ANTHROPIC_API_KEY` | Muse CLI |
 | `opencode` | `opencode run` | OpenCode config | OpenCode CLI |
 | `cursor` | `cursor-agent` / `agent` / `cursor --print` | `CURSOR_API_KEY` | Cursor Agent CLI |
 | `copilot` | `copilot -p` | `COPILOT_GITHUB_TOKEN` / `GH_TOKEN` | GitHub Copilot CLI |
 | `codex` | `codex exec` | `OPENAI_API_KEY` / `CODEX_API_KEY` | OpenAI Codex CLI |
+| `muse` | `muse exec` | `MUSE_API_KEY` / `META_API_KEY` | Muse (Meta) |
 | `queue` | `agent-toolkit devcompanion` async queue | — | Skeleton / queued execution |
 | `skeleton` | no LLM — writes `plan.md` only | — | Dry-run / offline |
 
@@ -99,7 +100,7 @@ flowchart TD
     B --> C[Parse loop.yaml\n_parse_simple_yaml + pack overrides\napply_loop_pack_overrides]
     C --> D{Budget gate?\nmax_runs_per_day, soft_token_precheck,\nwall timeout}
     D -- exceeded --> E[Exit budget_exhausted\nwrite STATE.md last_run_status=partial]
-    D -- ok --> F[Select runner\nauto probes harness→claude→...→queue]
+    D -- ok --> F[Select runner\nauto probes harness→claude→...→muse→queue]
     F --> G[Prepare run dir\nruns/<run_id>/ + trace.jsonl\ninject loop_gh_gate env\nLOOP_GATE_TIER/ALLOWLIST/DENY/RUN_DIR]
     G --> H[Execute runner\n_run_with_live_output streams\n+ _TraceTailer polls tokens]
     H --> I{Token/wall budget\nexhausted?}
