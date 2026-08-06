@@ -734,44 +734,89 @@ def cmd_start(args: list[str]) -> int:
                     (wt.get("path") for wt in created_wts if wt.get("role") == r),
                     str(run_dir),
                 )
-                # Build runner command
+                # Build runner command — like swarm-forge launch-command: pass prompt as CLI arg
+                prompt_file = run_dir / "prompts" / f"{r}.md"
+                # swarm-forge style: $(cat prompt) passed as positional prompt
+                prompt_cat = f"$(cat {_shlex.quote(str(prompt_file))})" if prompt_file.exists() else ""
                 if runner_name == "opencode":
-                    # opencode picks model from runner/opencode/agents/<role>.md
-                    cmd = [
-                        "bash",
-                        "-lc",
-                        f"cd {_shlex.quote(str(worktree_path))} && exec opencode --agent {_shlex.quote(r)}",
-                    ]
+                    # opencode: --agent + --prompt "$(cat prompt)"
+                    if prompt_cat:
+                        cmd = [
+                            "bash",
+                            "-lc",
+                            f"cd {_shlex.quote(str(worktree_path))} && exec opencode --agent {_shlex.quote(r)} --prompt \"{prompt_cat}\"",
+                        ]
+                    else:
+                        cmd = [
+                            "bash",
+                            "-lc",
+                            f"cd {_shlex.quote(str(worktree_path))} && exec opencode --agent {_shlex.quote(r)}",
+                        ]
                 elif runner_name == "claude":
-                    cmd = [
-                        "bash",
-                        "-lc",
-                        f"cd {_shlex.quote(str(worktree_path))} && exec claude --dangerously-skip-permissions",
-                    ]
+                    if prompt_cat:
+                        cmd = [
+                            "bash",
+                            "-lc",
+                            f"cd {_shlex.quote(str(worktree_path))} && exec claude --dangerously-skip-permissions --append-system-prompt-file {_shlex.quote(str(prompt_file))} \"{prompt_cat}\"",
+                        ]
+                    else:
+                        cmd = [
+                            "bash",
+                            "-lc",
+                            f"cd {_shlex.quote(str(worktree_path))} && exec claude --dangerously-skip-permissions",
+                        ]
                 elif runner_name == "codex":
-                    cmd = [
-                        "bash",
-                        "-lc",
-                        f"cd {_shlex.quote(str(worktree_path))} && exec codex",
-                    ]
+                    if prompt_cat:
+                        cmd = [
+                            "bash",
+                            "-lc",
+                            f"cd {_shlex.quote(str(worktree_path))} && exec codex -C {_shlex.quote(str(worktree_path))} \"{prompt_cat}\"",
+                        ]
+                    else:
+                        cmd = [
+                            "bash",
+                            "-lc",
+                            f"cd {_shlex.quote(str(worktree_path))} && exec codex",
+                        ]
                 elif runner_name == "cursor":
-                    cmd = [
-                        "bash",
-                        "-lc",
-                        f"cd {_shlex.quote(str(worktree_path))} && exec cursor-agent",
-                    ]
+                    if prompt_cat:
+                        cmd = [
+                            "bash",
+                            "-lc",
+                            f"cd {_shlex.quote(str(worktree_path))} && exec cursor-agent \"{prompt_cat}\"",
+                        ]
+                    else:
+                        cmd = [
+                            "bash",
+                            "-lc",
+                            f"cd {_shlex.quote(str(worktree_path))} && exec cursor-agent",
+                        ]
                 elif runner_name == "copilot":
-                    cmd = [
-                        "bash",
-                        "-lc",
-                        f"cd {_shlex.quote(str(worktree_path))} && exec copilot",
-                    ]
+                    if prompt_cat:
+                        cmd = [
+                            "bash",
+                            "-lc",
+                            f"cd {_shlex.quote(str(worktree_path))} && exec copilot --name {_shlex.quote('Swarm ' + r)} -i \"{prompt_cat}\"",
+                        ]
+                    else:
+                        cmd = [
+                            "bash",
+                            "-lc",
+                            f"cd {_shlex.quote(str(worktree_path))} && exec copilot",
+                        ]
                 elif runner_name == "muse":
-                    cmd = [
-                        "bash",
-                        "-lc",
-                        f"cd {_shlex.quote(str(worktree_path))} && exec muse chat",
-                    ]
+                    if prompt_cat:
+                        cmd = [
+                            "bash",
+                            "-lc",
+                            f"cd {_shlex.quote(str(worktree_path))} && exec muse chat \"{prompt_cat}\"",
+                        ]
+                    else:
+                        cmd = [
+                            "bash",
+                            "-lc",
+                            f"cd {_shlex.quote(str(worktree_path))} && exec muse chat",
+                        ]
                 elif runner_name == "skeleton":
                     cmd = [
                         "bash",
@@ -779,45 +824,23 @@ def cmd_start(args: list[str]) -> int:
                         f"cd {_shlex.quote(str(worktree_path))} && echo '[skeleton:{r}] ready — no LLM' && exec bash",
                     ]
                 else:
-                    cmd = [
-                        "bash",
-                        "-lc",
-                        f"cd {_shlex.quote(str(worktree_path))} && exec {runner_name}",
-                    ]
+                    if prompt_cat:
+                        cmd = [
+                            "bash",
+                            "-lc",
+                            f"cd {_shlex.quote(str(worktree_path))} && exec {runner_name} \"{prompt_cat}\"",
+                        ]
+                    else:
+                        cmd = [
+                            "bash",
+                            "-lc",
+                            f"cd {_shlex.quote(str(worktree_path))} && exec {runner_name}",
+                        ]
                 backend.start_agent(run_dir, run_id, r, cmd)
                 append_trace(
                     run_dir,
                     {"ts": now_ts(), "kind": "agent_started", "role": r, "runner": runner_name, "cmd": cmd},
                 )
-                # Auto-feed prompt to the agent (so --attach shows it working immediately)
-                try:
-                    prompt_file = run_dir / "prompts" / f"{r}.md"
-                    if prompt_file.exists():
-                        prompt_text = prompt_file.read_text(encoding="utf-8")
-                        if runner_name != "skeleton" and prompt_text.strip():
-                            try:
-                                backend.prompt_agent(run_id, r, prompt_text)
-                                append_trace(
-                                    run_dir,
-                                    {
-                                        "ts": now_ts(),
-                                        "kind": "prompt_sent",
-                                        "role": r,
-                                        "bytes": len(prompt_text),
-                                    },
-                                )
-                            except Exception as e2:
-                                append_trace(
-                                    run_dir,
-                                    {
-                                        "ts": now_ts(),
-                                        "kind": "prompt_failed",
-                                        "role": r,
-                                        "error": str(e2)[:500],
-                                    },
-                                )
-                except Exception:
-                    pass
             except Exception as e:
                 append_trace(
                     run_dir,
