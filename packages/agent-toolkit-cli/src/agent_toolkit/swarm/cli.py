@@ -789,6 +789,35 @@ def cmd_start(args: list[str]) -> int:
                     run_dir,
                     {"ts": now_ts(), "kind": "agent_started", "role": r, "runner": runner_name, "cmd": cmd},
                 )
+                # Auto-feed prompt to the agent (so --attach shows it working immediately)
+                try:
+                    prompt_file = run_dir / "prompts" / f"{r}.md"
+                    if prompt_file.exists():
+                        prompt_text = prompt_file.read_text(encoding="utf-8")
+                        if runner_name != "skeleton" and prompt_text.strip():
+                            try:
+                                backend.prompt_agent(run_id, r, prompt_text)
+                                append_trace(
+                                    run_dir,
+                                    {
+                                        "ts": now_ts(),
+                                        "kind": "prompt_sent",
+                                        "role": r,
+                                        "bytes": len(prompt_text),
+                                    },
+                                )
+                            except Exception as e2:
+                                append_trace(
+                                    run_dir,
+                                    {
+                                        "ts": now_ts(),
+                                        "kind": "prompt_failed",
+                                        "role": r,
+                                        "error": str(e2)[:500],
+                                    },
+                                )
+                except Exception:
+                    pass
             except Exception as e:
                 append_trace(
                     run_dir,

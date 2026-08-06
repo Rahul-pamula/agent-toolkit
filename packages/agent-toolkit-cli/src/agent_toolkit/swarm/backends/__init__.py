@@ -231,8 +231,54 @@ class TmuxBackend:
             return {"error": str(e)}
 
     def prompt_agent(self, run_id: str, role: str, prompt: str) -> dict[str, Any]:
-        # Tmux prompt is send-keys with prompt text
-        return {"backend": "tmux", "status": "prompted", "role": role}
+        sock = self._socket_for(run_id)
+        target = f"swarm-{run_id}:{role}"
+        # Use buffer paste for large multiline prompts (more robust than send-keys -l)
+        import tempfile
+        import time as _time
+
+        try:
+            # Give agent TUI a moment to initialize
+            _time.sleep(1.5)
+            with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False, encoding="utf-8") as tf:
+                tf.write(prompt)
+                tf_path = tf.name
+            try:
+                subprocess.run(
+                    ["tmux", "-L", sock, "load-buffer", "-b", f"swarm-prompt-{role}", tf_path],
+                    capture_output=True,
+                    timeout=5,
+                )
+                subprocess.run(
+                    ["tmux", "-L", sock, "paste-buffer", "-b", f"swarm-prompt-{role}", "-t", target],
+                    capture_output=True,
+                    timeout=5,
+                )
+                # Small delay then Enter to submit
+                _time.sleep(0.3)
+                subprocess.run(
+                    ["tmux", "-L", sock, "send-keys", "-t", target, "Enter"],
+                    capture_output=True,
+                    timeout=5,
+                )
+                return {"backend": "tmux", "status": "prompted", "role": role, "bytes": len(prompt)}
+            finally:
+                try:
+                    import os as _os
+
+                    _os.unlink(tf_path)
+                except Exception:
+                    pass
+                try:
+                    subprocess.run(
+                        ["tmux", "-L", sock, "delete-buffer", "-b", f"swarm-prompt-{role}"],
+                        capture_output=True,
+                        timeout=5,
+                    )
+                except Exception:
+                    pass
+        except Exception as e:
+            return {"error": str(e)}
 
     def wait_agent(
         self, run_id: str, role: str, until: str = "idle", timeout: int = 300
