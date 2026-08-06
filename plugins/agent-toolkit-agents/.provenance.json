@@ -1,106 +1,106 @@
 {
-  "generatorVersion": "1.4.0",
+  "generatorVersion": "1.4.1",
   "product": "agent-toolkit-agents",
-  "target": "opencode",
+  "target": "claude-code",
   "artifacts": [
     {
-      "path": "agent-toolkit-agents/opencode.json",
+      "path": "agent-toolkit-agents/.claude-plugin/plugin.json",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
-      "generatedDigest": "7d5f7ec21da5"
+      "generatedDigest": "18332fc0ae02"
     },
     {
-      "path": "agent-toolkit-agents/.opencode/agents/architect/AGENT.md",
+      "path": "agent-toolkit-agents/agents/architect/AGENT.md",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
       "generatedDigest": "dad9c2ee4c70"
     },
     {
-      "path": "agent-toolkit-agents/.opencode/agents/assistant/AGENT.md",
+      "path": "agent-toolkit-agents/agents/assistant/AGENT.md",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
       "generatedDigest": "77fd851ba607"
     },
     {
-      "path": "agent-toolkit-agents/.opencode/agents/build-error-resolver/AGENT.md",
+      "path": "agent-toolkit-agents/agents/build-error-resolver/AGENT.md",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
       "generatedDigest": "d2a13b8e8621"
     },
     {
-      "path": "agent-toolkit-agents/.opencode/agents/client-workflow-bootstrap/AGENT.md",
+      "path": "agent-toolkit-agents/agents/client-workflow-bootstrap/AGENT.md",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
       "generatedDigest": "79c7936f25b5"
     },
     {
-      "path": "agent-toolkit-agents/.opencode/agents/code-reviewer/AGENT.md",
+      "path": "agent-toolkit-agents/agents/code-reviewer/AGENT.md",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
       "generatedDigest": "0a0af737a06b"
     },
     {
-      "path": "agent-toolkit-agents/.opencode/agents/database-reviewer/AGENT.md",
+      "path": "agent-toolkit-agents/agents/database-reviewer/AGENT.md",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
       "generatedDigest": "ab66984faa2a"
     },
     {
-      "path": "agent-toolkit-agents/.opencode/agents/docs-lookup/AGENT.md",
+      "path": "agent-toolkit-agents/agents/docs-lookup/AGENT.md",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
       "generatedDigest": "5206522a2363"
     },
     {
-      "path": "agent-toolkit-agents/.opencode/agents/e2e-runner/AGENT.md",
+      "path": "agent-toolkit-agents/agents/e2e-runner/AGENT.md",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
       "generatedDigest": "ac51f0f3fc9e"
     },
     {
-      "path": "agent-toolkit-agents/.opencode/agents/performance-optimizer/AGENT.md",
+      "path": "agent-toolkit-agents/agents/performance-optimizer/AGENT.md",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
       "generatedDigest": "d035ea34107e"
     },
     {
-      "path": "agent-toolkit-agents/.opencode/agents/planner/AGENT.md",
+      "path": "agent-toolkit-agents/agents/planner/AGENT.md",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
       "generatedDigest": "92b55d54cf66"
     },
     {
-      "path": "agent-toolkit-agents/.opencode/agents/refactor-cleaner/AGENT.md",
+      "path": "agent-toolkit-agents/agents/refactor-cleaner/AGENT.md",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
       "generatedDigest": "e4828f8cec38"
     },
     {
-      "path": "agent-toolkit-agents/.opencode/agents/reference-lookup/AGENT.md",
+      "path": "agent-toolkit-agents/agents/reference-lookup/AGENT.md",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
       "generatedDigest": "f0674180bbfc"
     },
     {
-      "path": "agent-toolkit-agents/.opencode/agents/security-reviewer/AGENT.md",
+      "path": "agent-toolkit-agents/agents/security-reviewer/AGENT.md",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
       "generatedDigest": "d02e943d1927"
     },
     {
-      "path": "agent-toolkit-agents/.opencode/agents/tdd-guide/AGENT.md",
+      "path": "agent-toolkit-agents/agents/tdd-guide/AGENT.md",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
       "generatedDigest": "23df27096541"
     },
     {
-      "path": "agent-toolkit-agents/.opencode/agents/tech-assistant/AGENT.md",
+      "path": "agent-toolkit-agents/agents/tech-assistant/AGENT.md",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
       "generatedDigest": "a58d992b720d"
     },
     {
-      "path": "agent-toolkit-agents/.opencode/agents/typescript-reviewer/AGENT.md",
+      "path": "agent-toolkit-agents/agents/typescript-reviewer/AGENT.md",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
       "generatedDigest": "236cd9453692"
