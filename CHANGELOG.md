@@ -10,8 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- markdownlint-disable MD024 -->
 ## [Unreleased]
 
+## [1.7.0] — 2026-08-06
+
 ### Added
-- **Swarm orchestration** — new `agent-toolkit swarm` CLI (ADR-008) with backend-neutral orchestration (Herdr recommended, tmux fallback), recipes `pair`/`team`/`full` (lazy/elastic, `pair→team→full` promotion), Git worktree isolation per writer, durable filesystem handoffs (artifact/commit/feedback/decision_request), commit-based code transfer, human approval gates, budgets (tokens/cost/wall-clock/concurrency/round-trips), model profiles (`economy`/`balanced`/`quality`/`private`), runner abstraction (OpenCode primary), OpenCode per-role agent generation, Herdr plugin (`integrations/herdr/agent-toolkit-swarm`), and docs (`docs/SWARMS.md`, `SWARM_ARCHITECTURE.md`, etc.).
+- **Swarm orchestration** — new `agent-toolkit swarm` CLI (ADR-008) with backend-neutral orchestration (Herdr recommended, tmux fallback), recipes `pair`/`team`/`full` (lazy/elastic, `pair→team→full` promotion), Git worktree isolation per writer, durable filesystem handoffs (artifact/commit/feedback/decision_request), commit-based code transfer, human approval gates, budgets (tokens/cost/wall-clock/concurrency/round-trips), model profiles (`economy`/`balanced`/`quality`/`private`), runner abstraction (OpenCode primary, Muse/Claude/Codex/Cursor/Copilot), OpenCode per-role agent generation, Herdr backend (JSON CLI) + tmux backend (isolated socket `agent-toolkit-swarm-<run-id>`), Herdr plugin (`integrations/herdr/agent-toolkit-swarm`), and docs (`docs/SWARMS.md`, `SWARM_ARCHITECTURE.md`, `SWARM_RECIPES.md`, `SWARM_HANDOFFS.md`, `SWARM_MODELS_AND_COSTS.md`, `SWARM_HERDR.md`, `SWARM_TMUX.md`, `SWARM_SECURITY.md`, `HOW_TO_CREATE_SWARM_RECIPE.md`) with Mermaid diagrams and offline `--runner skeleton` demo. Complete cross-repo integration: Workstation provision (tmux/Herdr) and Harness reference workspace.
 
 ## [1.6.0] — 2026-08-06
 
