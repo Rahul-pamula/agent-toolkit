@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- markdownlint-disable MD024 -->
 ## [Unreleased]
 
+## [1.5.0] — 2026-08-06
+
 ### Added
 
 - **Muse Code support (Meta, <https://developer.meta.com/ai/products/muse-code/>)** — new `muse-code` build target (`muse` alias) via `MuseCodeAdapter` (`packages/agent-toolkit-cli/src/agent_toolkit/compiler/targets/muse_code.py`) registered in `capabilities/targets/registry.yaml` (stable). `agent-toolkit build --target muse-code` and `install --tools muse-code` now deploy 50 skills to `~/.config/muse/skills/<name>/SKILL.md` plus `.agents/skills` (universal fallback) per Agent Skills spec (`muse skills import --from claude`). New profile `profiles/muse-code/README.md` and docs `README.md`.
