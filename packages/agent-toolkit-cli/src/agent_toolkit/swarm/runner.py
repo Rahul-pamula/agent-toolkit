@@ -119,11 +119,18 @@ MODEL_PROFILES = {
 }
 
 
-def resolve_model(profile: str, task_class: str, override: str | None = None) -> str | None:
+def resolve_model(
+    profile: str,
+    task_class: str,
+    override: str | None = None,
+    model_profiles: dict[str, dict[str, str]] | None = None,
+) -> str | None:
     if override:
         if "/" not in override:
             raise ValueError(f"Model must be provider/model format: {override!r}")
         return override
+    if model_profiles and profile in model_profiles and task_class in model_profiles[profile]:
+        return model_profiles[profile][task_class]
     mapping = MODEL_PROFILES.get(profile) or MODEL_PROFILES["balanced"]
     return mapping.get(task_class)
 

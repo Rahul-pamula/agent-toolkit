@@ -354,7 +354,9 @@ def cmd_plan(args: list[str]) -> int:
         task_class = rdef.get("model_profile", "coding")
         try:
             model_assignments[rname] = resolve_model(
-                cfg.get("model_profile", "balanced"), task_class
+                cfg.get("model_profile", "balanced"),
+                task_class,
+                model_profiles=cfg.get("model_profiles"),
             )
         except ValueError as e:
             return _error(str(e))
@@ -469,6 +471,7 @@ def _load_or_create_run_state(
         "ui_backend": cfg.get("ui", "auto"),
         "runner": cfg.get("runner", "opencode"),
         "model_profile": cfg.get("model_profile", "balanced"),
+        "model_profiles": cfg.get("model_profiles"),
         "task": task_text[:5000],
         "budget": budget,
         "worktrees": [],
@@ -599,7 +602,14 @@ def cmd_start(args: list[str]) -> int:
     roles = recipe.get("spec", {}).get("roles", {})
     for rname, rdef in roles.items():
         task_class = rdef.get("model_profile", "coding")
-        model = resolve_model(cfg.get("model_profile", "balanced"), task_class) or "unknown/model"
+        model = (
+            resolve_model(
+                cfg.get("model_profile", "balanced"),
+                task_class,
+                model_profiles=cfg.get("model_profiles"),
+            )
+            or "unknown/model"
+        )
         worktree = rdef.get("worktree")
         try:
             generate_opencode_agent(
@@ -646,7 +656,23 @@ def cmd_start(args: list[str]) -> int:
                 continue
             try:
                 info = create_worktree(repo, run_dir, rname, run_id, ns.base_ref)
+                info["role"] = rname
                 created_wts.append(info)
+                # Ensure opencode agent is discoverable from worktree (copy to .opencode/agents)
+                try:
+                    _agent_src = run_dir / "runner" / "opencode" / "agents" / f"{rname}.md"
+                    if _agent_src.exists():
+                        _wt_agents = Path(info["path"]) / ".opencode" / "agents"
+                        _wt_agents.mkdir(parents=True, exist_ok=True)
+                        import shutil as _shutil
+
+                        _shutil.copy2(_agent_src, _wt_agents / f"{rname}.md")
+                        # Also copy prompt as context if needed
+                        _prompt_src = run_dir / "prompts" / f"{rname}.md"
+                        if _prompt_src.exists():
+                            _shutil.copy2(_prompt_src, Path(info["path"]) / f".agent-toolkit-prompt-{rname}.md")
+                except Exception:
+                    pass
                 append_trace(
                     run_dir,
                     {
@@ -688,10 +714,78 @@ def cmd_start(args: list[str]) -> int:
     append_trace(run_dir, {"ts": now_ts(), "kind": "backend_selected", "backend": backend_name})
     append_trace(run_dir, {"ts": now_ts(), "kind": "runner_selected", "runner": runner_name})
     # Create backend surfaces (best effort, filesystem correctness not dependent)
+    import shlex as _shlex
+
     try:
         backend.create_run_surface(run_dir, run_id, recipe_name)
         for r in initial_roles:
             backend.create_role_surface(run_dir, run_id, r)
+            # Auto-start agent in its tmux/herdr surface
+            try:
+                worktree_path = next(
+                    (wt.get("path") for wt in created_wts if wt.get("role") == r),
+                    str(run_dir),
+                )
+                # Build runner command
+                if runner_name == "opencode":
+                    # opencode picks model from runner/opencode/agents/<role>.md
+                    cmd = [
+                        "bash",
+                        "-lc",
+                        f"cd {_shlex.quote(str(worktree_path))} && exec opencode --agent {_shlex.quote(r)}",
+                    ]
+                elif runner_name == "claude":
+                    cmd = [
+                        "bash",
+                        "-lc",
+                        f"cd {_shlex.quote(str(worktree_path))} && exec claude --dangerously-skip-permissions",
+                    ]
+                elif runner_name == "codex":
+                    cmd = [
+                        "bash",
+                        "-lc",
+                        f"cd {_shlex.quote(str(worktree_path))} && exec codex",
+                    ]
+                elif runner_name == "cursor":
+                    cmd = [
+                        "bash",
+                        "-lc",
+                        f"cd {_shlex.quote(str(worktree_path))} && exec cursor-agent",
+                    ]
+                elif runner_name == "copilot":
+                    cmd = [
+                        "bash",
+                        "-lc",
+                        f"cd {_shlex.quote(str(worktree_path))} && exec copilot",
+                    ]
+                elif runner_name == "muse":
+                    cmd = [
+                        "bash",
+                        "-lc",
+                        f"cd {_shlex.quote(str(worktree_path))} && exec muse chat",
+                    ]
+                elif runner_name == "skeleton":
+                    cmd = [
+                        "bash",
+                        "-lc",
+                        f"cd {_shlex.quote(str(worktree_path))} && echo '[skeleton:{r}] ready — no LLM' && exec bash",
+                    ]
+                else:
+                    cmd = [
+                        "bash",
+                        "-lc",
+                        f"cd {_shlex.quote(str(worktree_path))} && exec {runner_name}",
+                    ]
+                backend.start_agent(run_dir, run_id, r, cmd)
+                append_trace(
+                    run_dir,
+                    {"ts": now_ts(), "kind": "agent_started", "role": r, "runner": runner_name, "cmd": cmd},
+                )
+            except Exception as e:
+                append_trace(
+                    run_dir,
+                    {"ts": now_ts(), "kind": "agent_start_failed", "role": r, "error": str(e)[:500]},
+                )
     except Exception:
         pass
     # Create artifacts placeholder
@@ -1294,10 +1388,14 @@ def cmd_promote(args: list[str]) -> int:
                 rname,
                 rdef.get("persona", rname),
                 rdef.get("policy", "read-only"),
-                resolve_model(
-                    state.get("model_profile", "balanced"), rdef.get("model_profile", "coding")
-                )
-                or "unknown/model",
+                (
+                    resolve_model(
+                        state.get("model_profile", "balanced"),
+                        rdef.get("model_profile", "coding"),
+                        model_profiles=state.get("model_profiles"),
+                    )
+                    or "unknown/model"
+                ),
                 ns.to_recipe,
                 ns.run_id,
                 rdef.get("worktree"),
@@ -1369,7 +1467,9 @@ def cmd_activate(args: list[str]) -> int:
         try:
             model = (
                 resolve_model(
-                    state.get("model_profile", "balanced"), rdef.get("model_profile", "hardening")
+                    state.get("model_profile", "balanced"),
+                    rdef.get("model_profile", "hardening"),
+                    model_profiles=state.get("model_profiles"),
                 )
                 or "unknown/model"
             )
