@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- markdownlint-disable MD024 -->
 ## [Unreleased]
 
+## [1.7.1] — 2026-08-06
+
+### Added
+- **Swarm prompt autodetect + workspace UX** — `agent-toolkit swarm start/plan` now autodetects repo from prompt (`https://github.com/OWNER/REPO`, `OWNER/REPO#123`, aliases `create-node-app`/`cna-templates` → `Create-Node-App/...`) and resolves to `~/.ai-workspace/repos/github.com/OWNER/REPO`, so `agent-toolkit swarm start "Fix https://github.com/Create-Node-App/create-node-app/issues/240"` works from `~/.ai-workspace` without `--workspace`/`--issue` flags (like `swarm-forge` `./swarm` but better: backend-neutral Herdr/tmux, isolated worktrees, handoffs). Adds `--workspace`/`--repo`/`-C` to `plan`/`start` and workspace-aware `list`/`status` (`list_all_runs`/`find_run_dir_by_id` aggregating across clones). Inspired by swarm-forge patterns (window-per-role tmux, worktrees, handoffs) clean-room.
+
 ## [1.7.0] — 2026-08-06
 
 ### Added
