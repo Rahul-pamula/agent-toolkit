@@ -85,8 +85,8 @@ def _json_out(data: Any) -> int:
     return 0
 
 
-def _need_repo() -> Path:
-    return find_repo_root()
+def _need_repo(prompt_text: str | None = None, workspace: str | None = None) -> Path:
+    return find_repo_root(prompt_text=prompt_text, workspace=workspace)
 
 
 def cmd_recipes(args: list[str]) -> int:
@@ -292,6 +292,9 @@ def cmd_plan(args: list[str]) -> int:
     parser.add_argument("--issue", default=None)
     parser.add_argument("--json", action="store_true")
     parser.add_argument("--base-ref", default=None)
+    parser.add_argument("--workspace", default=None, help="Repo path or OWNER/REPO shorthand")
+    parser.add_argument("--repo", default=None, help="Alias for --workspace")
+    parser.add_argument("-C", dest="workspace_C", default=None, help="Alias for --workspace")
     # allow positional task
     ns, rest = parser.parse_known_args(args)
     # rest may contain task words; need to separate --
@@ -303,7 +306,25 @@ def cmd_plan(args: list[str]) -> int:
         return _error(str(e))
     if not task_text:
         return _error("No task provided", hint="Provide task text, --request-file, or --issue")
-    repo = _need_repo()
+    workspace_flag = ns.workspace or ns.repo or ns.workspace_C
+    repo = _need_repo(prompt_text=task_text, workspace=workspace_flag)
+    # If autodetected via prompt but workspace flag overrides, workspace already handled
+    # Validate git repo and give actionable error
+    import subprocess as _sp
+    try:
+        _r = _sp.run(["git", "rev-parse", "--is-inside-work-tree"], cwd=str(repo), capture_output=True, text=True, timeout=5)
+        if _r.returncode != 0:
+            # Try to give hint with autodetected owner/repo
+            from .config import _resolve_owner_repo_from_prompt
+            owner_repo = _resolve_owner_repo_from_prompt(task_text)
+            hint = f"Resolved repo: {repo} (not a git repo). "
+            if owner_repo:
+                hint += f"Autodetected {owner_repo} from prompt. Run: agent-toolkit project clone {owner_repo} or specify --workspace <path>"
+            else:
+                hint += "Run from inside a git repo or use --workspace <path|OWNER/REPO>"
+            return _error(f"Not a git repository: {repo}", hint=hint)
+    except Exception:
+        pass
     cfg = resolve_config(
         repo,
         {"recipe": ns.recipe, "ui": ns.ui, "runner": ns.runner, "model_profile": ns.model_profile},
@@ -481,6 +502,9 @@ def cmd_start(args: list[str]) -> int:
     parser.add_argument("--base-ref", default="HEAD")
     parser.add_argument("--json", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--workspace", default=None, help="Repo path or OWNER/REPO shorthand")
+    parser.add_argument("--repo", default=None, help="Alias for --workspace")
+    parser.add_argument("-C", dest="workspace_C", default=None, help="Alias for --workspace")
     ns, rest = parser.parse_known_args(args)
     if rest and rest[0] == "--":
         rest = rest[1:]
@@ -492,7 +516,22 @@ def cmd_start(args: list[str]) -> int:
         return _error(
             "No task provided", hint="Provide task text inline or via --request-file / --issue"
         )
-    repo = _need_repo()
+    workspace_flag = ns.workspace or ns.repo or ns.workspace_C
+    repo = _need_repo(prompt_text=task_text, workspace=workspace_flag)
+    import subprocess as _sp2
+    try:
+        _r = _sp2.run(["git", "rev-parse", "--is-inside-work-tree"], cwd=str(repo), capture_output=True, text=True, timeout=5)
+        if _r.returncode != 0:
+            from .config import _resolve_owner_repo_from_prompt
+            owner_repo = _resolve_owner_repo_from_prompt(task_text)
+            hint = f"Resolved repo: {repo} (not a git repo). "
+            if owner_repo:
+                hint += f"Autodetected {owner_repo} from prompt. Run: agent-toolkit project clone {owner_repo} or specify --workspace <path>"
+            else:
+                hint += "Run from inside a git repo or use --workspace <path|OWNER/REPO>"
+            return _error(f"Not a git repository: {repo}", hint=hint)
+    except Exception:
+        pass
     cfg = resolve_config(
         repo,
         {"recipe": ns.recipe, "ui": ns.ui, "runner": ns.runner, "model_profile": ns.model_profile},
@@ -674,9 +713,19 @@ def cmd_start(args: list[str]) -> int:
 def cmd_list(args: list[str]) -> int:
     parser = argparse.ArgumentParser(prog="agent-toolkit swarm list")
     parser.add_argument("--json", action="store_true")
+    parser.add_argument("--workspace", default=None, help="Repo path or OWNER/REPO")
+    parser.add_argument("--repo", default=None, help="Alias for --workspace")
+    parser.add_argument("-C", dest="workspace_C", default=None, help="Alias for --workspace")
     ns = parser.parse_args(args)
-    repo = _need_repo()
-    runs = list_runs(repo)
+    workspace_flag = ns.workspace or ns.repo or ns.workspace_C
+    # If run from .ai-workspace with no explicit workspace, aggregate across clones
+    if workspace_flag:
+        from .config import find_repo_root
+        repo = find_repo_root(workspace=workspace_flag)
+        runs = list_runs(repo)
+    else:
+        from .config import list_all_runs
+        runs = list_all_runs()
     items = []
     for rd in runs:
         state = read_state(rd) or {}
@@ -706,12 +755,24 @@ def cmd_status(args: list[str]) -> int:
     parser.add_argument("run_id", nargs="?", default=None)
     parser.add_argument("--json", action="store_true")
     parser.add_argument("--watch", action="store_true")
+    parser.add_argument("--workspace", default=None, help="Repo path or OWNER/REPO")
+    parser.add_argument("--repo", default=None, help="Alias for --workspace")
+    parser.add_argument("-C", dest="workspace_C", default=None, help="Alias for --workspace")
     ns = parser.parse_args(args)
-    repo = _need_repo()
     if not ns.run_id:
         # Show all
+        ws_flag = ns.workspace or ns.repo or ns.workspace_C
+        if ws_flag:
+            return cmd_list(["--json", "--workspace", ws_flag] if ns.json else ["--workspace", ws_flag])
         return cmd_list(["--json"] if ns.json else [])
-    run_dir = run_dir_for(repo, ns.run_id)
+    workspace_flag = ns.workspace or ns.repo or ns.workspace_C
+    from .config import find_run_dir_by_id
+    run_dir = find_run_dir_by_id(ns.run_id, workspace=workspace_flag)
+    if run_dir is None or not run_dir.is_dir():
+        # Fallback to old path for error hint
+        from .config import find_repo_root
+        repo = find_repo_root(workspace=workspace_flag)
+        run_dir = run_dir_for(repo, ns.run_id)
     if not run_dir.is_dir():
         return _error(f"Run not found: {ns.run_id}", hint="List runs: agent-toolkit swarm list")
     state = read_state(run_dir) or {}
