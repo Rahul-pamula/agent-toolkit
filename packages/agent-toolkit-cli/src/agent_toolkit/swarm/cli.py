@@ -633,10 +633,12 @@ def cmd_start(args: list[str]) -> int:
             )
         except Exception:
             pass
-        # Prompt composition
+        # Prompt composition — inject run_id for handoff instructions
         try:
+            rdef_with_run = dict(rdef)
+            rdef_with_run["_run_id"] = run_id
             prompt, manifest = compose_role_prompt(
-                recipe, rname, rdef, task_text, None, rdef.get("skills")
+                recipe, rname, rdef_with_run, task_text, None, rdef.get("skills")
             )
             (run_dir / "prompts" / f"{rname}.md").write_text(prompt, encoding="utf-8")
             (run_dir / "prompts" / f"{rname}.manifest.json").write_text(
@@ -1468,13 +1470,15 @@ def cmd_promote(args: list[str]) -> int:
         if g["id"] not in ids:
             existing_gates.append(g)
     save_approvals(run_dir, existing_gates)
-    # Generate prompts for new roles
+    # Generate prompts for new roles — inject run_id
     for rname, rdef in recipe.get("spec", {}).get("roles", {}).items():
         if (run_dir / "prompts" / f"{rname}.md").exists():
             continue
         try:
+            rdef_with_run = dict(rdef)
+            rdef_with_run["_run_id"] = ns.run_id
             prompt, manifest = compose_role_prompt(
-                recipe, rname, rdef, state.get("task"), None, rdef.get("skills")
+                recipe, rname, rdef_with_run, state.get("task"), None, rdef.get("skills")
             )
             (run_dir / "prompts" / f"{rname}.md").write_text(prompt, encoding="utf-8")
             (run_dir / "prompts" / f"{rname}.manifest.json").write_text(
@@ -1580,10 +1584,12 @@ def cmd_activate(args: list[str]) -> int:
                 ns.run_id,
                 rdef.get("worktree"),
             )
+            rdef_with_run2 = dict(rdef)
+            rdef_with_run2["_run_id"] = ns.run_id
             prompt, manifest = compose_role_prompt(
                 get_recipe(state.get("recipe", "full")) or {},
                 "hardener",
-                rdef,
+                rdef_with_run2,
                 state.get("task"),
                 None,
                 rdef.get("skills"),
