@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- markdownlint-disable MD024 -->
 ## [Unreleased]
 
+## [1.8.3] — 2026-08-06
+
+### Fixed
+- **CI ruff format** — run `uv run ruff format` on `tests/test_swarm_cli.py` after `pytest.skip` line wrap (fixes Validate `Ruff format check` failure on 1.8.2).
+
 ## [1.8.2] — 2026-08-06
 
 ### Fixed

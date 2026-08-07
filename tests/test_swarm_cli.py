@@ -191,7 +191,9 @@ def test_swarm_auto_fallback_to_tmux():
         if res.returncode != 0 and "No interactive backend available" in (res.stdout + res.stderr):
             import pytest
 
-            pytest.skip("No herdr/tmux available on this runner — auto correctly reports no backend")
+            pytest.skip(
+                "No herdr/tmux available on this runner — auto correctly reports no backend"
+            )
         assert res.returncode == 0, res.stderr + res.stdout
         assert "swarm run created" in res.stdout.lower()
 
