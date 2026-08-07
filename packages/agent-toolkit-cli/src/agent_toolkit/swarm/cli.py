@@ -532,9 +532,10 @@ def cmd_start(args: list[str]) -> int:
     except ValueError as e:
         return _error(str(e))
     if not task_text:
-        return _error(
-            "No task provided", hint="Provide task text inline or via --request-file / --issue"
-        )
+        task_text = ""
+        # No task provided — launch agents with system prompt only, ready for interactive input
+        # (like swarm-forge ./swarm without initial task)
+        _log("No task provided — starting swarm with system prompt only, ready for interactive input")
     workspace_flag = ns.workspace or ns.repo or ns.workspace_C
     repo = _need_repo(prompt_text=task_text, workspace=workspace_flag)
     import subprocess as _sp2
