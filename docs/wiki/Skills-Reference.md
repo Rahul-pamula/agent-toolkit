@@ -1,7 +1,7 @@
 # Skills Reference
 
 Skills are the core unit of capability in agent-toolkit. Each skill is a portable, self-contained
-definition that tells an AI coding assistant what to do in a specific situation. There are 52
+definition that tells an AI coding assistant what to do in a specific situation. There are 61
 skills across 9 domains.
 
 ---

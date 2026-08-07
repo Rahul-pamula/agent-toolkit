@@ -1,109 +1,109 @@
 {
-  "generatorVersion": "1.6.0",
+  "generatorVersion": "1.8.0",
   "product": "agent-toolkit-agents",
-  "target": "claude-code",
+  "target": "windsurf",
   "artifacts": [
     {
-      "path": "agent-toolkit-agents/.claude-plugin/plugin.json",
+      "path": "agent-toolkit-agents/AGENTS.md",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
-      "generatedDigest": "18332fc0ae02"
+      "generatedDigest": "2bd54f41c989"
     },
     {
-      "path": "agent-toolkit-agents/agents/architect/AGENT.md",
+      "path": "agent-toolkit-agents/rules/architect.mdc",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
-      "generatedDigest": "dad9c2ee4c70"
+      "generatedDigest": "19874be0eb9a"
     },
     {
-      "path": "agent-toolkit-agents/agents/assistant/AGENT.md",
+      "path": "agent-toolkit-agents/rules/assistant.mdc",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
-      "generatedDigest": "77fd851ba607"
+      "generatedDigest": "3b1d50df3036"
     },
     {
-      "path": "agent-toolkit-agents/agents/build-error-resolver/AGENT.md",
+      "path": "agent-toolkit-agents/rules/build-error-resolver.mdc",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
-      "generatedDigest": "d2a13b8e8621"
+      "generatedDigest": "cd49b12c46c9"
     },
     {
-      "path": "agent-toolkit-agents/agents/client-workflow-bootstrap/AGENT.md",
+      "path": "agent-toolkit-agents/rules/client-workflow-bootstrap.mdc",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
-      "generatedDigest": "79c7936f25b5"
+      "generatedDigest": "6b41f1e399e3"
     },
     {
-      "path": "agent-toolkit-agents/agents/code-reviewer/AGENT.md",
+      "path": "agent-toolkit-agents/rules/code-reviewer.mdc",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
-      "generatedDigest": "0a0af737a06b"
+      "generatedDigest": "729380d68005"
     },
     {
-      "path": "agent-toolkit-agents/agents/database-reviewer/AGENT.md",
+      "path": "agent-toolkit-agents/rules/database-reviewer.mdc",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
-      "generatedDigest": "ab66984faa2a"
+      "generatedDigest": "7b4f80bc7c86"
     },
     {
-      "path": "agent-toolkit-agents/agents/docs-lookup/AGENT.md",
+      "path": "agent-toolkit-agents/rules/docs-lookup.mdc",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
-      "generatedDigest": "5206522a2363"
+      "generatedDigest": "cd37e78a1dce"
     },
     {
-      "path": "agent-toolkit-agents/agents/e2e-runner/AGENT.md",
+      "path": "agent-toolkit-agents/rules/e2e-runner.mdc",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
-      "generatedDigest": "ac51f0f3fc9e"
+      "generatedDigest": "bd80fd17e45d"
     },
     {
-      "path": "agent-toolkit-agents/agents/performance-optimizer/AGENT.md",
+      "path": "agent-toolkit-agents/rules/performance-optimizer.mdc",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
-      "generatedDigest": "d035ea34107e"
+      "generatedDigest": "8fd2ead8e205"
     },
     {
-      "path": "agent-toolkit-agents/agents/planner/AGENT.md",
+      "path": "agent-toolkit-agents/rules/planner.mdc",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
-      "generatedDigest": "92b55d54cf66"
+      "generatedDigest": "80ad56e7e021"
     },
     {
-      "path": "agent-toolkit-agents/agents/refactor-cleaner/AGENT.md",
+      "path": "agent-toolkit-agents/rules/refactor-cleaner.mdc",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
-      "generatedDigest": "e4828f8cec38"
+      "generatedDigest": "8578069732d7"
     },
     {
-      "path": "agent-toolkit-agents/agents/reference-lookup/AGENT.md",
+      "path": "agent-toolkit-agents/rules/reference-lookup.mdc",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
-      "generatedDigest": "f0674180bbfc"
+      "generatedDigest": "e1e521eed351"
     },
     {
-      "path": "agent-toolkit-agents/agents/security-reviewer/AGENT.md",
+      "path": "agent-toolkit-agents/rules/security-reviewer.mdc",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
-      "generatedDigest": "d02e943d1927"
+      "generatedDigest": "8cae149818ef"
     },
     {
-      "path": "agent-toolkit-agents/agents/tdd-guide/AGENT.md",
+      "path": "agent-toolkit-agents/rules/tdd-guide.mdc",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
-      "generatedDigest": "23df27096541"
+      "generatedDigest": "274b449ab84e"
     },
     {
-      "path": "agent-toolkit-agents/agents/tech-assistant/AGENT.md",
+      "path": "agent-toolkit-agents/rules/tech-assistant.mdc",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
-      "generatedDigest": "a58d992b720d"
+      "generatedDigest": "6f77fe9997da"
     },
     {
-      "path": "agent-toolkit-agents/agents/typescript-reviewer/AGENT.md",
+      "path": "agent-toolkit-agents/rules/typescript-reviewer.mdc",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
-      "generatedDigest": "236cd9453692"
+      "generatedDigest": "f25ca6255018"
     }
   ]
 }

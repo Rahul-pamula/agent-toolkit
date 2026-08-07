@@ -81,8 +81,18 @@ def compose_role_prompt(
             # Fallback chain for known recipes
             chain = {
                 "pair": {"implementer": ["reviewer"], "reviewer": ["integrator"]},
-                "team": {"planner": ["implementer"], "implementer": ["reviewer"], "reviewer": ["architect"]},
-                "full": {"planner": ["implementer"], "implementer": ["refactorer"], "refactorer": ["architect"], "architect": ["hardener"], "hardener": ["qa"]},
+                "team": {
+                    "planner": ["implementer"],
+                    "implementer": ["reviewer"],
+                    "reviewer": ["architect"],
+                },
+                "full": {
+                    "planner": ["implementer"],
+                    "implementer": ["refactorer"],
+                    "refactorer": ["architect"],
+                    "architect": ["hardener"],
+                    "hardener": ["qa"],
+                },
             }.get(recipe_name, {})
             next_roles = chain.get(role, [])
         if next_roles:

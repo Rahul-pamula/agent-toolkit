@@ -15,7 +15,7 @@ what each tool needs.
 
 | Component | Count | Description |
 |-----------|-------|-------------|
-| Skills | 52 | Portable capability definitions across 9 domains |
+| Skills | 61 | Portable capability definitions across 9 domains |
 | Agent personas | 16 | Tool-agnostic specialist role definitions |
 | Loop templates | 10 | Recurring agentic workflows across 3 tiers |
 | Plugins | 3 | Claude Code and Cursor marketplace bundles |
@@ -34,7 +34,7 @@ what each tool needs.
 
 ### Reference
 
-- [Skills Reference](Skills-Reference) — all 52 skills organized by domain, frontmatter spec, compatibility matrix
+- [Skills Reference](Skills-Reference) — all 61 skills organized by domain, frontmatter spec, compatibility matrix
 - [Agents Reference](Agents-Reference) — all 16 agent personas, triggers, handoffs, invocation patterns
 - [Loop Engineering](Loop-Engineering) — loop YAML spec, all 10 templates, checkpointing, budget sizing, scheduling
 - [MCP Setup](MCP-Setup) — all 6 MCP providers with env vars, setup commands, and per-tool configuration
@@ -144,7 +144,7 @@ new PRs, issues needing attention, and CI health on main.
 
 ```text
 agent-toolkit/
-├── skills/         # 52 skills across 9 domains
+├── skills/         # 61 skills across 9 domains
 ├── agents/         # 16 agent persona definitions
 ├── loops/          # 10 loop engineering templates
 ├── profiles/       # Per-tool configurations (6 tools)

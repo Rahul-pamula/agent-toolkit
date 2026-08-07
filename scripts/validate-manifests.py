@@ -8,12 +8,15 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).parent.parent
 ERRORS: list[str] = []
 
+
 def error(msg: str) -> None:
     ERRORS.append(msg)
     print(f"  ✗ {msg}")
 
+
 def ok(msg: str) -> None:
     print(f"  ✓ {msg}")
+
 
 def validate_marketplace(marketplace_path: Path, tool: str) -> None:
     if not marketplace_path.exists():
@@ -36,7 +39,11 @@ def validate_marketplace(marketplace_path: Path, tool: str) -> None:
     for plugin in data.get("plugins", []):
         pname = plugin.get("name", "?")
         psource = plugin.get("source", "")
-        plugin_dir = REPO_ROOT / psource.lstrip("./") if psource.startswith("./") else plugin_root_path / psource.lstrip("/")
+        plugin_dir = (
+            REPO_ROOT / psource.lstrip("./")
+            if psource.startswith("./")
+            else plugin_root_path / psource.lstrip("/")
+        )
 
         manifest_key = ".claude-plugin" if tool == "Claude Code" else ".cursor-plugin"
         plugin_json = plugin_dir / manifest_key / "plugin.json"
@@ -52,13 +59,16 @@ def validate_marketplace(marketplace_path: Path, tool: str) -> None:
             continue
 
         if pdata.get("name") != pname:
-            error(f"{tool} plugin '{pname}': name mismatch (marketplace='{pname}' vs plugin.json='{pdata.get('name')}')")
-        
+            error(
+                f"{tool} plugin '{pname}': name mismatch (marketplace='{pname}' vs plugin.json='{pdata.get('name')}')"
+            )
+
         for field in ["name", "version", "description", "author", "license"]:
             if not pdata.get(field):
                 error(f"{tool} plugin '{pname}': plugin.json missing '{field}'")
 
         ok(f"{tool} plugin '{pname}' OK")
+
 
 def main() -> int:
     print("\n🔍 Validating marketplace and plugin manifests...\n")
@@ -75,6 +85,7 @@ def main() -> int:
         return 1
     print("✅ All manifests valid!")
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())

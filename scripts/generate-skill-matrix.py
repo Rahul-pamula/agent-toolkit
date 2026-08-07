@@ -5,7 +5,9 @@ Generate docs/SKILL_PRODUCT_MATRIX.md from distributions/products.yaml.
 Source of truth is distributions/products.yaml (products define included
 skills/agents). The matrix is checked in but validated in CI via --check.
 """
+
 from __future__ import annotations
+
 import argparse
 import sys
 from pathlib import Path
@@ -14,15 +16,18 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 PRODUCTS_YAML = REPO_ROOT / "distributions" / "products.yaml"
 OUTPUT_MD = REPO_ROOT / "docs" / "SKILL_PRODUCT_MATRIX.md"
 
+
 def load_products():
     text = PRODUCTS_YAML.read_text(encoding="utf-8")
     try:
         import yaml
+
         return yaml.safe_load(text)
     except ImportError:
         # minimal: parse product ids and includes naively is not enough; require yaml
         print("PyYAML required to generate matrix", file=sys.stderr)
         sys.exit(1)
+
 
 def build_matrix():
     data = load_products()
@@ -44,9 +49,7 @@ def build_matrix():
     # also enumerate canonical skills/agents from filesystem for uncovered detection
     skills_dir = REPO_ROOT / "skills"
     all_skills = sorted(
-        str(p.parent.relative_to(skills_dir)) + "/" + p.parent.name
-        if False else ""
-        for _ in []
+        str(p.parent.relative_to(skills_dir)) + "/" + p.parent.name if False else "" for _ in []
     )
     # simpler: walk
     all_skills = []
@@ -56,21 +59,39 @@ def build_matrix():
         for skill in sorted(domain.iterdir()):
             if (skill / "SKILL.md").is_file():
                 all_skills.append(f"{domain.name}/{skill.name}")
-    all_agents = sorted(
-        d.name for d in (REPO_ROOT / "agents").iterdir() if d.is_dir()
+    all_agents = sorted(d.name for d in (REPO_ROOT / "agents").iterdir() if d.is_dir())
+    return (
+        products,
+        sku_to_products,
+        agent_to_products,
+        product_targets,
+        product_stability,
+        all_skills,
+        all_agents,
     )
-    return products, sku_to_products, agent_to_products, product_targets, product_stability, all_skills, all_agents
+
 
 def render_md():
-    products, sku_to_products, agent_to_products, product_targets, product_stability, all_skills, all_agents = build_matrix()
-    product_ids = [p["id"] for p in products]
+    (
+        products,
+        sku_to_products,
+        agent_to_products,
+        product_targets,
+        product_stability,
+        all_skills,
+        all_agents,
+    ) = build_matrix()
     # header
     lines = []
     lines.append("# Skill → Product → Target Membership Matrix")
     lines.append("")
-    lines.append(f"> Generated from `distributions/products.yaml` — do not hand-edit. Run `python3 scripts/generate-skill-matrix.py` to regenerate, or `python3 scripts/generate-skill-matrix.py --check` in CI.")
+    lines.append(
+        "> Generated from `distributions/products.yaml` — do not hand-edit. Run `python3 scripts/generate-skill-matrix.py` to regenerate, or `python3 scripts/generate-skill-matrix.py --check` in CI."
+    )
     lines.append("")
-    lines.append(f"_Generated from {len(products)} products × {len(all_skills)} skills × {len(all_agents)} agents._")
+    lines.append(
+        f"_Generated from {len(products)} products × {len(all_skills)} skills × {len(all_agents)} agents._"
+    )
     lines.append("")
     lines.append("## Products and targets")
     lines.append("")
@@ -116,9 +137,15 @@ def render_md():
     lines.append("")
     lines.append("## How to read")
     lines.append("")
-    lines.append("- A skill appears in a marketplace plugin when its product is built for that target (`agent-toolkit build --product <id> --target <target>`).")
-    lines.append("- `_uncovered_` means the skill/agent is not in any stable product yet — it exists canonically but is not shipped. See Wave 5 curation for promotion decisions.")
-    lines.append("- Verify membership locally via `agent-toolkit inventory` (canonical counts) or `python3 scripts/generate-skill-matrix.py --check`.")
+    lines.append(
+        "- A skill appears in a marketplace plugin when its product is built for that target (`agent-toolkit build --product <id> --target <target>`)."
+    )
+    lines.append(
+        "- `_uncovered_` means the skill/agent is not in any stable product yet — it exists canonically but is not shipped. See Wave 5 curation for promotion decisions."
+    )
+    lines.append(
+        "- Verify membership locally via `agent-toolkit inventory` (canonical counts) or `python3 scripts/generate-skill-matrix.py --check`."
+    )
     lines.append("")
     lines.append("## See also")
     lines.append("")
@@ -127,6 +154,7 @@ def render_md():
     lines.append("- `agent-toolkit build --check` — drift check")
     lines.append("")
     return "\n".join(lines) + "\n"
+
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Generate skill→product→target matrix")
@@ -141,8 +169,11 @@ def main() -> int:
             return 1
         existing = out.read_text(encoding="utf-8")
         if existing != content:
-            print(f"Matrix out of date: {out.relative_to(REPO_ROOT)} differs from distributions/products.yaml", file=sys.stderr)
-            print(f"Run: python3 scripts/generate-skill-matrix.py", file=sys.stderr)
+            print(
+                f"Matrix out of date: {out.relative_to(REPO_ROOT)} differs from distributions/products.yaml",
+                file=sys.stderr,
+            )
+            print("Run: python3 scripts/generate-skill-matrix.py", file=sys.stderr)
             return 1
         print(f"Matrix up to date: {out.relative_to(REPO_ROOT)}")
         return 0
@@ -150,6 +181,7 @@ def main() -> int:
     out.write_text(content, encoding="utf-8")
     print(f"Wrote matrix to {out.relative_to(REPO_ROOT)} ({len(content.splitlines())} lines)")
     return 0
+
 
 if __name__ == "__main__":
     raise SystemExit(main())

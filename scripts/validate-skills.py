@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Validate SKILL.md frontmatter across all skills per Agent Skills spec."""
 
-import sys
 import re
+import sys
 from pathlib import Path
 
 try:
@@ -10,6 +10,7 @@ try:
 except ImportError:
     print("Installing PyYAML...", file=sys.stderr)
     import subprocess
+
     subprocess.check_call([sys.executable, "-m", "pip", "install", "pyyaml", "--quiet"])
     import yaml
 
@@ -21,16 +22,20 @@ REQUIRED_FRONTMATTER = ["name", "description"]
 ERRORS: list[str] = []
 WARNINGS: list[str] = []
 
+
 def error(msg: str) -> None:
     ERRORS.append(msg)
     print(f"  ✗ {msg}")
+
 
 def warn(msg: str) -> None:
     WARNINGS.append(msg)
     print(f"  ⚠ {msg}")
 
+
 def ok(msg: str) -> None:
     print(f"  ✓ {msg}")
+
 
 def parse_frontmatter(path: Path) -> dict | None:
     content = path.read_text(errors="replace")
@@ -42,6 +47,7 @@ def parse_frontmatter(path: Path) -> dict | None:
     except yaml.YAMLError as e:
         error(f"{path.relative_to(REPO_ROOT)}: invalid YAML frontmatter: {e}")
         return None
+
 
 def validate_skill(skill_dir: Path) -> bool:
     skill_md = skill_dir / "SKILL.md"
@@ -72,6 +78,7 @@ def validate_skill(skill_dir: Path) -> bool:
 
     return ok_flag
 
+
 def main() -> int:
     print("\n🔍 Validating SKILL.md frontmatter (Agent Skills spec)...\n")
 
@@ -86,7 +93,7 @@ def main() -> int:
             validate_skill(skill_dir)
             skill_count += 1
 
-    print(f"\n── plugins/ (bundled copies) ──")
+    print("\n── plugins/ (bundled copies) ──")
     for plugin_dir in sorted(PLUGINS_DIR.iterdir()):
         if not plugin_dir.is_dir():
             continue
@@ -96,18 +103,19 @@ def main() -> int:
                 if skill_dir.is_dir():
                     validate_skill(skill_dir)
 
-    print(f"\n── Summary ──")
+    print("\n── Summary ──")
     print(f"  Skills validated: {skill_count}")
 
     if ERRORS:
         print(f"\n❌ {len(ERRORS)} error(s) found")
         return 1
-    
+
     if WARNINGS:
         print(f"\n⚠ All valid with {len(WARNINGS)} warning(s)")
     else:
         print("\n✅ All SKILL.md files are valid!")
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())

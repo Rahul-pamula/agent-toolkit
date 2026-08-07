@@ -53,9 +53,18 @@ Full stable skill catalog coverage for consumers who want everything (#50)
 - **loop-runner**: Execute and manage loop engineering primitives (init, run, status, audit) from a
 - **docs-generator**: WHAT — Generate or update documentation from code: README.md from repo structure
 - **llm-cost-advisor**: WHAT — Recommend the most cost-effective LLM provider for a given task type. Sho
+- **swarm**: Launch an Agent Toolkit swarm from a natural language request using agent-toolki
+- **swarm-handoff**: Create artifact/commit file handoffs for Agent Toolkit swarms with worktree-per-
+- **swarm-observer**: Observe, diagnose, and recover Agent Toolkit swarm runs via status, handoffs, lo
 - **triage**: Workstation health triage — validate tooling, directory layout, and run doctor w
+- **herdr**: Manage Herdr workspaces, tabs, and panes for Agent Toolkit swarms with eager win
+- **inventory**: Discover installed skills, agents, loops, and platform capabilities via agent-to
 - **jupyter-notebook**: Create, scaffold, or refactor Jupyter notebooks (.ipynb) for experiments and tut
 - **playwright-cli**: Drive a real browser from the terminal using the Playwright CLI (snapshot, click
+- **project**: Clone, index, and orchestrate multi-repo work via agent-toolkit project — symlin
+- **workspace**: Scaffold and manage the stateless AI workspace — context, packs, repos, and know
+- **worktree**: Manage Git worktrees per writer for Agent Toolkit swarms — isolated branches, ha
+- **mcp**: Configure and manage MCP providers for Agent Toolkit — setup, list, doctor, and 
 
 ## Scope
 

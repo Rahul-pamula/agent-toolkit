@@ -10,6 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- markdownlint-disable MD024 -->
 ## [Unreleased]
 
+## [1.8.0] — 2026-08-06
+
+### Added
+- **Swarm skills (Herdr-first)** — 4 new swarm-focused skills: `swarm` (launcher via `agent-toolkit swarm start --recipe pair/team/full --ui herdr/tmux --runner opencode/claude --model-profile balanced/economy --attach "task"` with eager windows `Waiting for handoff: <pred> -> <role>` and `_user_shell()` `zsh` detection), `swarm-observer` (monitor `status/handoffs/logs/attach` and recover `worktree_failed`/`headless` fallback), `swarm-handoff` (artifact/commit file handoffs with worktree-per-writer and promotion), `herdr` (Herdr workspace/tab/pane management) and `worktree` (Git worktree isolation). All validated via `muse skills validate` and `agent-toolkit skills validate` (61 total) and integrated with `code-reviewer`/`security-reviewer`/`github-cli-workflow`/`output-handshake`.
+- **Workspace orchestration skills** — `workspace` (stateless `~/.ai-workspace` `workspace context` + `memory inject/todo` + packs), `project` (`project clone/list` multi-repo), `mcp` (`mcp setup/list/doctor`), and `inventory` (`inventory/matrix/skills list` discovery). Completes end-to-end DX: `workspace` → `project` → `swarm` → `handoff` → `promote` → `github-cli-workflow`.
+- **Skill catalog growth** — total 52 → 61 skills across 9 domains; `agent-toolkit-complete` now includes all 9 new skills; badges, `catalogs/skill-catalog.yaml`, `catalogs/skills-layout.json`, and `docs/SKILL_PRODUCT_MATRIX.md` regenerated; `README.md`, `packages/agent-toolkit-cli/README.md`, `docs/GETTING_STARTED.md`, `docs/TROUBLESHOOTING.md`, `docs/wiki/Home.md` updated.
+
+### Fixed
+- **Docs 100% current** — regenerated catalogs (`scripts/generate-catalogs.py`, `prepare-package-data.sh`, `generate-skill-matrix.py`), fixed stale `skills-52` badges and `50 skills` assertions, and ensured `agent-toolkit install` deploys 61 skills to `~/.config/muse/skills` and `~/.agents/skills`.
+
 ## [1.7.2] — 2026-08-06
 
 ### Fixed

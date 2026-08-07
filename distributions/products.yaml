@@ -153,9 +153,18 @@ products:
         - loops/loop-runner
         - ops/docs-generator
         - ops/llm-cost-advisor
+        - ops/swarm
+        - ops/swarm-handoff
+        - ops/swarm-observer
         - ops/triage
+        - tooling/herdr
+        - tooling/inventory
         - tooling/jupyter-notebook
         - tooling/playwright-cli
+        - core/project
+        - core/workspace
+        - forge/worktree
+        - integrations/mcp
       agents: []
       hooks: []
       mcp: []

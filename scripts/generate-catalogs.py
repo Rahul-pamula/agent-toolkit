@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Regenerate catalogs/{skill,agent,loop}-catalog.yaml from the filesystem (#78)."""
+
 from __future__ import annotations
 
 import re
@@ -22,7 +23,6 @@ class IndentDumper(yaml.SafeDumper):
         return super().increase_indent(flow, False)
 
 
-
 def _fm(text: str) -> dict:
     m = re.match(r"^---\s*\n(.*?)\n---", text, re.S)
     if not m:
@@ -37,13 +37,15 @@ def gen_skills() -> dict:
         domain = skill_md.parent.parent.name
         name = skill_md.parent.name
         fm = _fm(skill_md.read_text(errors="replace"))
-        skills.append({
-            "id": f"{domain}/{name}",
-            "name": fm.get("name", name),
-            "domain": domain,
-            "description": str(fm.get("description", ""))[:200],
-            "stability": fm.get("stability", "stable"),
-        })
+        skills.append(
+            {
+                "id": f"{domain}/{name}",
+                "name": fm.get("name", name),
+                "domain": domain,
+                "description": str(fm.get("description", ""))[:200],
+                "stability": fm.get("stability", "stable"),
+            }
+        )
     return {"version": 1, "generated": True, "count": len(skills), "skills": skills}
 
 
@@ -52,11 +54,13 @@ def gen_agents() -> dict:
     for agent_md in sorted((ROOT / "agents").rglob("AGENT.md")):
         name = agent_md.parent.name
         fm = _fm(agent_md.read_text(errors="replace"))
-        agents.append({
-            "id": name,
-            "name": fm.get("name", name),
-            "description": str(fm.get("description", ""))[:200],
-        })
+        agents.append(
+            {
+                "id": name,
+                "name": fm.get("name", name),
+                "description": str(fm.get("description", ""))[:200],
+            }
+        )
     return {"version": 1, "generated": True, "count": len(agents), "agents": agents}
 
 
@@ -64,13 +68,15 @@ def gen_loops() -> dict:
     loops = []
     for loop_yaml in sorted((ROOT / "loops").glob("*/loop.yaml")):
         data = yaml.safe_load(loop_yaml.read_text()) or {}
-        loops.append({
-            "id": data.get("id", loop_yaml.parent.name),
-            "name": data.get("name", loop_yaml.parent.name),
-            "tier": data.get("tier"),
-            "cadence": data.get("cadence") or data.get("schedule"),
-            "description": str(data.get("description", ""))[:200],
-        })
+        loops.append(
+            {
+                "id": data.get("id", loop_yaml.parent.name),
+                "name": data.get("name", loop_yaml.parent.name),
+                "tier": data.get("tier"),
+                "cadence": data.get("cadence") or data.get("schedule"),
+                "description": str(data.get("description", ""))[:200],
+            }
+        )
     return {"version": 1, "generated": True, "count": len(loops), "loops": loops}
 
 
@@ -84,7 +90,15 @@ def main() -> int:
     }
     for name, data in mapping.items():
         path = out / name
-        path.write_text(yaml.dump(data, Dumper=IndentDumper, sort_keys=False, allow_unicode=True, default_flow_style=False))
+        path.write_text(
+            yaml.dump(
+                data,
+                Dumper=IndentDumper,
+                sort_keys=False,
+                allow_unicode=True,
+                default_flow_style=False,
+            )
+        )
         print(f"wrote {path} ({data['count']} entries)")
     return 0
 

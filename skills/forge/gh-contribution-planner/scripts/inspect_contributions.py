@@ -8,6 +8,7 @@ grouped by effort/impact buckets. Markdown by default; JSON via --json.
 Designed to be invoked from the agent-toolkit `gh-contribution-planner` skill.
 Stdlib only — relies exclusively on the `gh` CLI for GitHub access.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -137,7 +138,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--since",
         default=DEFAULT_SINCE,
-        help='Lookback window. Accepts e.g. 30d, 90d, 180d, or ISO date YYYY-MM-DD.',
+        help="Lookback window. Accepts e.g. 30d, 90d, 180d, or ISO date YYYY-MM-DD.",
     )
     parser.add_argument(
         "--max-per-bucket",
@@ -216,24 +217,26 @@ def resolve_user(override: str | None, *, dry_run: bool) -> str | None:
 
 
 def fetch_owned_repos(user: str, *, dry_run: bool) -> list[dict[str, Any]]:
-    fields = ",".join([
-        "nameWithOwner",
-        "name",
-        "owner",
-        "description",
-        "isFork",
-        "isPrivate",
-        "isArchived",
-        "pushedAt",
-        "updatedAt",
-        "url",
-        "defaultBranchRef",
-        "primaryLanguage",
-        "parent",
-        "stargazerCount",
-        "forkCount",
-        "visibility",
-    ])
+    fields = ",".join(
+        [
+            "nameWithOwner",
+            "name",
+            "owner",
+            "description",
+            "isFork",
+            "isPrivate",
+            "isArchived",
+            "pushedAt",
+            "updatedAt",
+            "url",
+            "defaultBranchRef",
+            "primaryLanguage",
+            "parent",
+            "stargazerCount",
+            "forkCount",
+            "visibility",
+        ]
+    )
     result = run_gh(
         ["repo", "list", user, "--no-archived", "--limit", "1000", "--json", fields],
         dry_run=dry_run,
@@ -253,11 +256,16 @@ def fetch_authored_open_prs(user: str, *, dry_run: bool) -> list[dict[str, Any]]
             file=sys.stderr,
         )
         return []
-    result = run_gh([
-        "api", "graphql",
-        "-f", f"query={OPEN_PRS_GRAPHQL}",
-        "-f", f"queryString={query_string}",
-    ])
+    result = run_gh(
+        [
+            "api",
+            "graphql",
+            "-f",
+            f"query={OPEN_PRS_GRAPHQL}",
+            "-f",
+            f"queryString={query_string}",
+        ]
+    )
     if result.returncode != 0:
         msg = (result.stderr or result.stdout or "").strip()
         print(f"Warning: open PRs GraphQL query failed: {msg}", file=sys.stderr)
@@ -266,9 +274,7 @@ def fetch_authored_open_prs(user: str, *, dry_run: bool) -> list[dict[str, Any]]
         payload = json.loads(result.stdout or "{}")
     except json.JSONDecodeError:
         return []
-    nodes = (
-        ((payload.get("data") or {}).get("search") or {}).get("nodes") or []
-    )
+    nodes = ((payload.get("data") or {}).get("search") or {}).get("nodes") or []
     return [node for node in nodes if isinstance(node, dict) and node]
 
 
@@ -282,12 +288,18 @@ def fetch_contributions_collection(
             file=sys.stderr,
         )
         return {}
-    result = run_gh([
-        "api", "graphql",
-        "-f", f"query={CONTRIBUTIONS_GRAPHQL}",
-        "-f", f"login={user}",
-        "-f", f"since={since_iso_datetime}",
-    ])
+    result = run_gh(
+        [
+            "api",
+            "graphql",
+            "-f",
+            f"query={CONTRIBUTIONS_GRAPHQL}",
+            "-f",
+            f"login={user}",
+            "-f",
+            f"since={since_iso_datetime}",
+        ]
+    )
     if result.returncode != 0:
         msg = (result.stderr or result.stdout or "").strip()
         print(f"Warning: contributionsCollection query failed: {msg}", file=sys.stderr)
@@ -296,9 +308,7 @@ def fetch_contributions_collection(
         payload = json.loads(result.stdout or "{}")
     except json.JSONDecodeError:
         return {}
-    return ((payload.get("data") or {}).get("user") or {}).get(
-        "contributionsCollection"
-    ) or {}
+    return ((payload.get("data") or {}).get("user") or {}).get("contributionsCollection") or {}
 
 
 def fetch_owner_open_issues(
@@ -306,11 +316,16 @@ def fetch_owner_open_issues(
 ) -> list[dict[str, Any]]:
     fields = "repository,url,number,title,updatedAt,labels,assignees,author,state"
     args = [
-        "search", "issues",
-        "--owner", user,
-        "--state", "open",
-        "--limit", "200",
-        "--json", fields,
+        "search",
+        "issues",
+        "--owner",
+        user,
+        "--state",
+        "open",
+        "--limit",
+        "200",
+        "--json",
+        fields,
     ]
     if label:
         args.extend(["--label", label])
@@ -335,18 +350,18 @@ def fetch_fork_compare(fork: dict[str, Any]) -> dict[str, Any]:
     out: dict[str, Any] = {
         "fork": fork.get("nameWithOwner"),
         "fork_url": fork.get("url"),
-        "parent": (
-            f"{parent_owner}/{parent_name}"
-            if parent_owner and parent_name
-            else None
-        ),
+        "parent": (f"{parent_owner}/{parent_name}" if parent_owner and parent_name else None),
         "behind": None,
         "ahead": None,
         "error": None,
     }
     missing = not (
-        parent_owner and parent_name and fork_default
-        and parent_default and fork_owner and fork_name
+        parent_owner
+        and parent_name
+        and fork_default
+        and parent_default
+        and fork_owner
+        and fork_name
     )
     if missing:
         out["error"] = "Missing parent or default branch metadata."
@@ -429,21 +444,16 @@ def bucketize(
     # buckets. Filter them out here using the non-archived repo set as an
     # allow-list. Guard on non_archived_repos being non-empty so that a failed
     # repos fetch doesn't wipe all issue items (fall back to old behavior).
-    non_archived_repos: set[str] = {
-        (repo.get("nameWithOwner") or "") for repo in repos
-    }
+    non_archived_repos: set[str] = {(repo.get("nameWithOwner") or "") for repo in repos}
     if non_archived_repos:
         issues_good_first = [
-            i for i in issues_good_first
-            if _repo_full(i.get("repository")) in non_archived_repos
+            i for i in issues_good_first if _repo_full(i.get("repository")) in non_archived_repos
         ]
         issues_help_wanted = [
-            i for i in issues_help_wanted
-            if _repo_full(i.get("repository")) in non_archived_repos
+            i for i in issues_help_wanted if _repo_full(i.get("repository")) in non_archived_repos
         ]
         issues_owned = [
-            i for i in issues_owned
-            if _repo_full(i.get("repository")) in non_archived_repos
+            i for i in issues_owned if _repo_full(i.get("repository")) in non_archived_repos
         ]
 
     # --- Quick wins ---
@@ -459,20 +469,22 @@ def bucketize(
             quick.append((age_days, repo))
     quick.sort(key=lambda pair: pair[0], reverse=True)
     for age_days, repo in quick[:max_per_bucket]:
-        plan["quick_wins"].append({
-            "repo": repo.get("nameWithOwner"),
-            "url": repo.get("url"),
-            "summary": (
-                f"Dormant for {age_days} days — README polish, dependency bump, "
-                "or CI badge update."
-            ),
-            "effort": "~15 min",
-            "delegate": DELEGATES["quick_wins"],
-            "signals": {
-                "pushed_days_ago": age_days,
-                "stars": repo.get("stargazerCount", 0),
-            },
-        })
+        plan["quick_wins"].append(
+            {
+                "repo": repo.get("nameWithOwner"),
+                "url": repo.get("url"),
+                "summary": (
+                    f"Dormant for {age_days} days — README polish, dependency bump, "
+                    "or CI badge update."
+                ),
+                "effort": "~15 min",
+                "delegate": DELEGATES["quick_wins"],
+                "signals": {
+                    "pushed_days_ago": age_days,
+                    "stars": repo.get("stargazerCount", 0),
+                },
+            }
+        )
 
     # Top up quick_wins with unassigned good-first-issue / help-wanted in own repos.
     # Issues can carry both labels — dedupe by (repo, number) so each slot is unique.
@@ -489,15 +501,17 @@ def bucketize(
         own_easy.append(issue)
     remaining = max(0, max_per_bucket - len(plan["quick_wins"]))
     for issue in own_easy[:remaining]:
-        plan["quick_wins"].append({
-            "repo": _repo_full(issue.get("repository")),
-            "url": issue.get("url"),
-            "issue_number": issue.get("number"),
-            "summary": f"Unassigned `{', '.join(_label_names(issue))}` issue: {issue.get('title')!r}",
-            "effort": "~15 min",
-            "delegate": DELEGATES["quick_wins"],
-            "signals": {"labels": _label_names(issue)},
-        })
+        plan["quick_wins"].append(
+            {
+                "repo": _repo_full(issue.get("repository")),
+                "url": issue.get("url"),
+                "issue_number": issue.get("number"),
+                "summary": f"Unassigned `{', '.join(_label_names(issue))}` issue: {issue.get('title')!r}",
+                "effort": "~15 min",
+                "delegate": DELEGATES["quick_wins"],
+                "signals": {"labels": _label_names(issue)},
+            }
+        )
 
     # --- In-flight PRs ---
     def _pr_sort_key(pr: dict[str, Any]) -> tuple[int, datetime]:
@@ -511,18 +525,20 @@ def bucketize(
         summary = pr.get("title") or ""
         if pr.get("isDraft"):
             summary = f"[draft] {summary}"
-        plan["in_flight_prs"].append({
-            "repo": _repo_full(pr.get("repository")),
-            "url": pr.get("url"),
-            "pr_number": pr.get("number"),
-            "summary": summary,
-            "effort": "varies",
-            "delegate": DELEGATES["in_flight_prs"],
-            "signals": {
-                "is_draft": bool(pr.get("isDraft")),
-                "updated_days_ago": age_days,
-            },
-        })
+        plan["in_flight_prs"].append(
+            {
+                "repo": _repo_full(pr.get("repository")),
+                "url": pr.get("url"),
+                "pr_number": pr.get("number"),
+                "summary": summary,
+                "effort": "varies",
+                "delegate": DELEGATES["in_flight_prs"],
+                "signals": {
+                    "is_draft": bool(pr.get("isDraft")),
+                    "updated_days_ago": age_days,
+                },
+            }
+        )
 
     # --- Review feedback ---
     # Filter strictly by reviewDecision == CHANGES_REQUESTED so this bucket
@@ -538,44 +554,45 @@ def bucketize(
         candidates.append((age_days, pr))
     candidates.sort(key=lambda pair: pair[0], reverse=True)
     for age_days, pr in candidates[:max_per_bucket]:
-        plan["review_feedback"].append({
-            "repo": _repo_full(pr.get("repository")),
-            "url": pr.get("url"),
-            "pr_number": pr.get("number"),
-            "summary": (
-                f"Reviewer requested changes ({age_days} days since last activity) "
-                "— address the feedback."
-            ),
-            "effort": "~30 min",
-            "delegate": DELEGATES["review_feedback"],
-            "signals": {
-                "review_decision": pr.get("reviewDecision"),
-                "updated_days_ago": age_days,
-            },
-        })
+        plan["review_feedback"].append(
+            {
+                "repo": _repo_full(pr.get("repository")),
+                "url": pr.get("url"),
+                "pr_number": pr.get("number"),
+                "summary": (
+                    f"Reviewer requested changes ({age_days} days since last activity) "
+                    "— address the feedback."
+                ),
+                "effort": "~30 min",
+                "delegate": DELEGATES["review_feedback"],
+                "signals": {
+                    "review_decision": pr.get("reviewDecision"),
+                    "updated_days_ago": age_days,
+                },
+            }
+        )
 
     # --- Forks needing sync ---
-    drift = [
-        fc for fc in fork_compares
-        if isinstance(fc.get("behind"), int) and fc["behind"] > 0
-    ]
+    drift = [fc for fc in fork_compares if isinstance(fc.get("behind"), int) and fc["behind"] > 0]
     drift.sort(key=lambda fc: fc.get("behind") or 0, reverse=True)
     for fc in drift[:max_per_bucket]:
-        plan["forks_to_sync"].append({
-            "repo": fc.get("fork"),
-            "url": fc.get("fork_url"),
-            "parent": fc.get("parent"),
-            "summary": (
-                f"Fork is {fc.get('behind')} commits behind {fc.get('parent')}; "
-                f"ahead {fc.get('ahead') or 0}."
-            ),
-            "effort": "~5 min (clean sync) / ~30 min (conflicts)",
-            "delegate": DELEGATES["forks_to_sync"],
-            "signals": {
-                "behind": fc.get("behind"),
-                "ahead": fc.get("ahead"),
-            },
-        })
+        plan["forks_to_sync"].append(
+            {
+                "repo": fc.get("fork"),
+                "url": fc.get("fork_url"),
+                "parent": fc.get("parent"),
+                "summary": (
+                    f"Fork is {fc.get('behind')} commits behind {fc.get('parent')}; "
+                    f"ahead {fc.get('ahead') or 0}."
+                ),
+                "effort": "~5 min (clean sync) / ~30 min (conflicts)",
+                "delegate": DELEGATES["forks_to_sync"],
+                "signals": {
+                    "behind": fc.get("behind"),
+                    "ahead": fc.get("ahead"),
+                },
+            }
+        )
 
     # --- Maintenance: stale issues in own repos (authored by others) ---
     stale_cutoff = now - timedelta(days=stale_issue_days)
@@ -590,26 +607,26 @@ def bucketize(
         stale.append(((now - updated).days, issue))
     stale.sort(key=lambda pair: pair[0], reverse=True)
     for age_days, issue in stale[:max_per_bucket]:
-        plan["maintenance"].append({
-            "repo": _repo_full(issue.get("repository")),
-            "url": issue.get("url"),
-            "issue_number": issue.get("number"),
-            "summary": (
-                f"Issue stale for {age_days} days: {issue.get('title')!r}"
-            ),
-            "effort": "~20 min",
-            "delegate": DELEGATES["maintenance"],
-            "signals": {
-                "updated_days_ago": age_days,
-                "labels": _label_names(issue),
-            },
-        })
+        plan["maintenance"].append(
+            {
+                "repo": _repo_full(issue.get("repository")),
+                "url": issue.get("url"),
+                "issue_number": issue.get("number"),
+                "summary": (f"Issue stale for {age_days} days: {issue.get('title')!r}"),
+                "effort": "~20 min",
+                "delegate": DELEGATES["maintenance"],
+                "signals": {
+                    "updated_days_ago": age_days,
+                    "labels": _label_names(issue),
+                },
+            }
+        )
 
     # --- External contributions ---
     aggregate: dict[str, dict[str, Any]] = {}
 
     def _ingest(section: str, weight: int) -> None:
-        for node in (contributions.get(section) or []):
+        for node in contributions.get(section) or []:
             repo = node.get("repository") or {}
             repo_full = repo.get("nameWithOwner") or ""
             if not repo_full:
@@ -617,15 +634,18 @@ def bucketize(
             owner = (repo.get("owner") or {}).get("login", "")
             if owner and owner.lower() == user.lower():
                 continue
-            entry = aggregate.setdefault(repo_full, {
-                "repo": repo_full,
-                "url": repo.get("url") or f"https://github.com/{repo_full}",
-                "score": 0,
-                "commits": 0,
-                "prs": 0,
-                "issues": 0,
-                "private": bool(repo.get("isPrivate")),
-            })
+            entry = aggregate.setdefault(
+                repo_full,
+                {
+                    "repo": repo_full,
+                    "url": repo.get("url") or f"https://github.com/{repo_full}",
+                    "score": 0,
+                    "commits": 0,
+                    "prs": 0,
+                    "issues": 0,
+                    "private": bool(repo.get("isPrivate")),
+                },
+            )
             count = (node.get("contributions") or {}).get("totalCount", 0)
             entry["score"] += weight * count
             if section.startswith("commit"):
@@ -639,35 +659,33 @@ def bucketize(
     _ingest("commitContributionsByRepository", weight=2)
     _ingest("issueContributionsByRepository", weight=1)
 
-    external = sorted(
-        aggregate.values(), key=lambda entry: entry["score"], reverse=True
-    )
+    external = sorted(aggregate.values(), key=lambda entry: entry["score"], reverse=True)
     for entry in external[:max_per_bucket]:
         signals = {
             "recent_commits": entry["commits"],
             "recent_prs": entry["prs"],
             "recent_issues": entry["issues"],
         }
-        plan["external_contributions"].append({
-            "repo": entry["repo"],
-            "url": entry["url"],
-            "summary": (
-                f"Active externally since {since_iso} "
-                f"(commits={entry['commits']}, prs={entry['prs']}, issues={entry['issues']}). "
-                "Scan for `good first issue` / `help wanted`."
-            ),
-            "effort": "varies",
-            "delegate": DELEGATES["external_contributions"],
-            "signals": signals,
-        })
+        plan["external_contributions"].append(
+            {
+                "repo": entry["repo"],
+                "url": entry["url"],
+                "summary": (
+                    f"Active externally since {since_iso} "
+                    f"(commits={entry['commits']}, prs={entry['prs']}, issues={entry['issues']}). "
+                    "Scan for `good first issue` / `help wanted`."
+                ),
+                "effort": "varies",
+                "delegate": DELEGATES["external_contributions"],
+                "signals": signals,
+            }
+        )
 
     plan["quick_wins"] = plan["quick_wins"][:max_per_bucket]
     return plan
 
 
-def render_markdown(
-    plan: dict[str, list[dict[str, Any]]], *, user: str, since_iso: str
-) -> None:
+def render_markdown(plan: dict[str, list[dict[str, Any]]], *, user: str, since_iso: str) -> None:
     print(f"# Daily GitHub contribution plan — @{user}")
     print()
     print(f"_Lookback window: contributions since `{since_iso}`._")
@@ -706,17 +724,17 @@ def render_markdown(
     )
 
 
-def render_json(
-    plan: dict[str, list[dict[str, Any]]], *, user: str, since_iso: str
-) -> None:
-    print(json.dumps(
-        {
-            "user": user,
-            "since": since_iso,
-            "buckets": plan,
-        },
-        indent=2,
-    ))
+def render_json(plan: dict[str, list[dict[str, Any]]], *, user: str, since_iso: str) -> None:
+    print(
+        json.dumps(
+            {
+                "user": user,
+                "since": since_iso,
+                "buckets": plan,
+            },
+            indent=2,
+        )
+    )
 
 
 def main() -> int:
@@ -737,9 +755,7 @@ def main() -> int:
 
     repos = fetch_owned_repos(user, dry_run=args.dry_run)
     open_prs = fetch_authored_open_prs(user, dry_run=args.dry_run)
-    contributions = fetch_contributions_collection(
-        user, since_iso_datetime, dry_run=args.dry_run
-    )
+    contributions = fetch_contributions_collection(user, since_iso_datetime, dry_run=args.dry_run)
     issues_good_first = fetch_owner_open_issues(
         user, label="good first issue", no_assignee=True, dry_run=args.dry_run
     )
@@ -759,14 +775,16 @@ def main() -> int:
                 try:
                     fork_compares.append(future.result())
                 except Exception as exc:
-                    fork_compares.append({
-                        "fork": None,
-                        "fork_url": None,
-                        "parent": None,
-                        "behind": None,
-                        "ahead": None,
-                        "error": f"Fork compare task failed: {exc}",
-                    })
+                    fork_compares.append(
+                        {
+                            "fork": None,
+                            "fork_url": None,
+                            "parent": None,
+                            "behind": None,
+                            "ahead": None,
+                            "error": f"Fork compare task failed: {exc}",
+                        }
+                    )
     elif args.dry_run:
         for fork in forks:
             print(

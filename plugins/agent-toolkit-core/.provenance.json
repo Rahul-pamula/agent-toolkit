@@ -1,13 +1,13 @@
 {
-  "generatorVersion": "1.6.0",
+  "generatorVersion": "1.8.0",
   "product": "agent-toolkit-core",
-  "target": "claude-code",
+  "target": "windsurf",
   "artifacts": [
     {
-      "path": "agent-toolkit-core/.claude-plugin/plugin.json",
+      "path": "agent-toolkit-core/AGENTS.md",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
-      "generatedDigest": "f6f456d449ba"
+      "generatedDigest": "d312620363f4"
     },
     {
       "path": "agent-toolkit-core/skills/assistant/SKILL.md",
@@ -46,22 +46,10 @@
       "generatedDigest": "be04af0af5cd"
     },
     {
-      "path": "agent-toolkit-core/agents/code-reviewer/AGENT.md",
+      "path": "agent-toolkit-core/rules/code-reviewer.mdc",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
-      "generatedDigest": "0a0af737a06b"
-    },
-    {
-      "path": "agent-toolkit-core/hooks/hooks.json",
-      "sourceFile": "generated",
-      "sourceDigest": "n/a",
-      "generatedDigest": "18f4c09c4917"
-    },
-    {
-      "path": "agent-toolkit-core/.mcp.json",
-      "sourceFile": "generated",
-      "sourceDigest": "n/a",
-      "generatedDigest": "7d8b7e5b87ae"
+      "generatedDigest": "729380d68005"
     }
   ]
 }

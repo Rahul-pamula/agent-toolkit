@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 """Validate AGENT.md frontmatter across all agents."""
 
-import sys
 import re
+import sys
 from pathlib import Path
 
 try:
     import yaml
 except ImportError:
     import subprocess
+
     subprocess.check_call([sys.executable, "-m", "pip", "install", "pyyaml", "--quiet"])
     import yaml
 
@@ -18,9 +19,11 @@ REQUIRED = ["name", "description"]
 
 ERRORS: list[str] = []
 
+
 def error(msg: str) -> None:
     ERRORS.append(msg)
     print(f"  ✗ {msg}")
+
 
 def parse_frontmatter(path: Path) -> dict | None:
     content = path.read_text(errors="replace")
@@ -31,6 +34,7 @@ def parse_frontmatter(path: Path) -> dict | None:
         return yaml.safe_load(match.group(1)) or {}
     except yaml.YAMLError:
         return None
+
 
 def main() -> int:
     print("\n🔍 Validating AGENT.md frontmatter...\n")
@@ -58,6 +62,7 @@ def main() -> int:
         return 1
     print("\n✅ All AGENT.md files are valid!")
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())

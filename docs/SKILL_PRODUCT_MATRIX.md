@@ -2,7 +2,7 @@
 
 > Generated from `distributions/products.yaml` — do not hand-edit. Run `python3 scripts/generate-skill-matrix.py` to regenerate, or `python3 scripts/generate-skill-matrix.py --check` in CI.
 
-_Generated from 4 products × 52 skills × 16 agents._
+_Generated from 4 products × 61 skills × 16 agents._
 
 ## Products and targets
 
@@ -11,7 +11,7 @@ _Generated from 4 products × 52 skills × 16 agents._
 | `agent-toolkit-core` | stable | claude-code, cursor | 6 | 1 |
 | `agent-toolkit-agents` | stable | claude-code, cursor | 0 | 16 |
 | `agent-toolkit-forge` | stable | claude-code, cursor | 7 | 0 |
-| `agent-toolkit-complete` | experimental | — | 52 | 0 |
+| `agent-toolkit-complete` | experimental | — | 61 | 0 |
 
 ## Skills → Products
 
@@ -22,6 +22,8 @@ _Generated from 4 products × 52 skills × 16 agents._
 | `core/onboarding` | `agent-toolkit-complete`, `agent-toolkit-core` | claude-code, cursor |
 | `core/output-handshake` | `agent-toolkit-complete`, `agent-toolkit-core` | claude-code, cursor |
 | `core/pr-fallback` | `agent-toolkit-complete`, `agent-toolkit-core` | claude-code, cursor |
+| `core/project` | `agent-toolkit-complete` | — |
+| `core/workspace` | `agent-toolkit-complete` | — |
 | `core/workspace-knowledge-sync` | `agent-toolkit-complete`, `agent-toolkit-core` | claude-code, cursor |
 | `data/dbt-validation` | `agent-toolkit-complete` | — |
 | `data/snowflake-validation` | `agent-toolkit-complete` | — |
@@ -59,14 +61,21 @@ _Generated from 4 products × 52 skills × 16 agents._
 | `forge/gitlab-cli-workflow` | `agent-toolkit-complete`, `agent-toolkit-forge` | claude-code, cursor |
 | `forge/workflow-client-bootstrap` | `agent-toolkit-complete`, `agent-toolkit-forge` | claude-code, cursor |
 | `forge/workflow-generic-project` | `agent-toolkit-complete`, `agent-toolkit-forge` | claude-code, cursor |
+| `forge/worktree` | `agent-toolkit-complete` | — |
 | `integrations/clickup-cli` | `agent-toolkit-complete` | — |
 | `integrations/linear` | `agent-toolkit-complete` | — |
+| `integrations/mcp` | `agent-toolkit-complete` | — |
 | `integrations/slack-assistant` | `agent-toolkit-complete` | — |
 | `integrations/slack-cli` | `agent-toolkit-complete` | — |
 | `loops/loop-runner` | `agent-toolkit-complete` | — |
 | `ops/docs-generator` | `agent-toolkit-complete` | — |
 | `ops/llm-cost-advisor` | `agent-toolkit-complete` | — |
+| `ops/swarm` | `agent-toolkit-complete` | — |
+| `ops/swarm-handoff` | `agent-toolkit-complete` | — |
+| `ops/swarm-observer` | `agent-toolkit-complete` | — |
 | `ops/triage` | `agent-toolkit-complete` | — |
+| `tooling/herdr` | `agent-toolkit-complete` | — |
+| `tooling/inventory` | `agent-toolkit-complete` | — |
 | `tooling/jupyter-notebook` | `agent-toolkit-complete` | — |
 | `tooling/playwright-cli` | `agent-toolkit-complete` | — |
 

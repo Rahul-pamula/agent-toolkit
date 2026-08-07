@@ -1,6 +1,6 @@
 version: 1
 generated: true
-count: 52
+count: 61
 skills:
   - id: core/assistant
     name: assistant
@@ -35,6 +35,18 @@ skills:
     description: WHAT — When the repo has no GitHub PR template, structure the pull-request
       body using the default in references/pr-body-default.md. Pair with output-handshake
       and github-cli-workflow. Does not open th
+    stability: stable
+  - id: core/project
+    name: project
+    domain: core
+    description: Clone, index, and orchestrate multi-repo work via agent-toolkit project
+      — symlinks, quick access, and swarm workspaces.
+    stability: stable
+  - id: core/workspace
+    name: workspace
+    domain: core
+    description: Scaffold and manage the stateless AI workspace — context, packs,
+      repos, and knowledge for multi-repo orchestration.
     stability: stable
   - id: core/workspace-knowledge-sync
     name: workspace-knowledge-sync
@@ -284,6 +296,12 @@ skills:
     domain: forge
     description: DEPRECATED alias. Use workflow-generic-project instead.
     stability: stable
+  - id: forge/worktree
+    name: worktree
+    domain: forge
+    description: Manage Git worktrees per writer for Agent Toolkit swarms — isolated
+      branches, handoff promotion, and cleanup.
+    stability: stable
   - id: integrations/clickup-cli
     name: clickup-cli
     domain: integrations
@@ -297,6 +315,12 @@ skills:
     description: Manage Linear issues, projects and cycles via the Linear MCP server.
       Use when the user wants to read, triage, create or update Linear tickets, plan
       a sprint, audit Linear documentation, or rebalance t
+    stability: stable
+  - id: integrations/mcp
+    name: mcp
+    domain: integrations
+    description: Configure and manage MCP providers for Agent Toolkit — setup, list,
+      doctor, and per-tool deployment.
     stability: stable
   - id: integrations/slack-assistant
     name: slack-assistant
@@ -332,11 +356,41 @@ skills:
       task type. Shows estimated cost per run across available providers and integrates
       with devcompanion llm-status to show what is actuall
     stability: stable
+  - id: ops/swarm
+    name: swarm
+    domain: ops
+    description: Launch an Agent Toolkit swarm from a natural language request using
+      agent-toolkit swarm CLI with Herdr/tmux eager windows and file handoffs.
+    stability: stable
+  - id: ops/swarm-handoff
+    name: swarm-handoff
+    domain: ops
+    description: Create artifact/commit file handoffs for Agent Toolkit swarms with
+      worktree-per-writer, branch, and promotion integration.
+    stability: stable
+  - id: ops/swarm-observer
+    name: swarm-observer
+    domain: ops
+    description: Observe, diagnose, and recover Agent Toolkit swarm runs via status,
+      handoffs, logs, and attach with worktree and shell awareness.
+    stability: stable
   - id: ops/triage
     name: triage
     domain: ops
     description: Workstation health triage — validate tooling, directory layout, and
       run doctor with remediation suggestions.
+    stability: stable
+  - id: tooling/herdr
+    name: herdr
+    domain: tooling
+    description: Manage Herdr workspaces, tabs, and panes for Agent Toolkit swarms
+      with eager windows, shell-aware execution, and reuse.
+    stability: stable
+  - id: tooling/inventory
+    name: inventory
+    domain: tooling
+    description: Discover installed skills, agents, loops, and platform capabilities
+      via agent-toolkit inventory, matrix, and skills list.
     stability: stable
   - id: tooling/jupyter-notebook
     name: jupyter-notebook

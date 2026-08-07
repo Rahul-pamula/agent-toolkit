@@ -32,14 +32,15 @@ SURFACES: dict[str, list[tuple[str, str]]] = {
         ("skills/core/onboarding", "skills/onboarding"),
     ],
     "agent-toolkit-agents": [
-        (f"agents/{d.name}", f"agents/{d.name}")
-        for d in sorted(AGENTS_DIR.iterdir()) if d.is_dir()
+        (f"agents/{d.name}", f"agents/{d.name}") for d in sorted(AGENTS_DIR.iterdir()) if d.is_dir()
     ],
     "agent-toolkit-forge": [
         (f"skills/forge/{d.name}", f"skills/{d.name}")
-        for d in sorted((SKILLS_DIR / "forge").iterdir()) if d.is_dir()
+        for d in sorted((SKILLS_DIR / "forge").iterdir())
+        if d.is_dir()
     ],
 }
+
 
 def dirs_in_sync(src: Path, dst: Path) -> bool:
     if not dst.exists():
@@ -48,6 +49,7 @@ def dirs_in_sync(src: Path, dst: Path) -> bool:
     if cmp.left_only or cmp.right_only or cmp.diff_files:
         return False
     return all(dirs_in_sync(src / sub, dst / sub) for sub in cmp.common_dirs)
+
 
 def sync_surface(src: Path, dst: Path, check: bool) -> bool:
     if not src.exists():
@@ -64,6 +66,7 @@ def sync_surface(src: Path, dst: Path, check: bool) -> bool:
     shutil.copytree(src, dst)
     print(f"  synced: {src.relative_to(REPO_ROOT)} → {dst.relative_to(REPO_ROOT)}")
     return True
+
 
 def main() -> int:
     parser = argparse.ArgumentParser()
@@ -93,6 +96,7 @@ def main() -> int:
         return 1
     print("✅ All plugin surfaces are in sync!")
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())

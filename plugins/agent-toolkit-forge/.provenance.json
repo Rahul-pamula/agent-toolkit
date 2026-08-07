@@ -1,13 +1,13 @@
 {
-  "generatorVersion": "1.6.0",
+  "generatorVersion": "1.8.0",
   "product": "agent-toolkit-forge",
-  "target": "claude-code",
+  "target": "windsurf",
   "artifacts": [
     {
-      "path": "agent-toolkit-forge/.claude-plugin/plugin.json",
+      "path": "agent-toolkit-forge/AGENTS.md",
       "sourceFile": "generated",
       "sourceDigest": "n/a",
-      "generatedDigest": "0aa563c0b4d1"
+      "generatedDigest": "2b839df28e92"
     },
     {
       "path": "agent-toolkit-forge/skills/github-cli-workflow/SKILL.md",

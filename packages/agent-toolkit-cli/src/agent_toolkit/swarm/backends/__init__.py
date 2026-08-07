@@ -71,7 +71,9 @@ class HerdrBackend:
                     ["herdr"] + args + extra, capture_output=True, text=True, timeout=timeout
                 )
                 # If herdr complains about unknown --json, try without
-                if "unknown option: --json" in (res.stderr or "") or "unknown option: --json" in (res.stdout or ""):
+                if "unknown option: --json" in (res.stderr or "") or "unknown option: --json" in (
+                    res.stdout or ""
+                ):
                     continue
                 try:
                     return (
@@ -105,8 +107,11 @@ class HerdrBackend:
             pass
         # Find by label swarm-<run_id>
         try:
-            res = subprocess.run(["herdr", "workspace", "list"], capture_output=True, text=True, timeout=5)
+            res = subprocess.run(
+                ["herdr", "workspace", "list"], capture_output=True, text=True, timeout=5
+            )
             import json as _json
+
             data = _json.loads(res.stdout)
             for w in data.get("result", {}).get("workspaces", []):
                 if w.get("label") == f"swarm-{run_id}":
@@ -120,19 +125,34 @@ class HerdrBackend:
         if not wid:
             return None
         try:
-            res = subprocess.run(["herdr", "tab", "list", "--workspace", wid], capture_output=True, text=True, timeout=5)
+            res = subprocess.run(
+                ["herdr", "tab", "list", "--workspace", wid],
+                capture_output=True,
+                text=True,
+                timeout=5,
+            )
             import json as _json
+
             data = _json.loads(res.stdout)
             for tab in data.get("result", {}).get("tabs", []):
                 if tab.get("label") == role:
                     # Get pane for this tab
-                    res2 = subprocess.run(["herdr", "pane", "list", "--workspace", wid], capture_output=True, text=True, timeout=5)
+                    res2 = subprocess.run(
+                        ["herdr", "pane", "list", "--workspace", wid],
+                        capture_output=True,
+                        text=True,
+                        timeout=5,
+                    )
                     data2 = _json.loads(res2.stdout)
                     for pane in data2.get("result", {}).get("panes", []):
                         if pane.get("tab_id") == tab.get("tab_id"):
                             return pane.get("pane_id")
                     # Fallback to root_pane if tab list gives it
-                    return tab.get("root_pane", {}).get("pane_id") if isinstance(tab.get("root_pane"), dict) else None
+                    return (
+                        tab.get("root_pane", {}).get("pane_id")
+                        if isinstance(tab.get("root_pane"), dict)
+                        else None
+                    )
         except Exception:
             pass
         return None
@@ -160,7 +180,9 @@ class HerdrBackend:
         )
         # Store workspace_id for later
         try:
-            wid = res.get("result", {}).get("workspace", {}).get("workspace_id") or res.get("result", {}).get("workspace_id")
+            wid = res.get("result", {}).get("workspace", {}).get("workspace_id") or res.get(
+                "result", {}
+            ).get("workspace_id")
             if wid:
                 (run_dir / ".herdr_workspace_id").write_text(wid, encoding="utf-8")
             else:
@@ -181,12 +203,23 @@ class HerdrBackend:
             return {"backend": "herdr", "status": "no_workspace", "role": role}
         # Check if tab already exists
         try:
-            res = subprocess.run(["herdr", "tab", "list", "--workspace", wid], capture_output=True, text=True, timeout=5)
+            res = subprocess.run(
+                ["herdr", "tab", "list", "--workspace", wid],
+                capture_output=True,
+                text=True,
+                timeout=5,
+            )
             import json as _json
+
             data = _json.loads(res.stdout)
             for tab in data.get("result", {}).get("tabs", []):
                 if tab.get("label") == role:
-                    return {"backend": "herdr", "status": "exists", "role": role, "tab_id": tab.get("tab_id")}
+                    return {
+                        "backend": "herdr",
+                        "status": "exists",
+                        "role": role,
+                        "tab_id": tab.get("tab_id"),
+                    }
         except Exception:
             pass
         # Create tab for role
@@ -194,16 +227,19 @@ class HerdrBackend:
         try:
             # Try to get worktree path from state if available
             from .store import read_state
+
             state = read_state(run_dir) or {}
             wt_path = None
             for wt in state.get("worktrees", []):
                 if wt.get("role") == role:
                     wt_path = wt.get("path")
                     break
-            cwd = wt_path if wt_path and pathlib.Path(wt_path).exists() else str(run_dir)
+            cwd = wt_path if wt_path and Path(wt_path).exists() else str(run_dir)
         except Exception:
             cwd = str(run_dir)
-        res = self._run_json(["tab", "create", "--workspace", wid, "--label", role, "--cwd", cwd, "--no-focus"])
+        res = self._run_json(
+            ["tab", "create", "--workspace", wid, "--label", role, "--cwd", cwd, "--no-focus"]
+        )
         return {"backend": "herdr", "status": "created", "role": role, "result": res}
 
     def start_agent(self, run_dir: Path, run_id: str, role: str, cmd: list[str]) -> dict[str, Any]:
@@ -217,8 +253,14 @@ class HerdrBackend:
             wid = self._herdr_workspace_id(run_dir, run_id)
             if wid:
                 try:
-                    res = subprocess.run(["herdr", "pane", "list", "--workspace", wid], capture_output=True, text=True, timeout=5)
+                    res = subprocess.run(
+                        ["herdr", "pane", "list", "--workspace", wid],
+                        capture_output=True,
+                        text=True,
+                        timeout=5,
+                    )
                     import json as _json
+
                     data = _json.loads(res.stdout)
                     panes = data.get("result", {}).get("panes", [])
                     if panes:
@@ -229,11 +271,24 @@ class HerdrBackend:
             return {"error": f"no pane for role {role}"}
         # Build shell command string like tmux does
         import shlex as _shlex
+
         shell_cmd = " ".join(_shlex.quote(c) for c in cmd)
-        # Use pane run to execute bash -lc '...' 
+        # Use pane run to execute bash -lc '...'
         try:
-            res = subprocess.run(["herdr", "pane", "run", pane_id, shell_cmd], capture_output=True, text=True, timeout=10)
-            return {"backend": "herdr", "status": "started", "pane_id": pane_id, "stdout": res.stdout[:500], "stderr": res.stderr[:500], "code": res.returncode}
+            res = subprocess.run(
+                ["herdr", "pane", "run", pane_id, shell_cmd],
+                capture_output=True,
+                text=True,
+                timeout=10,
+            )
+            return {
+                "backend": "herdr",
+                "status": "started",
+                "pane_id": pane_id,
+                "stdout": res.stdout[:500],
+                "stderr": res.stderr[:500],
+                "code": res.returncode,
+            }
         except Exception as e:
             return {"error": str(e)}
 
@@ -259,7 +314,9 @@ class HerdrBackend:
         # Find workspace_id by label and focus it (herdr has no 'open')
         wid = None
         try:
-            import subprocess as _sp, json as _json
+            import json as _json
+            import subprocess as _sp
+
             res = _sp.run(["herdr", "workspace", "list"], capture_output=True, text=True, timeout=5)
             data = _json.loads(res.stdout)
             for w in data.get("result", {}).get("workspaces", []):
@@ -272,11 +329,16 @@ class HerdrBackend:
             print(f"[herdr] focusing workspace swarm-{run_id} ({wid})")
             try:
                 import subprocess as _sp2
+
                 _sp2.run(["herdr", "workspace", "focus", wid], capture_output=False, timeout=5)
             except Exception as e:
-                print(f"[herdr] focus failed: {e} — run `herdr workspace list` and `herdr workspace focus {wid}`")
+                print(
+                    f"[herdr] focus failed: {e} — run `herdr workspace list` and `herdr workspace focus {wid}`"
+                )
         else:
-            print(f"[herdr] attach swarm-{run_id}: workspace not found — run `herdr workspace list`")
+            print(
+                f"[herdr] attach swarm-{run_id}: workspace not found — run `herdr workspace list`"
+            )
 
     def stop_agent(self, run_id: str, role: str) -> dict[str, Any]:
         name = f"swarm-{run_id}-{role}"
@@ -386,7 +448,9 @@ class TmuxBackend:
         try:
             # Give agent TUI a moment to initialize
             _time.sleep(1.5)
-            with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False, encoding="utf-8") as tf:
+            with tempfile.NamedTemporaryFile(
+                mode="w", suffix=".txt", delete=False, encoding="utf-8"
+            ) as tf:
                 tf.write(prompt)
                 tf_path = tf.name
             try:
@@ -396,7 +460,16 @@ class TmuxBackend:
                     timeout=5,
                 )
                 subprocess.run(
-                    ["tmux", "-L", sock, "paste-buffer", "-b", f"swarm-prompt-{role}", "-t", target],
+                    [
+                        "tmux",
+                        "-L",
+                        sock,
+                        "paste-buffer",
+                        "-b",
+                        f"swarm-prompt-{role}",
+                        "-t",
+                        target,
+                    ],
                     capture_output=True,
                     timeout=5,
                 )

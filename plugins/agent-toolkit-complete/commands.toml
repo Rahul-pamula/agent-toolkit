@@ -440,12 +440,57 @@ Follow the `llm-cost-advisor` skill instructions for {{args}}.
 """
 
 [[commands]]
+name = "swarm"
+description = "Launch an Agent Toolkit swarm from a natural language request using agent-toolkit swarm CLI with Herdr/tmux eager window"
+prompt = """
+Follow the `swarm` skill instructions for {{args}}.
+
+@{skills/swarm/SKILL.md}
+"""
+
+[[commands]]
+name = "swarm_handoff"
+description = "Create artifact/commit file handoffs for Agent Toolkit swarms with worktree-per-writer, branch, and promotion integratio"
+prompt = """
+Follow the `swarm-handoff` skill instructions for {{args}}.
+
+@{skills/swarm-handoff/SKILL.md}
+"""
+
+[[commands]]
+name = "swarm_observer"
+description = "Observe, diagnose, and recover Agent Toolkit swarm runs via status, handoffs, logs, and attach with worktree and shell a"
+prompt = """
+Follow the `swarm-observer` skill instructions for {{args}}.
+
+@{skills/swarm-observer/SKILL.md}
+"""
+
+[[commands]]
 name = "triage"
 description = "Workstation health triage — validate tooling, directory layout, and run doctor with remediation suggestions."
 prompt = """
 Follow the `triage` skill instructions for {{args}}.
 
 @{skills/triage/SKILL.md}
+"""
+
+[[commands]]
+name = "herdr"
+description = "Manage Herdr workspaces, tabs, and panes for Agent Toolkit swarms with eager windows, shell-aware execution, and reuse."
+prompt = """
+Follow the `herdr` skill instructions for {{args}}.
+
+@{skills/herdr/SKILL.md}
+"""
+
+[[commands]]
+name = "inventory"
+description = "Discover installed skills, agents, loops, and platform capabilities via agent-toolkit inventory, matrix, and skills list"
+prompt = """
+Follow the `inventory` skill instructions for {{args}}.
+
+@{skills/inventory/SKILL.md}
 """
 
 [[commands]]
@@ -464,5 +509,41 @@ prompt = """
 Follow the `playwright-cli` skill instructions for {{args}}.
 
 @{skills/playwright-cli/SKILL.md}
+"""
+
+[[commands]]
+name = "project"
+description = "Clone, index, and orchestrate multi-repo work via agent-toolkit project — symlinks, quick access, and swarm workspaces."
+prompt = """
+Follow the `project` skill instructions for {{args}}.
+
+@{skills/project/SKILL.md}
+"""
+
+[[commands]]
+name = "workspace"
+description = "Scaffold and manage the stateless AI workspace — context, packs, repos, and knowledge for multi-repo orchestration."
+prompt = """
+Follow the `workspace` skill instructions for {{args}}.
+
+@{skills/workspace/SKILL.md}
+"""
+
+[[commands]]
+name = "worktree"
+description = "Manage Git worktrees per writer for Agent Toolkit swarms — isolated branches, handoff promotion, and cleanup."
+prompt = """
+Follow the `worktree` skill instructions for {{args}}.
+
+@{skills/worktree/SKILL.md}
+"""
+
+[[commands]]
+name = "mcp"
+description = "Configure and manage MCP providers for Agent Toolkit — setup, list, doctor, and per-tool deployment."
+prompt = """
+Follow the `mcp` skill instructions for {{args}}.
+
+@{skills/mcp/SKILL.md}
 """
 

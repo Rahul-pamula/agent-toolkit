@@ -13,7 +13,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-7c3aed?style=flat&labelColor=1f2937)](https://github.com/ulises-jeremias/agent-toolkit/blob/main/LICENSE)
 [![Validate](https://img.shields.io/github/actions/workflow/status/ulises-jeremias/agent-toolkit/validate.yml?branch=main&label=validate&style=flat&labelColor=1f2937)](https://github.com/ulises-jeremias/agent-toolkit/actions/workflows/validate.yml)
 
-![skills](https://img.shields.io/badge/skills-52-7c3aed?style=flat&labelColor=1f2937)
+![skills](https://img.shields.io/badge/skills-61-7c3aed?style=flat&labelColor=1f2937)
 ![agents](https://img.shields.io/badge/agents-16-0891b2?style=flat&labelColor=1f2937)
 ![loops](https://img.shields.io/badge/loops-10-ea580c?style=flat&labelColor=1f2937)
 
@@ -93,7 +93,7 @@ Full walkthrough: [docs/INSTALLATION.md](https://github.com/ulises-jeremias/agen
       <h3>🛠️ Skills</h3>
       <sub>Reusable capability units (<code>SKILL.md</code>) that teach an agent how to do a job — delivery, forge CLIs, design, data, ops.</sub>
       <br><br>
-      <sub>52 skills across 9 domains. Browse with <code>agent-toolkit inventory</code> or <code>agent-toolkit skills list</code>.</sub>
+      <sub>61 skills across 9 domains. Browse with <code>agent-toolkit inventory</code> or <code>agent-toolkit skills list</code>.</sub>
     </td>
     <td width="50%" valign="top">
       <h3>🤖 Agents</h3>

@@ -34,7 +34,7 @@ Per-tool paths are tabled in `docs/INSTALLATION.md`.
 
 ## 3. Partial install (skills without agents/loops)
 
-**Symptom:** `doctor` shows `skills: 52, agents: 0` or similar.
+**Symptom:** `doctor` shows `skills: 61, agents: 0` or similar.
 
 **Fix:**
 

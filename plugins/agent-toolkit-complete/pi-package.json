@@ -1,6 +1,6 @@
 {
   "name": "@agent-toolkit/agent-toolkit-complete",
-  "version": "1.6.0",
+  "version": "1.8.0",
   "description": "Full stable skill catalog coverage for consumers who want everything (#50)",
   "license": "MIT",
   "repository": {
@@ -65,9 +65,18 @@
       "skills/loop-runner/SKILL.md",
       "skills/docs-generator/SKILL.md",
       "skills/llm-cost-advisor/SKILL.md",
+      "skills/swarm/SKILL.md",
+      "skills/swarm-handoff/SKILL.md",
+      "skills/swarm-observer/SKILL.md",
       "skills/triage/SKILL.md",
+      "skills/herdr/SKILL.md",
+      "skills/inventory/SKILL.md",
       "skills/jupyter-notebook/SKILL.md",
-      "skills/playwright-cli/SKILL.md"
+      "skills/playwright-cli/SKILL.md",
+      "skills/project/SKILL.md",
+      "skills/workspace/SKILL.md",
+      "skills/worktree/SKILL.md",
+      "skills/mcp/SKILL.md"
     ],
     "agents": []
   }

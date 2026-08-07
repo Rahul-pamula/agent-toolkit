@@ -1,8 +1,13 @@
 #!/usr/bin/env python3
 """Bump all version sources atomically. Usage: bump-version.py [--check] X.Y.Z"""
-import pathlib, json, re, sys
+
+import json
+import pathlib
+import re
+import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
+
 
 def bump_file(path, pattern, repl, version):
     p = ROOT / path
@@ -18,6 +23,7 @@ def bump_file(path, pattern, repl, version):
     p.write_text(new)
     print(f"bumped {path}")
     return True
+
 
 def main():
     args = [a for a in sys.argv[1:] if not a.startswith("-")]
@@ -40,7 +46,12 @@ def main():
                 p.write_text(version + "\n")
             changed += 1
     # __init__.py
-    changed += bump_file("packages/agent-toolkit-cli/src/agent_toolkit/__init__.py", r'__version__ = ".*"', '__version__ = "{version}"', version)
+    changed += bump_file(
+        "packages/agent-toolkit-cli/src/agent_toolkit/__init__.py",
+        r'__version__ = ".*"',
+        '__version__ = "{version}"',
+        version,
+    )
     # package.json
     pkg = ROOT / "package.json"
     if pkg.exists():
@@ -82,6 +93,7 @@ def main():
     if not check:
         print(f"bumped {changed} files to {version}")
         # also sync marketplace via same
+
 
 if __name__ == "__main__":
     main()

@@ -18,36 +18,6 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-# Detect user's login shell — herdr/tmux already run it, so swarm should too
-def _user_shell() -> str:
-    """Return user's login shell, fallback to bash. Respects $SHELL and /etc/passwd."""
-    import os as _os
-    import pathlib as _pl
-    # 1. $SHELL env (herdr/tmux inherit it)
-    for cand in [_os.environ.get("SHELL"), _os.environ.get("SWARM_SHELL")]:
-        if cand and _pl.Path(cand).exists():
-            return cand
-    # 2. passwd entry
-    try:
-        import pwd as _pwd
-        pw = _pwd.getpwuid(_os.getuid()).pw_shell
-        if pw and _pl.Path(pw).exists():
-            return pw
-    except Exception:
-        pass
-    # 3. common shells
-    for cand in ["/usr/bin/zsh", "/bin/zsh", "/usr/bin/bash", "/bin/bash", "/bin/sh"]:
-        if _pl.Path(cand).exists():
-            return cand
-    return "/bin/bash"
-
-def _shell_base() -> str:
-    """Base shell name for exec fallback (zsh/bash/sh)."""
-    import pathlib as _pl
-    sh = _user_shell()
-    return _pl.Path(sh).name or "bash"
-
-
 from .approvals import (
     approve_gate,
     default_gates_for_recipe,
@@ -95,6 +65,41 @@ from .worktree import (
     is_worktree_dirty,
     remove_worktree,
 )
+
+
+# Detect user's login shell — herdr/tmux already run it, so swarm should too
+def _user_shell() -> str:
+    """Return user's login shell, fallback to bash. Respects $SHELL and /etc/passwd."""
+    import os as _os
+    import pathlib as _pl
+
+    # 1. $SHELL env (herdr/tmux inherit it)
+    for cand in [_os.environ.get("SHELL"), _os.environ.get("SWARM_SHELL")]:
+        if cand and _pl.Path(cand).exists():
+            return cand
+    # 2. passwd entry
+    try:
+        import pwd as _pwd
+
+        pw = _pwd.getpwuid(_os.getuid()).pw_shell
+        if pw and _pl.Path(pw).exists():
+            return pw
+    except Exception:
+        pass
+    # 3. common shells
+    for cand in ["/usr/bin/zsh", "/bin/zsh", "/usr/bin/bash", "/bin/bash", "/bin/sh"]:
+        if _pl.Path(cand).exists():
+            return cand
+    return "/bin/bash"
+
+
+def _shell_base() -> str:
+    """Base shell name for exec fallback (zsh/bash/sh)."""
+    import pathlib as _pl
+
+    sh = _user_shell()
+    return _pl.Path(sh).name or "bash"
+
 
 NO_COLOR = os.environ.get("NO_COLOR") is not None or not sys.stdout.isatty()
 
@@ -565,7 +570,9 @@ def cmd_start(args: list[str]) -> int:
         task_text = ""
         # No task provided — launch agents with system prompt only, ready for interactive input
         # (like swarm-forge ./swarm without initial task)
-        _log("No task provided — starting swarm with system prompt only, ready for interactive input")
+        _log(
+            "No task provided — starting swarm with system prompt only, ready for interactive input"
+        )
     workspace_flag = ns.workspace or ns.repo or ns.workspace_C
     repo = _need_repo(prompt_text=task_text, workspace=workspace_flag)
     import subprocess as _sp2
@@ -711,7 +718,10 @@ def cmd_start(args: list[str]) -> int:
                         # Also copy prompt as context if needed
                         _prompt_src = run_dir / "prompts" / f"{rname}.md"
                         if _prompt_src.exists():
-                            _shutil.copy2(_prompt_src, Path(info["path"]) / f".agent-toolkit-prompt-{rname}.md")
+                            _shutil.copy2(
+                                _prompt_src,
+                                Path(info["path"]) / f".agent-toolkit-prompt-{rname}.md",
+                            )
                 except Exception:
                     pass
                 append_trace(
@@ -778,8 +788,18 @@ def cmd_start(args: list[str]) -> int:
             if not _eager_predecessors:
                 _fallback = {
                     "pair": {"reviewer": "implementer", "integrator": "reviewer"},
-                    "team": {"implementer": "planner", "reviewer": "implementer", "architect": "reviewer"},
-                    "full": {"implementer": "planner", "refactorer": "implementer", "architect": "refactorer", "hardener": "architect", "qa": "hardener"},
+                    "team": {
+                        "implementer": "planner",
+                        "reviewer": "implementer",
+                        "architect": "reviewer",
+                    },
+                    "full": {
+                        "implementer": "planner",
+                        "refactorer": "implementer",
+                        "architect": "refactorer",
+                        "hardener": "architect",
+                        "qa": "hardener",
+                    },
                 }.get(recipe_name, {})
                 _eager_predecessors.update(_fallback)
         except Exception:
@@ -792,20 +812,44 @@ def cmd_start(args: list[str]) -> int:
                     _pred = _eager_predecessors.get(_rname, "previous role")
                     _msg = f"Waiting for handoff: {_pred} -> {_rname}  |  role: {_rname}  |  run: {run_id}"
                     _hint = f"Will auto-start {_rname} when {_pred} creates artifact handoff"
-                    _waiting_cmd = [_user_shell(), "-lc", f"echo \"Waiting for handoff: {_pred} -> {_rname} | role: {_rname} | run: {run_id}\" && echo \"Will auto-start {_rname} when {_pred} creates artifact handoff\" && echo \"Tip: agent-toolkit swarm handoffs {run_id}\" && exec {_shell_base()}"]
+                    _waiting_cmd = [
+                        _user_shell(),
+                        "-lc",
+                        f'echo "Waiting for handoff: {_pred} -> {_rname} | role: {_rname} | run: {run_id}" && echo "Will auto-start {_rname} when {_pred} creates artifact handoff" && echo "Tip: agent-toolkit swarm handoffs {run_id}" && exec {_shell_base()}',
+                    ]
                     try:
                         backend.start_agent(run_dir, run_id, _rname, _waiting_cmd)
-                        append_trace(run_dir, {"ts": now_ts(), "kind": "agent_waiting", "role": _rname, "waiting_for": _pred})
+                        append_trace(
+                            run_dir,
+                            {
+                                "ts": now_ts(),
+                                "kind": "agent_waiting",
+                                "role": _rname,
+                                "waiting_for": _pred,
+                            },
+                        )
                     except Exception:
                         pass
             except Exception:
                 pass
         # Keep initial role focused for UX (like swarm-forge keeps first window active)
         try:
-            if initial_roles and hasattr(backend, '_socket_for'):
+            if initial_roles and hasattr(backend, "_socket_for"):
                 import subprocess as _sp
+
                 _sock = backend._socket_for(run_id)
-                _sp.run(["tmux", "-L", _sock, "select-window", "-t", f"swarm-{run_id}:{initial_roles[0]}"], capture_output=True, timeout=3)
+                _sp.run(
+                    [
+                        "tmux",
+                        "-L",
+                        _sock,
+                        "select-window",
+                        "-t",
+                        f"swarm-{run_id}:{initial_roles[0]}",
+                    ],
+                    capture_output=True,
+                    timeout=3,
+                )
         except Exception:
             pass
         for r in initial_roles:
@@ -819,7 +863,9 @@ def cmd_start(args: list[str]) -> int:
                 # Build runner command — like swarm-forge launch-command: pass prompt as CLI arg
                 prompt_file = run_dir / "prompts" / f"{r}.md"
                 # swarm-forge style: $(cat prompt) passed as positional prompt
-                prompt_cat = f"$(cat {_shlex.quote(str(prompt_file))})" if prompt_file.exists() else ""
+                prompt_cat = (
+                    f"$(cat {_shlex.quote(str(prompt_file))})" if prompt_file.exists() else ""
+                )
                 # Export swarm context for handoffs (like SWARMFORGE_ROLE)
                 swarm_env = f"export AGENT_TOOLKIT_SWARM_RUN_ID={_shlex.quote(run_id)} && export AGENT_TOOLKIT_SWARM_RUN_DIR={_shlex.quote(str(run_dir))} && export AGENT_TOOLKIT_SWARM_REPO={_shlex.quote(str(repo))} && export SWARMFORGE_ROLE={_shlex.quote(r)} &&"
                 if runner_name == "opencode":
@@ -828,7 +874,7 @@ def cmd_start(args: list[str]) -> int:
                         cmd = [
                             _user_shell(),
                             "-lc",
-                            f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec opencode --agent {_shlex.quote(r)} --prompt \"{prompt_cat}\"",
+                            f'{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec opencode --agent {_shlex.quote(r)} --prompt "{prompt_cat}"',
                         ]
                     else:
                         cmd = [
@@ -841,7 +887,7 @@ def cmd_start(args: list[str]) -> int:
                         cmd = [
                             _user_shell(),
                             "-lc",
-                            f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec claude --dangerously-skip-permissions --append-system-prompt-file {_shlex.quote(str(prompt_file))} \"{prompt_cat}\"",
+                            f'{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec claude --dangerously-skip-permissions --append-system-prompt-file {_shlex.quote(str(prompt_file))} "{prompt_cat}"',
                         ]
                     else:
                         cmd = [
@@ -854,7 +900,7 @@ def cmd_start(args: list[str]) -> int:
                         cmd = [
                             _user_shell(),
                             "-lc",
-                            f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec codex -C {_shlex.quote(str(worktree_path))} \"{prompt_cat}\"",
+                            f'{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec codex -C {_shlex.quote(str(worktree_path))} "{prompt_cat}"',
                         ]
                     else:
                         cmd = [
@@ -867,7 +913,7 @@ def cmd_start(args: list[str]) -> int:
                         cmd = [
                             _user_shell(),
                             "-lc",
-                            f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec cursor-agent \"{prompt_cat}\"",
+                            f'{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec cursor-agent "{prompt_cat}"',
                         ]
                     else:
                         cmd = [
@@ -880,7 +926,7 @@ def cmd_start(args: list[str]) -> int:
                         cmd = [
                             _user_shell(),
                             "-lc",
-                            f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec copilot --name {_shlex.quote('Swarm ' + r)} -i \"{prompt_cat}\"",
+                            f'{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec copilot --name {_shlex.quote("Swarm " + r)} -i "{prompt_cat}"',
                         ]
                     else:
                         cmd = [
@@ -893,7 +939,7 @@ def cmd_start(args: list[str]) -> int:
                         cmd = [
                             _user_shell(),
                             "-lc",
-                            f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec muse chat \"{prompt_cat}\"",
+                            f'{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec muse chat "{prompt_cat}"',
                         ]
                     else:
                         cmd = [
@@ -912,7 +958,7 @@ def cmd_start(args: list[str]) -> int:
                         cmd = [
                             _user_shell(),
                             "-lc",
-                            f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec {runner_name} \"{prompt_cat}\"",
+                            f'{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec {runner_name} "{prompt_cat}"',
                         ]
                     else:
                         cmd = [
@@ -923,12 +969,23 @@ def cmd_start(args: list[str]) -> int:
                 backend.start_agent(run_dir, run_id, r, cmd)
                 append_trace(
                     run_dir,
-                    {"ts": now_ts(), "kind": "agent_started", "role": r, "runner": runner_name, "cmd": cmd},
+                    {
+                        "ts": now_ts(),
+                        "kind": "agent_started",
+                        "role": r,
+                        "runner": runner_name,
+                        "cmd": cmd,
+                    },
                 )
             except Exception as e:
                 append_trace(
                     run_dir,
-                    {"ts": now_ts(), "kind": "agent_start_failed", "role": r, "error": str(e)[:500]},
+                    {
+                        "ts": now_ts(),
+                        "kind": "agent_start_failed",
+                        "role": r,
+                        "error": str(e)[:500],
+                    },
                 )
     except Exception:
         pass
@@ -1806,7 +1863,9 @@ def cmd_handoff_create(args: list[str]) -> int:
                     # Basic validation: looks like run_id (contains T and Z and -)
                     if "T" in candidate and "Z" in candidate and "-" in candidate:
                         # Verify it exists
-                        maybe_dir = run_dir_for(repo, candidate) if (repo / ".git").exists() else None
+                        maybe_dir = (
+                            run_dir_for(repo, candidate) if (repo / ".git").exists() else None
+                        )
                         # Also try via direct path search
                         if maybe_dir and maybe_dir.is_dir():
                             run_id = candidate
@@ -1954,7 +2013,16 @@ def cmd_handoff_create(args: list[str]) -> int:
                 if hid2:
                     try:
                         move_handoff(run_dir, hid2, "active", "completed")
-                        append_trace(run_dir, {"ts": now_ts(), "kind": "handoff_completed", "handoff_id": hid2, "auto": True, "trigger": f"handoff_create:{hid}"})
+                        append_trace(
+                            run_dir,
+                            {
+                                "ts": now_ts(),
+                                "kind": "handoff_completed",
+                                "handoff_id": hid2,
+                                "auto": True,
+                                "trigger": f"handoff_create:{hid}",
+                            },
+                        )
                     except Exception:
                         pass
     except Exception:
@@ -1973,7 +2041,9 @@ def cmd_handoff_create(args: list[str]) -> int:
             backend = get_backend(backend_name)
             # Create worktree for target role
             try:
-                info = create_worktree(repo, run_dir, ns.to_role, run_id, state.get("base_ref", "HEAD"))
+                info = create_worktree(
+                    repo, run_dir, ns.to_role, run_id, state.get("base_ref", "HEAD")
+                )
                 info["role"] = ns.to_role
                 # Copy opencode agent if present
                 try:
@@ -1982,54 +2052,138 @@ def cmd_handoff_create(args: list[str]) -> int:
                         _wt_agents = Path(info["path"]) / ".opencode" / "agents"
                         _wt_agents.mkdir(parents=True, exist_ok=True)
                         import shutil as _shutil
+
                         _shutil.copy2(_agent_src, _wt_agents / f"{ns.to_role}.md")
                         _prompt_src = run_dir / "prompts" / f"{ns.to_role}.md"
                         if _prompt_src.exists():
-                            _shutil.copy2(_prompt_src, Path(info["path"]) / f".agent-toolkit-prompt-{ns.to_role}.md")
+                            _shutil.copy2(
+                                _prompt_src,
+                                Path(info["path"]) / f".agent-toolkit-prompt-{ns.to_role}.md",
+                            )
                 except Exception:
                     pass
                 worktrees.append(info)
                 state["worktrees"] = worktrees
                 state["roles"][ns.to_role] = "ready"
                 write_state(run_dir, state)
-                append_trace(run_dir, {"ts": now_ts(), "kind": "worktree_created", "role": ns.to_role, "path": info["path"], "branch": info["branch"]})
-                append_trace(run_dir, {"ts": now_ts(), "kind": "role_activated", "role": ns.to_role})
+                append_trace(
+                    run_dir,
+                    {
+                        "ts": now_ts(),
+                        "kind": "worktree_created",
+                        "role": ns.to_role,
+                        "path": info["path"],
+                        "branch": info["branch"],
+                    },
+                )
+                append_trace(
+                    run_dir, {"ts": now_ts(), "kind": "role_activated", "role": ns.to_role}
+                )
                 # Create tmux/herdr surface and start agent
                 try:
                     backend.create_role_surface(run_dir, run_id, ns.to_role)
                     import shlex as _shlex2
+
                     worktree_path = info["path"]
                     prompt_file = run_dir / "prompts" / f"{ns.to_role}.md"
-                    prompt_cat = f"$(cat {_shlex2.quote(str(prompt_file))})" if prompt_file.exists() else ""
+                    prompt_cat = (
+                        f"$(cat {_shlex2.quote(str(prompt_file))})" if prompt_file.exists() else ""
+                    )
                     swarm_env = f"export AGENT_TOOLKIT_SWARM_RUN_ID={_shlex2.quote(run_id)} && export AGENT_TOOLKIT_SWARM_RUN_DIR={_shlex2.quote(str(run_dir))} && export AGENT_TOOLKIT_SWARM_REPO={_shlex2.quote(str(repo))} && export SWARMFORGE_ROLE={_shlex2.quote(ns.to_role)} &&"
                     cmd = None
                     if runner_name == "opencode":
                         if prompt_cat:
-                            cmd = [_user_shell(), "-lc", f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec opencode --agent {_shlex2.quote(ns.to_role)} --prompt \"" + prompt_cat + "\""]
+                            cmd = [
+                                _user_shell(),
+                                "-lc",
+                                f'{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec opencode --agent {_shlex2.quote(ns.to_role)} --prompt "'
+                                + prompt_cat
+                                + '"',
+                            ]
                         else:
-                            cmd = [_user_shell(), "-lc", f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec opencode --agent {_shlex2.quote(ns.to_role)}"]
+                            cmd = [
+                                _user_shell(),
+                                "-lc",
+                                f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec opencode --agent {_shlex2.quote(ns.to_role)}",
+                            ]
                     elif runner_name == "claude":
                         if prompt_cat:
-                            cmd = [_user_shell(), "-lc", f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec claude --dangerously-skip-permissions --append-system-prompt-file {_shlex2.quote(str(prompt_file))} \"" + prompt_cat + "\""]
+                            cmd = [
+                                _user_shell(),
+                                "-lc",
+                                f'{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec claude --dangerously-skip-permissions --append-system-prompt-file {_shlex2.quote(str(prompt_file))} "'
+                                + prompt_cat
+                                + '"',
+                            ]
                         else:
-                            cmd = [_user_shell(), "-lc", f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec claude --dangerously-skip-permissions"]
+                            cmd = [
+                                _user_shell(),
+                                "-lc",
+                                f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec claude --dangerously-skip-permissions",
+                            ]
                     elif runner_name == "codex":
                         if prompt_cat:
-                            cmd = [_user_shell(), "-lc", f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec codex -C {_shlex2.quote(str(worktree_path))} \"" + prompt_cat + "\""]
+                            cmd = [
+                                _user_shell(),
+                                "-lc",
+                                f'{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec codex -C {_shlex2.quote(str(worktree_path))} "'
+                                + prompt_cat
+                                + '"',
+                            ]
                         else:
-                            cmd = [_user_shell(), "-lc", f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec codex"]
+                            cmd = [
+                                _user_shell(),
+                                "-lc",
+                                f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec codex",
+                            ]
                     elif runner_name == "cursor":
                         if prompt_cat:
-                            cmd = [_user_shell(), "-lc", f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec cursor-agent \"" + prompt_cat + "\""]
+                            cmd = [
+                                _user_shell(),
+                                "-lc",
+                                f'{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec cursor-agent "'
+                                + prompt_cat
+                                + '"',
+                            ]
                         else:
-                            cmd = [_user_shell(), "-lc", f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec cursor-agent"]
+                            cmd = [
+                                _user_shell(),
+                                "-lc",
+                                f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec cursor-agent",
+                            ]
                     if cmd:
                         backend.start_agent(run_dir, run_id, ns.to_role, cmd)
-                        append_trace(run_dir, {"ts": now_ts(), "kind": "agent_started", "role": ns.to_role, "runner": runner_name, "cmd": cmd, "trigger": "handoff_auto_provision"})
+                        append_trace(
+                            run_dir,
+                            {
+                                "ts": now_ts(),
+                                "kind": "agent_started",
+                                "role": ns.to_role,
+                                "runner": runner_name,
+                                "cmd": cmd,
+                                "trigger": "handoff_auto_provision",
+                            },
+                        )
                 except Exception as e:
-                    append_trace(run_dir, {"ts": now_ts(), "kind": "agent_start_failed", "role": ns.to_role, "error": str(e)[:500]})
+                    append_trace(
+                        run_dir,
+                        {
+                            "ts": now_ts(),
+                            "kind": "agent_start_failed",
+                            "role": ns.to_role,
+                            "error": str(e)[:500],
+                        },
+                    )
             except Exception as e:
-                append_trace(run_dir, {"ts": now_ts(), "kind": "worktree_failed", "role": ns.to_role, "error": str(e)[:500]})
+                append_trace(
+                    run_dir,
+                    {
+                        "ts": now_ts(),
+                        "kind": "worktree_failed",
+                        "role": ns.to_role,
+                        "error": str(e)[:500],
+                    },
+                )
     except Exception:
         pass
     return 0

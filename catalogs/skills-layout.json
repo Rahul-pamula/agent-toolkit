@@ -7,6 +7,8 @@
       "onboarding",
       "output-handshake",
       "pr-fallback",
+      "project",
+      "workspace",
       "workspace-knowledge-sync"
     ],
     "data": [
@@ -51,11 +53,13 @@
       "github-cli-workflow",
       "gitlab-cli-workflow",
       "workflow-client-bootstrap",
-      "workflow-generic-project"
+      "workflow-generic-project",
+      "worktree"
     ],
     "integrations": [
       "clickup-cli",
       "linear",
+      "mcp",
       "slack-assistant",
       "slack-cli"
     ],
@@ -65,273 +69,323 @@
     "ops": [
       "docs-generator",
       "llm-cost-advisor",
+      "swarm",
+      "swarm-handoff",
+      "swarm-observer",
       "triage"
     ],
     "tooling": [
+      "herdr",
+      "inventory",
       "jupyter-notebook",
       "playwright-cli"
     ]
   },
   "skills": [
     {
+      "id": "core/assistant",
       "name": "assistant",
-      "group": "core",
-      "path": "skills/core/assistant"
+      "domain": "core"
     },
     {
+      "id": "core/dev-companion",
       "name": "dev-companion",
-      "group": "core",
-      "path": "skills/core/dev-companion"
+      "domain": "core"
     },
     {
+      "id": "core/onboarding",
       "name": "onboarding",
-      "group": "core",
-      "path": "skills/core/onboarding"
+      "domain": "core"
     },
     {
+      "id": "core/output-handshake",
       "name": "output-handshake",
-      "group": "core",
-      "path": "skills/core/output-handshake"
+      "domain": "core"
     },
     {
+      "id": "core/pr-fallback",
       "name": "pr-fallback",
-      "group": "core",
-      "path": "skills/core/pr-fallback"
+      "domain": "core"
     },
     {
+      "id": "core/project",
+      "name": "project",
+      "domain": "core"
+    },
+    {
+      "id": "core/workspace",
+      "name": "workspace",
+      "domain": "core"
+    },
+    {
+      "id": "core/workspace-knowledge-sync",
       "name": "workspace-knowledge-sync",
-      "group": "core",
-      "path": "skills/core/workspace-knowledge-sync"
+      "domain": "core"
     },
     {
+      "id": "data/dbt-validation",
       "name": "dbt-validation",
-      "group": "data",
-      "path": "skills/data/dbt-validation"
+      "domain": "data"
     },
     {
+      "id": "data/snowflake-validation",
       "name": "snowflake-validation",
-      "group": "data",
-      "path": "skills/data/snowflake-validation"
+      "domain": "data"
     },
     {
+      "id": "delivery/adr",
       "name": "adr",
-      "group": "delivery",
-      "path": "skills/delivery/adr"
+      "domain": "delivery"
     },
     {
+      "id": "delivery/agreement",
       "name": "agreement",
-      "group": "delivery",
-      "path": "skills/delivery/agreement"
+      "domain": "delivery"
     },
     {
+      "id": "delivery/bug",
       "name": "bug",
-      "group": "delivery",
-      "path": "skills/delivery/bug"
+      "domain": "delivery"
     },
     {
+      "id": "delivery/decision-log",
       "name": "decision-log",
-      "group": "delivery",
-      "path": "skills/delivery/decision-log"
+      "domain": "delivery"
     },
     {
+      "id": "delivery/development-workflow",
       "name": "development-workflow",
-      "group": "delivery",
-      "path": "skills/delivery/development-workflow"
+      "domain": "delivery"
     },
     {
+      "id": "delivery/epic",
       "name": "epic",
-      "group": "delivery",
-      "path": "skills/delivery/epic"
+      "domain": "delivery"
     },
     {
+      "id": "delivery/incident",
       "name": "incident",
-      "group": "delivery",
-      "path": "skills/delivery/incident"
+      "domain": "delivery"
     },
     {
+      "id": "delivery/management-unit-assessment",
       "name": "management-unit-assessment",
-      "group": "delivery",
-      "path": "skills/delivery/management-unit-assessment"
+      "domain": "delivery"
     },
     {
+      "id": "delivery/meeting-minutes",
       "name": "meeting-minutes",
-      "group": "delivery",
-      "path": "skills/delivery/meeting-minutes"
+      "domain": "delivery"
     },
     {
+      "id": "delivery/planning",
       "name": "planning",
-      "group": "delivery",
-      "path": "skills/delivery/planning"
+      "domain": "delivery"
     },
     {
+      "id": "delivery/prd",
       "name": "prd",
-      "group": "delivery",
-      "path": "skills/delivery/prd"
+      "domain": "delivery"
     },
     {
+      "id": "delivery/project-assessment",
       "name": "project-assessment",
-      "group": "delivery",
-      "path": "skills/delivery/project-assessment"
+      "domain": "delivery"
     },
     {
+      "id": "delivery/project-assessment-evidence",
       "name": "project-assessment-evidence",
-      "group": "delivery",
-      "path": "skills/delivery/project-assessment-evidence"
+      "domain": "delivery"
     },
     {
+      "id": "delivery/spike",
       "name": "spike",
-      "group": "delivery",
-      "path": "skills/delivery/spike"
+      "domain": "delivery"
     },
     {
+      "id": "delivery/task",
       "name": "task",
-      "group": "delivery",
-      "path": "skills/delivery/task"
+      "domain": "delivery"
     },
     {
+      "id": "delivery/technical-unit-assessment",
       "name": "technical-unit-assessment",
-      "group": "delivery",
-      "path": "skills/delivery/technical-unit-assessment"
+      "domain": "delivery"
     },
     {
+      "id": "delivery/trd",
       "name": "trd",
-      "group": "delivery",
-      "path": "skills/delivery/trd"
+      "domain": "delivery"
     },
     {
+      "id": "delivery/user-story",
       "name": "user-story",
-      "group": "delivery",
-      "path": "skills/delivery/user-story"
+      "domain": "delivery"
     },
     {
+      "id": "delivery/work-item",
       "name": "work-item",
-      "group": "delivery",
-      "path": "skills/delivery/work-item"
+      "domain": "delivery"
     },
     {
+      "id": "delivery/workflow-client-bootstrap",
       "name": "workflow-client-bootstrap",
-      "group": "delivery",
-      "path": "skills/delivery/workflow-client-bootstrap"
+      "domain": "delivery"
     },
     {
+      "id": "delivery/workflow-generic-project",
       "name": "workflow-generic-project",
-      "group": "delivery",
-      "path": "skills/delivery/workflow-generic-project"
+      "domain": "delivery"
     },
     {
+      "id": "design/figma",
       "name": "figma",
-      "group": "design",
-      "path": "skills/design/figma"
+      "domain": "design"
     },
     {
+      "id": "design/figma-code-connect-components",
       "name": "figma-code-connect-components",
-      "group": "design",
-      "path": "skills/design/figma-code-connect-components"
+      "domain": "design"
     },
     {
+      "id": "design/figma-create-design-system-rules",
       "name": "figma-create-design-system-rules",
-      "group": "design",
-      "path": "skills/design/figma-create-design-system-rules"
+      "domain": "design"
     },
     {
+      "id": "design/figma-create-new-file",
       "name": "figma-create-new-file",
-      "group": "design",
-      "path": "skills/design/figma-create-new-file"
+      "domain": "design"
     },
     {
+      "id": "design/figma-implement-design",
       "name": "figma-implement-design",
-      "group": "design",
-      "path": "skills/design/figma-implement-design"
+      "domain": "design"
     },
     {
+      "id": "design/ui-ux-pro-max",
       "name": "ui-ux-pro-max",
-      "group": "design",
-      "path": "skills/design/ui-ux-pro-max"
+      "domain": "design"
     },
     {
+      "id": "forge/gh-address-comments",
       "name": "gh-address-comments",
-      "group": "forge",
-      "path": "skills/forge/gh-address-comments"
+      "domain": "forge"
     },
     {
+      "id": "forge/gh-contribution-planner",
       "name": "gh-contribution-planner",
-      "group": "forge",
-      "path": "skills/forge/gh-contribution-planner"
+      "domain": "forge"
     },
     {
+      "id": "forge/gh-fix-ci",
       "name": "gh-fix-ci",
-      "group": "forge",
-      "path": "skills/forge/gh-fix-ci"
+      "domain": "forge"
     },
     {
+      "id": "forge/github-cli-workflow",
       "name": "github-cli-workflow",
-      "group": "forge",
-      "path": "skills/forge/github-cli-workflow"
+      "domain": "forge"
     },
     {
+      "id": "forge/gitlab-cli-workflow",
       "name": "gitlab-cli-workflow",
-      "group": "forge",
-      "path": "skills/forge/gitlab-cli-workflow"
+      "domain": "forge"
     },
     {
+      "id": "forge/workflow-client-bootstrap",
       "name": "workflow-client-bootstrap",
-      "group": "forge",
-      "path": "skills/forge/workflow-client-bootstrap"
+      "domain": "forge"
     },
     {
+      "id": "forge/workflow-generic-project",
       "name": "workflow-generic-project",
-      "group": "forge",
-      "path": "skills/forge/workflow-generic-project"
+      "domain": "forge"
     },
     {
+      "id": "forge/worktree",
+      "name": "worktree",
+      "domain": "forge"
+    },
+    {
+      "id": "integrations/clickup-cli",
       "name": "clickup-cli",
-      "group": "integrations",
-      "path": "skills/integrations/clickup-cli"
+      "domain": "integrations"
     },
     {
+      "id": "integrations/linear",
       "name": "linear",
-      "group": "integrations",
-      "path": "skills/integrations/linear"
+      "domain": "integrations"
     },
     {
+      "id": "integrations/mcp",
+      "name": "mcp",
+      "domain": "integrations"
+    },
+    {
+      "id": "integrations/slack-assistant",
       "name": "slack-assistant",
-      "group": "integrations",
-      "path": "skills/integrations/slack-assistant"
+      "domain": "integrations"
     },
     {
+      "id": "integrations/slack-cli",
       "name": "slack-cli",
-      "group": "integrations",
-      "path": "skills/integrations/slack-cli"
+      "domain": "integrations"
     },
     {
+      "id": "loops/loop-runner",
       "name": "loop-runner",
-      "group": "loops",
-      "path": "skills/loops/loop-runner"
+      "domain": "loops"
     },
     {
+      "id": "ops/docs-generator",
       "name": "docs-generator",
-      "group": "ops",
-      "path": "skills/ops/docs-generator"
+      "domain": "ops"
     },
     {
+      "id": "ops/llm-cost-advisor",
       "name": "llm-cost-advisor",
-      "group": "ops",
-      "path": "skills/ops/llm-cost-advisor"
+      "domain": "ops"
     },
     {
+      "id": "ops/swarm",
+      "name": "swarm",
+      "domain": "ops"
+    },
+    {
+      "id": "ops/swarm-handoff",
+      "name": "swarm-handoff",
+      "domain": "ops"
+    },
+    {
+      "id": "ops/swarm-observer",
+      "name": "swarm-observer",
+      "domain": "ops"
+    },
+    {
+      "id": "ops/triage",
       "name": "triage",
-      "group": "ops",
-      "path": "skills/ops/triage"
+      "domain": "ops"
     },
     {
+      "id": "tooling/herdr",
+      "name": "herdr",
+      "domain": "tooling"
+    },
+    {
+      "id": "tooling/inventory",
+      "name": "inventory",
+      "domain": "tooling"
+    },
+    {
+      "id": "tooling/jupyter-notebook",
       "name": "jupyter-notebook",
-      "group": "tooling",
-      "path": "skills/tooling/jupyter-notebook"
+      "domain": "tooling"
     },
     {
+      "id": "tooling/playwright-cli",
       "name": "playwright-cli",
-      "group": "tooling",
-      "path": "skills/tooling/playwright-cli"
+      "domain": "tooling"
     }
   ]
 }
