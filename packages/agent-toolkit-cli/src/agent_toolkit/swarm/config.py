@@ -90,9 +90,86 @@ def find_repo_root(
         if auto is not None:
             return auto
     cur = (start or Path.cwd()).resolve()
+    # If we're inside a swarm worktree ( .../.agent-toolkit/swarm/runs/<run_id>/worktrees/<role> ),
+    # extract the main repo from that path directly
     for p in [cur] + list(cur.parents):
-        if (p / ".git").exists():
-            return p
+        # Detect being inside a run worktree: check for .agent-toolkit/swarm/runs segment
+        try:
+            parts = p.parts
+            if ".agent-toolkit" in parts:
+                idx = parts.index(".agent-toolkit")
+                # possible repo is parents[idx-1] if idx>0
+                if idx > 0:
+                    candidate = Path(*parts[:idx])
+                    if (candidate / ".git").exists() and (candidate / ".git").is_dir():
+                        return candidate.resolve()
+                    # also check if candidate is inside worktree path, try to find real repo via git common dir
+                    if candidate.exists():
+                        # Try git common dir resolution
+                        import subprocess
+
+                        try:
+                            res = subprocess.run(
+                                ["git", "rev-parse", "--git-common-dir"],
+                                cwd=str(p),
+                                capture_output=True,
+                                text=True,
+                                timeout=3,
+                            )
+                            if res.returncode == 0:
+                                common = res.stdout.strip()
+                                # common is like /path/to/repo/.git or /path/to/repo/.git/worktrees/...
+                                # Find the repo root by looking for .git dir
+                                common_path = Path(common)
+                                if not common_path.is_absolute():
+                                    common_path = (p / common_path).resolve()
+                                # common_path is .git or .git/worktrees/...
+                                # The repo root is parent of .git
+                                if common_path.name == ".git":
+                                    return common_path.parent.resolve()
+                                elif common_path.parent.name == ".git":
+                                    # e.g., .git/worktrees/...
+                                    return common_path.parent.parent.resolve()
+                                else:
+                                    # fallback: walk up from common_path looking for .git dir
+                                    for q in [common_path] + list(common_path.parents):
+                                        if (q / ".git").is_dir():
+                                            return q.resolve()
+                        except Exception:
+                            pass
+        except Exception:
+            pass
+    for p in [cur] + list(cur.parents):
+        git_path = p / ".git"
+        if git_path.exists():
+            # Prefer directory .git (main repo) over file (worktree)
+            if git_path.is_dir():
+                return p
+            # If .git is a file, it's a worktree — skip and continue searching up
+            # But also try to resolve via git common dir
+            try:
+                import subprocess
+
+                res = subprocess.run(
+                    ["git", "rev-parse", "--git-common-dir"],
+                    cwd=str(p),
+                    capture_output=True,
+                    text=True,
+                    timeout=2,
+                )
+                if res.returncode == 0:
+                    common = res.stdout.strip()
+                    cp = Path(common)
+                    if not cp.is_absolute():
+                        cp = (p / cp).resolve()
+                    if cp.name == ".git":
+                        return cp.parent.resolve()
+                    if cp.parent.name == ".git":
+                        return cp.parent.parent.resolve()
+            except Exception:
+                pass
+            # Continue to next parent instead of returning worktree
+            continue
     return cur
 
 

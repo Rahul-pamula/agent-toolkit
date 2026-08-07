@@ -738,103 +738,105 @@ def cmd_start(args: list[str]) -> int:
                 prompt_file = run_dir / "prompts" / f"{r}.md"
                 # swarm-forge style: $(cat prompt) passed as positional prompt
                 prompt_cat = f"$(cat {_shlex.quote(str(prompt_file))})" if prompt_file.exists() else ""
+                # Export swarm context for handoffs (like SWARMFORGE_ROLE)
+                swarm_env = f"export AGENT_TOOLKIT_SWARM_RUN_ID={_shlex.quote(run_id)} && export AGENT_TOOLKIT_SWARM_RUN_DIR={_shlex.quote(str(run_dir))} && export AGENT_TOOLKIT_SWARM_REPO={_shlex.quote(str(repo))} && export SWARMFORGE_ROLE={_shlex.quote(r)} &&"
                 if runner_name == "opencode":
                     # opencode: --agent + --prompt "$(cat prompt)"
                     if prompt_cat:
                         cmd = [
                             "bash",
                             "-lc",
-                            f"cd {_shlex.quote(str(worktree_path))} && exec opencode --agent {_shlex.quote(r)} --prompt \"{prompt_cat}\"",
+                            f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec opencode --agent {_shlex.quote(r)} --prompt \"{prompt_cat}\"",
                         ]
                     else:
                         cmd = [
                             "bash",
                             "-lc",
-                            f"cd {_shlex.quote(str(worktree_path))} && exec opencode --agent {_shlex.quote(r)}",
+                            f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec opencode --agent {_shlex.quote(r)}",
                         ]
                 elif runner_name == "claude":
                     if prompt_cat:
                         cmd = [
                             "bash",
                             "-lc",
-                            f"cd {_shlex.quote(str(worktree_path))} && exec claude --dangerously-skip-permissions --append-system-prompt-file {_shlex.quote(str(prompt_file))} \"{prompt_cat}\"",
+                            f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec claude --dangerously-skip-permissions --append-system-prompt-file {_shlex.quote(str(prompt_file))} \"{prompt_cat}\"",
                         ]
                     else:
                         cmd = [
                             "bash",
                             "-lc",
-                            f"cd {_shlex.quote(str(worktree_path))} && exec claude --dangerously-skip-permissions",
+                            f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec claude --dangerously-skip-permissions",
                         ]
                 elif runner_name == "codex":
                     if prompt_cat:
                         cmd = [
                             "bash",
                             "-lc",
-                            f"cd {_shlex.quote(str(worktree_path))} && exec codex -C {_shlex.quote(str(worktree_path))} \"{prompt_cat}\"",
+                            f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec codex -C {_shlex.quote(str(worktree_path))} \"{prompt_cat}\"",
                         ]
                     else:
                         cmd = [
                             "bash",
                             "-lc",
-                            f"cd {_shlex.quote(str(worktree_path))} && exec codex",
+                            f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec codex",
                         ]
                 elif runner_name == "cursor":
                     if prompt_cat:
                         cmd = [
                             "bash",
                             "-lc",
-                            f"cd {_shlex.quote(str(worktree_path))} && exec cursor-agent \"{prompt_cat}\"",
+                            f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec cursor-agent \"{prompt_cat}\"",
                         ]
                     else:
                         cmd = [
                             "bash",
                             "-lc",
-                            f"cd {_shlex.quote(str(worktree_path))} && exec cursor-agent",
+                            f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec cursor-agent",
                         ]
                 elif runner_name == "copilot":
                     if prompt_cat:
                         cmd = [
                             "bash",
                             "-lc",
-                            f"cd {_shlex.quote(str(worktree_path))} && exec copilot --name {_shlex.quote('Swarm ' + r)} -i \"{prompt_cat}\"",
+                            f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec copilot --name {_shlex.quote('Swarm ' + r)} -i \"{prompt_cat}\"",
                         ]
                     else:
                         cmd = [
                             "bash",
                             "-lc",
-                            f"cd {_shlex.quote(str(worktree_path))} && exec copilot",
+                            f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec copilot",
                         ]
                 elif runner_name == "muse":
                     if prompt_cat:
                         cmd = [
                             "bash",
                             "-lc",
-                            f"cd {_shlex.quote(str(worktree_path))} && exec muse chat \"{prompt_cat}\"",
+                            f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec muse chat \"{prompt_cat}\"",
                         ]
                     else:
                         cmd = [
                             "bash",
                             "-lc",
-                            f"cd {_shlex.quote(str(worktree_path))} && exec muse chat",
+                            f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec muse chat",
                         ]
                 elif runner_name == "skeleton":
                     cmd = [
                         "bash",
                         "-lc",
-                        f"cd {_shlex.quote(str(worktree_path))} && echo '[skeleton:{r}] ready — no LLM' && exec bash",
+                        f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && echo '[skeleton:{r}] ready — no LLM' && exec bash",
                     ]
                 else:
                     if prompt_cat:
                         cmd = [
                             "bash",
                             "-lc",
-                            f"cd {_shlex.quote(str(worktree_path))} && exec {runner_name} \"{prompt_cat}\"",
+                            f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec {runner_name} \"{prompt_cat}\"",
                         ]
                     else:
                         cmd = [
                             "bash",
                             "-lc",
-                            f"cd {_shlex.quote(str(worktree_path))} && exec {runner_name}",
+                            f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec {runner_name}",
                         ]
                 backend.start_agent(run_dir, run_id, r, cmd)
                 append_trace(
@@ -1706,12 +1708,71 @@ def cmd_handoff_create(args: list[str]) -> int:
     # Resolve run_dir: from --run-id or latest run or env
     run_id = ns.run_id or os.environ.get("AGENT_TOOLKIT_SWARM_RUN_ID")
     if not run_id:
+        # Try to extract run_id from worktree path (e.g., .../.agent-toolkit/swarm/runs/<run_id>/worktrees/<role>)
+        try:
+            cwd = Path.cwd().resolve()
+            parts = cwd.parts
+            if ".agent-toolkit" in parts:
+                idx = parts.index(".agent-toolkit")
+                # Expect .../.agent-toolkit/swarm/runs/<run_id>/...
+                if len(parts) > idx + 3 and parts[idx + 1] == "swarm" and parts[idx + 2] == "runs":
+                    candidate = parts[idx + 3]
+                    # Basic validation: looks like run_id (contains T and Z and -)
+                    if "T" in candidate and "Z" in candidate and "-" in candidate:
+                        # Verify it exists
+                        maybe_dir = run_dir_for(repo, candidate) if (repo / ".git").exists() else None
+                        # Also try via direct path search
+                        if maybe_dir and maybe_dir.is_dir():
+                            run_id = candidate
+                        else:
+                            # Search via config helper
+                            from .config import find_run_dir_by_id
+
+                            if find_run_dir_by_id(candidate):
+                                run_id = candidate
+        except Exception:
+            pass
+    if not run_id:
         # Pick latest run
         runs = list_runs(repo)
         if not runs:
-            return _error("No run found; specify --run-id")
-        run_id = sorted(runs, key=lambda p: p.stat().st_mtime, reverse=True)[0].name
+            # Last fallback: search via find_run_dir_by_id from cwd
+            try:
+                cwd = Path.cwd().resolve()
+                parts = cwd.parts
+                if ".agent-toolkit" in parts:
+                    idx = parts.index(".agent-toolkit")
+                    if len(parts) > idx + 3:
+                        run_id = parts[idx + 3]
+                        from .config import find_run_dir_by_id
+
+                        rd = find_run_dir_by_id(run_id)
+                        if rd and rd.is_dir():
+                            repo = rd.parent.parent.parent  # .agent-toolkit/swarm/runs -> repo
+                        else:
+                            run_id = None
+            except Exception:
+                pass
+        if not run_id:
+            runs = list_runs(repo)
+            if not runs:
+                return _error("No run found; specify --run-id")
+            run_id = sorted(runs, key=lambda p: p.stat().st_mtime, reverse=True)[0].name
     run_dir = run_dir_for(repo, run_id)
+    # Fallback: if run_dir not found, try global search
+    if not run_dir.is_dir():
+        from .config import find_run_dir_by_id
+
+        found = find_run_dir_by_id(run_id)
+        if found and found.is_dir():
+            run_dir = found
+            # Update repo to parent of .agent-toolkit
+            try:
+                repo = found.parent.parent.parent
+            except Exception:
+                pass
+    if not run_dir.is_dir():
+        return _error(f"Run not found: {run_id}")
     if not run_dir.is_dir():
         return _error(f"Run not found: {run_id}")
     state = read_state(run_dir) or {}
