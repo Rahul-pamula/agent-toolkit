@@ -65,18 +65,29 @@ class HerdrBackend:
 
     def _run_json(self, args: list[str], timeout: int = 10) -> dict[str, Any]:
         try:
-            res = subprocess.run(
-                ["herdr"] + args + ["--json"], capture_output=True, text=True, timeout=timeout
-            )
-            # Prefer JSON output parsing
-            try:
-                return (
-                    json.loads(res.stdout)
-                    if res.stdout.strip()
-                    else {"raw": res.stdout, "stderr": res.stderr, "code": res.returncode}
+            # Try with --json first, fallback without if herdr rejects it (e.g., workspace create)
+            for extra in (["--json"], []):
+                res = subprocess.run(
+                    ["herdr"] + args + extra, capture_output=True, text=True, timeout=timeout
                 )
-            except Exception:
-                return {"raw": res.stdout, "stderr": res.stderr, "code": res.returncode}
+                # If herdr complains about unknown --json, try without
+                if "unknown option: --json" in (res.stderr or "") or "unknown option: --json" in (res.stdout or ""):
+                    continue
+                try:
+                    return (
+                        json.loads(res.stdout)
+                        if res.stdout.strip()
+                        else {"raw": res.stdout, "stderr": res.stderr, "code": res.returncode}
+                    )
+                except Exception:
+                    # If not JSON but success, return raw
+                    if res.returncode == 0 and res.stdout.strip():
+                        try:
+                            return json.loads(res.stdout)
+                        except Exception:
+                            return {"raw": res.stdout, "stderr": res.stderr, "code": res.returncode}
+                    return {"raw": res.stdout, "stderr": res.stderr, "code": res.returncode}
+            return {"raw": "", "stderr": "unknown option --json handling failed", "code": 1}
         except FileNotFoundError:
             return {"error": "herdr not found"}
         except Exception as e:
