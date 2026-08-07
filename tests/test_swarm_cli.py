@@ -12,12 +12,13 @@ def run_swarm(args, cwd, extra_env=None):
     env = os.environ.copy()
     if extra_env:
         env.update(extra_env)
-    # Use uv run --project
+    # Use uv run --project — resolve repo root dynamically for CI portability
+    repo_root = Path(__file__).resolve().parents[1]
     cmd = [
         "uv",
         "run",
         "--project",
-        "/home/ulisesjcf/.ai-workspace/repos/github.com/ulises-jeremias/agent-toolkit",
+        str(repo_root),
         "agent-toolkit",
         "swarm",
     ] + args

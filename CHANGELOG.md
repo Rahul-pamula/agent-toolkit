@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- markdownlint-disable MD024 -->
 ## [Unreleased]
 
+## [1.8.1] — 2026-08-06
+
+### Fixed
+- **CI portability** — fix `tests/test_swarm_cli.py` hardcoded `/home/ulisesjcf/...` project path to `Path(__file__).resolve().parents[1]` so `uv run --project` works on any runner (fixes Validate `test_swarm_cli` 9 failures on Python 3.13).
+
 ## [1.8.0] — 2026-08-06
 
 ### Added
