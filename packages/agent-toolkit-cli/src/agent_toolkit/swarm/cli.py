@@ -18,6 +18,36 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+# Detect user's login shell — herdr/tmux already run it, so swarm should too
+def _user_shell() -> str:
+    """Return user's login shell, fallback to bash. Respects $SHELL and /etc/passwd."""
+    import os as _os
+    import pathlib as _pl
+    # 1. $SHELL env (herdr/tmux inherit it)
+    for cand in [_os.environ.get("SHELL"), _os.environ.get("SWARM_SHELL")]:
+        if cand and _pl.Path(cand).exists():
+            return cand
+    # 2. passwd entry
+    try:
+        import pwd as _pwd
+        pw = _pwd.getpwuid(_os.getuid()).pw_shell
+        if pw and _pl.Path(pw).exists():
+            return pw
+    except Exception:
+        pass
+    # 3. common shells
+    for cand in ["/usr/bin/zsh", "/bin/zsh", "/usr/bin/bash", "/bin/bash", "/bin/sh"]:
+        if _pl.Path(cand).exists():
+            return cand
+    return "/bin/bash"
+
+def _shell_base() -> str:
+    """Base shell name for exec fallback (zsh/bash/sh)."""
+    import pathlib as _pl
+    sh = _user_shell()
+    return _pl.Path(sh).name or "bash"
+
+
 from .approvals import (
     approve_gate,
     default_gates_for_recipe,
@@ -762,7 +792,7 @@ def cmd_start(args: list[str]) -> int:
                     _pred = _eager_predecessors.get(_rname, "previous role")
                     _msg = f"Waiting for handoff: {_pred} -> {_rname}  |  role: {_rname}  |  run: {run_id}"
                     _hint = f"Will auto-start {_rname} when {_pred} creates artifact handoff"
-                    _waiting_cmd = ["bash", "-lc", f"echo \"Waiting for handoff: {_pred} -> {_rname} | role: {_rname} | run: {run_id}\" && echo \"Will auto-start {_rname} when {_pred} creates artifact handoff\" && echo \"Tip: agent-toolkit swarm handoffs {run_id}\" && exec bash"]
+                    _waiting_cmd = [_user_shell(), "-lc", f"echo \"Waiting for handoff: {_pred} -> {_rname} | role: {_rname} | run: {run_id}\" && echo \"Will auto-start {_rname} when {_pred} creates artifact handoff\" && echo \"Tip: agent-toolkit swarm handoffs {run_id}\" && exec {_shell_base()}"]
                     try:
                         backend.start_agent(run_dir, run_id, _rname, _waiting_cmd)
                         append_trace(run_dir, {"ts": now_ts(), "kind": "agent_waiting", "role": _rname, "waiting_for": _pred})
@@ -796,97 +826,97 @@ def cmd_start(args: list[str]) -> int:
                     # opencode: --agent + --prompt "$(cat prompt)"
                     if prompt_cat:
                         cmd = [
-                            "bash",
+                            _user_shell(),
                             "-lc",
                             f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec opencode --agent {_shlex.quote(r)} --prompt \"{prompt_cat}\"",
                         ]
                     else:
                         cmd = [
-                            "bash",
+                            _user_shell(),
                             "-lc",
                             f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec opencode --agent {_shlex.quote(r)}",
                         ]
                 elif runner_name == "claude":
                     if prompt_cat:
                         cmd = [
-                            "bash",
+                            _user_shell(),
                             "-lc",
                             f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec claude --dangerously-skip-permissions --append-system-prompt-file {_shlex.quote(str(prompt_file))} \"{prompt_cat}\"",
                         ]
                     else:
                         cmd = [
-                            "bash",
+                            _user_shell(),
                             "-lc",
                             f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec claude --dangerously-skip-permissions",
                         ]
                 elif runner_name == "codex":
                     if prompt_cat:
                         cmd = [
-                            "bash",
+                            _user_shell(),
                             "-lc",
                             f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec codex -C {_shlex.quote(str(worktree_path))} \"{prompt_cat}\"",
                         ]
                     else:
                         cmd = [
-                            "bash",
+                            _user_shell(),
                             "-lc",
                             f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec codex",
                         ]
                 elif runner_name == "cursor":
                     if prompt_cat:
                         cmd = [
-                            "bash",
+                            _user_shell(),
                             "-lc",
                             f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec cursor-agent \"{prompt_cat}\"",
                         ]
                     else:
                         cmd = [
-                            "bash",
+                            _user_shell(),
                             "-lc",
                             f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec cursor-agent",
                         ]
                 elif runner_name == "copilot":
                     if prompt_cat:
                         cmd = [
-                            "bash",
+                            _user_shell(),
                             "-lc",
                             f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec copilot --name {_shlex.quote('Swarm ' + r)} -i \"{prompt_cat}\"",
                         ]
                     else:
                         cmd = [
-                            "bash",
+                            _user_shell(),
                             "-lc",
                             f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec copilot",
                         ]
                 elif runner_name == "muse":
                     if prompt_cat:
                         cmd = [
-                            "bash",
+                            _user_shell(),
                             "-lc",
                             f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec muse chat \"{prompt_cat}\"",
                         ]
                     else:
                         cmd = [
-                            "bash",
+                            _user_shell(),
                             "-lc",
                             f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec muse chat",
                         ]
                 elif runner_name == "skeleton":
                     cmd = [
-                        "bash",
+                        _user_shell(),
                         "-lc",
-                        f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && echo '[skeleton:{r}] ready — no LLM' && exec bash",
+                        f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && echo '[skeleton:{r}] ready — no LLM' && exec {_shell_base()}",
                     ]
                 else:
                     if prompt_cat:
                         cmd = [
-                            "bash",
+                            _user_shell(),
                             "-lc",
                             f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec {runner_name} \"{prompt_cat}\"",
                         ]
                     else:
                         cmd = [
-                            "bash",
+                            _user_shell(),
                             "-lc",
                             f"{swarm_env} cd {_shlex.quote(str(worktree_path))} && exec {runner_name}",
                         ]
@@ -1975,24 +2005,24 @@ def cmd_handoff_create(args: list[str]) -> int:
                     cmd = None
                     if runner_name == "opencode":
                         if prompt_cat:
-                            cmd = ["bash", "-lc", f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec opencode --agent {_shlex2.quote(ns.to_role)} --prompt \"" + prompt_cat + "\""]
+                            cmd = [_user_shell(), "-lc", f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec opencode --agent {_shlex2.quote(ns.to_role)} --prompt \"" + prompt_cat + "\""]
                         else:
-                            cmd = ["bash", "-lc", f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec opencode --agent {_shlex2.quote(ns.to_role)}"]
+                            cmd = [_user_shell(), "-lc", f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec opencode --agent {_shlex2.quote(ns.to_role)}"]
                     elif runner_name == "claude":
                         if prompt_cat:
-                            cmd = ["bash", "-lc", f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec claude --dangerously-skip-permissions --append-system-prompt-file {_shlex2.quote(str(prompt_file))} \"" + prompt_cat + "\""]
+                            cmd = [_user_shell(), "-lc", f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec claude --dangerously-skip-permissions --append-system-prompt-file {_shlex2.quote(str(prompt_file))} \"" + prompt_cat + "\""]
                         else:
-                            cmd = ["bash", "-lc", f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec claude --dangerously-skip-permissions"]
+                            cmd = [_user_shell(), "-lc", f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec claude --dangerously-skip-permissions"]
                     elif runner_name == "codex":
                         if prompt_cat:
-                            cmd = ["bash", "-lc", f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec codex -C {_shlex2.quote(str(worktree_path))} \"" + prompt_cat + "\""]
+                            cmd = [_user_shell(), "-lc", f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec codex -C {_shlex2.quote(str(worktree_path))} \"" + prompt_cat + "\""]
                         else:
-                            cmd = ["bash", "-lc", f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec codex"]
+                            cmd = [_user_shell(), "-lc", f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec codex"]
                     elif runner_name == "cursor":
                         if prompt_cat:
-                            cmd = ["bash", "-lc", f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec cursor-agent \"" + prompt_cat + "\""]
+                            cmd = [_user_shell(), "-lc", f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec cursor-agent \"" + prompt_cat + "\""]
                         else:
-                            cmd = ["bash", "-lc", f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec cursor-agent"]
+                            cmd = [_user_shell(), "-lc", f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec cursor-agent"]
                     if cmd:
                         backend.start_agent(run_dir, run_id, ns.to_role, cmd)
                         append_trace(run_dir, {"ts": now_ts(), "kind": "agent_started", "role": ns.to_role, "runner": runner_name, "cmd": cmd, "trigger": "handoff_auto_provision"})
