@@ -1866,7 +1866,93 @@ def cmd_handoff_create(args: list[str]) -> int:
     hid = dest.stem
     move_handoff(run_dir, hid, "outbox", "queued")
     append_trace(run_dir, {"ts": now_ts(), "kind": "handoff_queued", "handoff_id": hid})
+    # Auto-complete incoming active handoffs for the sender (e.g., reviewer had active implementer->reviewer, now reviewer->integrator should close it)
+    try:
+        active = list_handoffs(run_dir, "active")
+        for h in list(active):
+            if h.get("to") == ns.from_role:
+                hid2 = h.get("handoff_id")
+                if hid2:
+                    try:
+                        move_handoff(run_dir, hid2, "active", "completed")
+                        append_trace(run_dir, {"ts": now_ts(), "kind": "handoff_completed", "handoff_id": hid2, "auto": True, "trigger": f"handoff_create:{hid}"})
+                    except Exception:
+                        pass
+    except Exception:
+        pass
     print(f"Handoff {hid} created: {ns.from_role} -> {ns.to_role} ({ns.htype})")
+    # Auto-provision next role if lazy (create worktree + tmux window + start agent)
+    try:
+        state = read_state(run_dir) or {}
+        roles = state.get("roles", {})
+        worktrees = state.get("worktrees", []) or []
+        has_wt = any(w.get("role") == ns.to_role for w in worktrees)
+        if not has_wt and ns.to_role in roles:
+            # Resolve runner/backend from state
+            runner_name = state.get("runner") or "claude"
+            backend_name = state.get("ui_backend", "tmux")
+            backend = get_backend(backend_name)
+            # Create worktree for target role
+            try:
+                info = create_worktree(repo, run_dir, ns.to_role, run_id, state.get("base_ref", "HEAD"))
+                info["role"] = ns.to_role
+                # Copy opencode agent if present
+                try:
+                    _agent_src = run_dir / "runner" / "opencode" / "agents" / f"{ns.to_role}.md"
+                    if _agent_src.exists():
+                        _wt_agents = Path(info["path"]) / ".opencode" / "agents"
+                        _wt_agents.mkdir(parents=True, exist_ok=True)
+                        import shutil as _shutil
+                        _shutil.copy2(_agent_src, _wt_agents / f"{ns.to_role}.md")
+                        _prompt_src = run_dir / "prompts" / f"{ns.to_role}.md"
+                        if _prompt_src.exists():
+                            _shutil.copy2(_prompt_src, Path(info["path"]) / f".agent-toolkit-prompt-{ns.to_role}.md")
+                except Exception:
+                    pass
+                worktrees.append(info)
+                state["worktrees"] = worktrees
+                state["roles"][ns.to_role] = "ready"
+                write_state(run_dir, state)
+                append_trace(run_dir, {"ts": now_ts(), "kind": "worktree_created", "role": ns.to_role, "path": info["path"], "branch": info["branch"]})
+                append_trace(run_dir, {"ts": now_ts(), "kind": "role_activated", "role": ns.to_role})
+                # Create tmux/herdr surface and start agent
+                try:
+                    backend.create_role_surface(run_dir, run_id, ns.to_role)
+                    import shlex as _shlex2
+                    worktree_path = info["path"]
+                    prompt_file = run_dir / "prompts" / f"{ns.to_role}.md"
+                    prompt_cat = f"$(cat {_shlex2.quote(str(prompt_file))})" if prompt_file.exists() else ""
+                    swarm_env = f"export AGENT_TOOLKIT_SWARM_RUN_ID={_shlex2.quote(run_id)} && export AGENT_TOOLKIT_SWARM_RUN_DIR={_shlex2.quote(str(run_dir))} && export AGENT_TOOLKIT_SWARM_REPO={_shlex2.quote(str(repo))} && export SWARMFORGE_ROLE={_shlex2.quote(ns.to_role)} &&"
+                    cmd = None
+                    if runner_name == "opencode":
+                        if prompt_cat:
+                            cmd = ["bash", "-lc", f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec opencode --agent {_shlex2.quote(ns.to_role)} --prompt \"" + prompt_cat + "\""]
+                        else:
+                            cmd = ["bash", "-lc", f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec opencode --agent {_shlex2.quote(ns.to_role)}"]
+                    elif runner_name == "claude":
+                        if prompt_cat:
+                            cmd = ["bash", "-lc", f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec claude --dangerously-skip-permissions --append-system-prompt-file {_shlex2.quote(str(prompt_file))} \"" + prompt_cat + "\""]
+                        else:
+                            cmd = ["bash", "-lc", f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec claude --dangerously-skip-permissions"]
+                    elif runner_name == "codex":
+                        if prompt_cat:
+                            cmd = ["bash", "-lc", f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec codex -C {_shlex2.quote(str(worktree_path))} \"" + prompt_cat + "\""]
+                        else:
+                            cmd = ["bash", "-lc", f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec codex"]
+                    elif runner_name == "cursor":
+                        if prompt_cat:
+                            cmd = ["bash", "-lc", f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec cursor-agent \"" + prompt_cat + "\""]
+                        else:
+                            cmd = ["bash", "-lc", f"{swarm_env} cd {_shlex2.quote(str(worktree_path))} && exec cursor-agent"]
+                    if cmd:
+                        backend.start_agent(run_dir, run_id, ns.to_role, cmd)
+                        append_trace(run_dir, {"ts": now_ts(), "kind": "agent_started", "role": ns.to_role, "runner": runner_name, "cmd": cmd, "trigger": "handoff_auto_provision"})
+                except Exception as e:
+                    append_trace(run_dir, {"ts": now_ts(), "kind": "agent_start_failed", "role": ns.to_role, "error": str(e)[:500]})
+            except Exception as e:
+                append_trace(run_dir, {"ts": now_ts(), "kind": "worktree_failed", "role": ns.to_role, "error": str(e)[:500]})
+    except Exception:
+        pass
     return 0
 
 

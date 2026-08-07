@@ -95,7 +95,8 @@ def compose_role_prompt(
                 f"   `agent-toolkit swarm handoff create --type commit --from {role} --to {next_roles[0]} --commit <40-hex-sha> --branch <your-branch>`",
                 "2. If you created an artifact (e.g., `artifacts/review.md`), then:",
                 f"   `agent-toolkit swarm handoff create --type artifact --from {role} --to {next_roles[0]} --artifact artifacts/<file>.md`",
-                "The next role will run `agent-toolkit swarm task next --role <next> --run-id <run_id>` to pick it up. Do not wait — the handoff is durable and the daemon will notify.",
+                "The next role will run `agent-toolkit swarm task next --role <next> --run-id <run_id>` to pick it up. Do not wait — the handoff is durable and the daemon will notify. The next role's tmux window will be auto-created by the handoff.",
+                "IMPORTANT: After you finish writing the artifact or committing code, immediately run the `handoff create` command above — do NOT ask the user for confirmation, do NOT wait for 'do the handoff'.",
                 f"Run ID for this swarm: `{role_def.get('_run_id', 'see task contract')}` — if the command says 'No run found', add `--run-id <run_id>` or ensure `AGENT_TOOLKIT_SWARM_RUN_ID` is exported (it is in your tmux env).",
             ]
             parts.append("\n".join(handoff_lines))
