@@ -729,8 +729,57 @@ def cmd_start(args: list[str]) -> int:
 
     try:
         backend.create_run_surface(run_dir, run_id, recipe_name)
+        # Eager windows for ALL roles (UX like swarm-forge), lazy agents only for initial_roles
+        # Build eager mapping for waiting message: who feeds whom
+        # Determine predecessor for each role based on produces/consumes chain
+        _eager_predecessors = {}
+        try:
+            _spec_roles = recipe.get("spec", {}).get("roles", {}) if recipe else {}
+            for _rname, _rdef in _spec_roles.items():
+                _consumes = _rdef.get("consumes", [])
+                for _other, _odef in _spec_roles.items():
+                    if _other == _rname:
+                        continue
+                    _produces = _odef.get("produces", [])
+                    if any(pr in _consumes for pr in _produces):
+                        _eager_predecessors[_rname] = _other
+                        break
+            # Fallback chain for known recipes
+            if not _eager_predecessors:
+                _fallback = {
+                    "pair": {"reviewer": "implementer", "integrator": "reviewer"},
+                    "team": {"implementer": "planner", "reviewer": "implementer", "architect": "reviewer"},
+                    "full": {"implementer": "planner", "refactorer": "implementer", "architect": "refactorer", "hardener": "architect", "qa": "hardener"},
+                }.get(recipe_name, {})
+                _eager_predecessors.update(_fallback)
+        except Exception:
+            pass
+        for _rname in list(roles.keys()):
+            try:
+                backend.create_role_surface(run_dir, run_id, _rname)
+                if _rname not in initial_roles:
+                    # Waiting placeholder with clear UX
+                    _pred = _eager_predecessors.get(_rname, "previous role")
+                    _msg = f"Waiting for handoff: {_pred} -> {_rname}  |  role: {_rname}  |  run: {run_id}"
+                    _hint = f"Will auto-start {_rname} when {_pred} creates artifact handoff"
+                    _waiting_cmd = ["bash", "-lc", f"echo \"Waiting for handoff: {_pred} -> {_rname} | role: {_rname} | run: {run_id}\" && echo \"Will auto-start {_rname} when {_pred} creates artifact handoff\" && echo \"Tip: agent-toolkit swarm handoffs {run_id}\" && exec bash"]
+                    try:
+                        backend.start_agent(run_dir, run_id, _rname, _waiting_cmd)
+                        append_trace(run_dir, {"ts": now_ts(), "kind": "agent_waiting", "role": _rname, "waiting_for": _pred})
+                    except Exception:
+                        pass
+            except Exception:
+                pass
+        # Keep initial role focused for UX (like swarm-forge keeps first window active)
+        try:
+            if initial_roles and hasattr(backend, '_socket_for'):
+                import subprocess as _sp
+                _sock = backend._socket_for(run_id)
+                _sp.run(["tmux", "-L", _sock, "select-window", "-t", f"swarm-{run_id}:{initial_roles[0]}"], capture_output=True, timeout=3)
+        except Exception:
+            pass
         for r in initial_roles:
-            backend.create_role_surface(run_dir, run_id, r)
+            # Window already created eagerly above; just start agent
             # Auto-start agent in its tmux/herdr surface
             try:
                 worktree_path = next(
