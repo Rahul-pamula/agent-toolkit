@@ -184,10 +184,14 @@ def test_swarm_herdr_explicit_missing_fails():
 def test_swarm_auto_fallback_to_tmux():
     with tempfile.TemporaryDirectory() as td:
         repo = init_repo(Path(td))
-        # auto should succeed regardless of herdr availability (herdr or tmux)
+        # auto should succeed when a backend is available; on CI macos without tmux/herdr it correctly reports no backend
         res = run_swarm(
             ["start", "--recipe", "pair", "--ui", "auto", "--runner", "skeleton", "Task"], repo
         )
+        if res.returncode != 0 and "No interactive backend available" in (res.stdout + res.stderr):
+            import pytest
+
+            pytest.skip("No herdr/tmux available on this runner — auto correctly reports no backend")
         assert res.returncode == 0, res.stderr + res.stdout
         assert "swarm run created" in res.stdout.lower()
 

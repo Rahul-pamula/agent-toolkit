@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- markdownlint-disable MD024 -->
 ## [Unreleased]
 
+## [1.8.2] — 2026-08-06
+
+### Fixed
+- **CI macos tmux** — make `test_swarm_auto_fallback_to_tmux` skip when neither herdr nor tmux is available on runner (fixes 1 failure on macos-latest).
+
 ## [1.8.1] — 2026-08-06
 
 ### Fixed

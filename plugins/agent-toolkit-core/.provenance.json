@@ -1,55 +1,6 @@
 {
-  "generatorVersion": "1.8.1",
+  "generatorVersion": "1.8.2",
   "product": "agent-toolkit-core",
-  "target": "windsurf",
-  "artifacts": [
-    {
-      "path": "agent-toolkit-core/AGENTS.md",
-      "sourceFile": "generated",
-      "sourceDigest": "n/a",
-      "generatedDigest": "d312620363f4"
-    },
-    {
-      "path": "agent-toolkit-core/skills/assistant/SKILL.md",
-      "sourceFile": "generated",
-      "sourceDigest": "n/a",
-      "generatedDigest": "8d752e774043"
-    },
-    {
-      "path": "agent-toolkit-core/skills/dev-companion/SKILL.md",
-      "sourceFile": "generated",
-      "sourceDigest": "n/a",
-      "generatedDigest": "97e6e487514a"
-    },
-    {
-      "path": "agent-toolkit-core/skills/output-handshake/SKILL.md",
-      "sourceFile": "generated",
-      "sourceDigest": "n/a",
-      "generatedDigest": "a9948ef0dad3"
-    },
-    {
-      "path": "agent-toolkit-core/skills/pr-fallback/SKILL.md",
-      "sourceFile": "generated",
-      "sourceDigest": "n/a",
-      "generatedDigest": "ae0ed4f57759"
-    },
-    {
-      "path": "agent-toolkit-core/skills/workspace-knowledge-sync/SKILL.md",
-      "sourceFile": "generated",
-      "sourceDigest": "n/a",
-      "generatedDigest": "8a7138abd914"
-    },
-    {
-      "path": "agent-toolkit-core/skills/onboarding/SKILL.md",
-      "sourceFile": "generated",
-      "sourceDigest": "n/a",
-      "generatedDigest": "be04af0af5cd"
-    },
-    {
-      "path": "agent-toolkit-core/rules/code-reviewer.mdc",
-      "sourceFile": "generated",
-      "sourceDigest": "n/a",
-      "generatedDigest": "729380d68005"
-    }
-  ]
+  "target": "muse-code",
+  "artifacts": []
 }
