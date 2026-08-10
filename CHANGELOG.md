@@ -10,9 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- markdownlint-disable MD024 -->
 ## [Unreleased]
 
+## [1.9.0] — 2026-08-10
+
 ### Added
 - **Agent Plugins 1.0** portable plugin standard — every plugin in `plugins/` now ships as `plugin.json` (`$schema: https://agent-plugins.org/schemas/1.0.0/plugin.schema.json`) + `skills/` + `mcp.json` for Cursor, VS Code, GitHub Copilot, ChatGPT/Codex, Kiro. Dual emit keeps `.claude-plugin/plugin.json` for Claude Code (which does not yet support the spec). See `docs/AGENT_PLUGINS.md`, `plugins/README.md`, and `schemas/agent-plugins/1.0.0/`. Compiler target `agent-plugins`, validator `scripts/validate-agent-plugins.py`, and CI job `validate-agent-plugins` added; `scripts/bump-version.py` now preserves `$schema`/`extensions`.
 
+### Changed
+- **Docs** — `docs/COMPATIBILITY.md` clarifies Claude legacy-only and adds VS Code/Kiro + dedicated Agent Plugins 1.0 subsection; `docs/TARGETS.md` adds Agent Plugins 1.0 row to capability matrix.
 
 ## [1.8.4] — 2026-08-07
 
