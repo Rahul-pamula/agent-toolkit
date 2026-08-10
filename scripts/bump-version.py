@@ -96,6 +96,17 @@ def main():
                 data["$schema"] = "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json"
                 pl.write_text(json.dumps(data, indent=2) + "\n")
             changed += 1
+    # Legacy Claude/Cursor plugin manifests inside plugins/*/.claude-plugin/ and .cursor-plugin/
+    for legacy in list((ROOT / "plugins").glob("*/.claude-plugin/plugin.json")) + list(
+        (ROOT / "plugins").glob("*/.cursor-plugin/plugin.json")
+    ):
+        data = json.loads(legacy.read_text())
+        if data.get("version") != version:
+            print(f"bumped {legacy.relative_to(ROOT)}")
+            if not check:
+                data["version"] = version
+                legacy.write_text(json.dumps(data, indent=2) + "\n")
+            changed += 1
     if check and changed:
         print(f"{changed} files would change", file=sys.stderr)
         sys.exit(1)
