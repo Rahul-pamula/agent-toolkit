@@ -1,6 +1,6 @@
 version: 1
 generated: true
-count: 60
+count: 61
 skills:
   - id: core/assistant
     name: assistant
@@ -244,6 +244,13 @@ skills:
     description: Translates Figma designs into production-ready application code with
       1:1 visual fidelity. Use when implementing UI code from Figma files, when user
       mentions "implement design", "generate code", "imple
+    stability: stable
+  - id: design/frontend-design
+    name: frontend-design
+    domain: design
+    description: Guidance for distinctive, intentional visual design when building
+      new UI or reshaping an existing one. Helps with aesthetic direction, typography,
+      and making choices that don't read as templated defau
     stability: stable
   - id: forge/gh-address-comments
     name: gh-address-comments
