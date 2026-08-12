@@ -1546,6 +1546,15 @@ def cmd_cleanup(args: list[str]) -> int:
     # Mark cleanup pending
     # Optionally remove run_dir if requested? Keep state for audit
     print(f"Cleanup completed for {ns.run_id} (branches preserved).")
+    # Tear down UI backend surfaces (e.g. tmux sessions / socket files) so runs
+    # do not leak tmux servers. Without this, `swarm start` accumulates
+    # /tmp/tmux-<uid>/agent-toolkit-swarm-* sockets across invocations.
+    backend_name = state.get("ui_backend", "auto")
+    try:
+        be = get_backend(backend_name)
+        be.cleanup(run_dir, ns.run_id)
+    except Exception as e:
+        print(f"Backend cleanup failed (non-fatal): {e}", file=sys.stderr)
     try:
         append_trace(run_dir, {"ts": now_ts(), "kind": "cleanup_completed", "run_id": ns.run_id})
     except Exception:

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import shutil
 import subprocess
 from pathlib import Path
@@ -538,15 +539,44 @@ class TmuxBackend:
 
     def cleanup(self, run_dir: Path, run_id: str) -> dict[str, Any]:
         sock = self._socket_for(run_id)
+        session = f"swarm-{run_id}"
+        actions: list[str] = []
         try:
             subprocess.run(
-                ["tmux", "-L", sock, "kill-session", "-t", f"swarm-{run_id}"],
+                ["tmux", "-L", sock, "kill-session", "-t", session],
                 capture_output=True,
                 timeout=5,
             )
-            return {"status": "cleaned"}
+            actions.append("kill-session")
         except Exception as e:
             return {"error": str(e)}
+        # kill-server releases the per-run tmux server. If the server already
+        # exited (e.g. last session closed, tmux crashed, test timeout), this is
+        # a no-op but ensures no server process lingers.
+        try:
+            subprocess.run(
+                ["tmux", "-L", sock, "kill-server"],
+                capture_output=True,
+                timeout=5,
+            )
+            actions.append("kill-server")
+        except Exception:
+            pass
+        # tmux leaves the socket file behind when the server dies without a
+        # clean shutdown (common under pytest timeouts). Remove the orphan so
+        # /tmp/tmux-<uid>/ does not accumulate socket files across runs.
+        try:
+            for base in ("/tmp", os.environ.get("TMPDIR", "/tmp")):
+                cand = Path(base) / f"tmux-{os.getuid()}" / sock
+                if cand.is_socket():
+                    try:
+                        cand.unlink()
+                        actions.append(f"rm-socket:{cand}")
+                    except FileNotFoundError:
+                        pass
+        except Exception:
+            pass
+        return {"backend": "tmux", "status": "cleaned", "actions": actions}
 
 
 def get_backend(name: str):
