@@ -192,7 +192,20 @@ The canonical compiler pipeline now generates native artifacts for 9 AI coding t
 
 ## [Unreleased]
 
+### Fixed
+
+- Codex/OpenCode/Pi manifest validators no longer treat semver `1.10.0` as a
+  private `10.x` hostname (false positive after the v1.10.0 bump).
+
 ### Added
+
+- **Loop comment attribution (default ON):** `loop-gh-gate` prepends
+  `> 🤖 AI-assisted message posted as @{login} by [agent-toolkit](...) (`loop`)`
+  to outbound `gh` comment/review bodies (`--body`, `--body-file`, `-f body=`).
+  Opt out per loop with `attribution: false` or `attribution.enabled: false` in
+  LOOP.md / `loop.yaml`. Login is resolved from the authenticated `gh` token.
+
+### Added (historical backlog)
 
 - Initial toolkit release with 53+ skills across 9 domains (core, delivery, design, forge, integrations, data, tooling, ops, loops)
 - Agent personas for all major AI coding tools: architect, planner, code-reviewer, security-reviewer, performance-optimizer, tdd-guide, refactor-cleaner, docs-lookup
