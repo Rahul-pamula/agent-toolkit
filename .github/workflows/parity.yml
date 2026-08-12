@@ -1,0 +1,56 @@
+name: Parity (Python↔V)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.ref }}-parity
+  cancel-in-progress: true
+
+jobs:
+  parity-seed:
+    name: Golden CLI parity (seed)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: Sync Python CLI
+        run: uv sync --all-extras
+
+      - name: Install pinned V from GitHub Release
+        run: |
+          set -euo pipefail
+          PIN="$(tr -d '[:space:]' < .v-version)"
+          echo "Installing V ${PIN} (prebuilt)"
+          curl -fsSL -o /tmp/v_linux.zip "https://github.com/vlang/v/releases/download/${PIN}/v_linux.zip"
+          sudo rm -rf /usr/local/v
+          sudo unzip -q /tmp/v_linux.zip -d /usr/local
+          # zip usually extracts to /usr/local/v
+          if [ -x /usr/local/v/v ]; then
+            echo "/usr/local/v" >> "${GITHUB_PATH}"
+            /usr/local/v/v version
+          elif [ -x /usr/local/v_linux/v ]; then
+            echo "/usr/local/v_linux" >> "${GITHUB_PATH}"
+            /usr/local/v_linux/v version
+          else
+            echo "Unexpected V zip layout:" >&2
+            find /usr/local -maxdepth 2 -type f -name v >&2 || true
+            exit 1
+          fi
+
+      - name: Build experimental V CLI
+        run: make build-cli
+
+      - name: Run parity harness (seed fixtures)
+        run: python3 tests/parity/run_harness.py --v-bin build/agent-toolkit-v
+        env:
+          AGENT_TOOLKIT_ROOT: ${{ github.workspace }}
