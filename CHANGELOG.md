@@ -10,6 +10,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- markdownlint-disable MD024 -->
 ## [Unreleased]
 
+## [1.10.0] — 2026-08-12
+
+### Added
+- **Providers** — capability provider abstraction WHAT vs HOW (Closes #386), audit 8 candidates + 5 ADOPT via hierarchy (Refs #393), curated agentic-security/code-quality/architecture/design-engineering packs (Closes #390)
+- **Design** — Vercel web-design-guidelines + Microsoft frontend-design-review dual-source pinning (Closes #372, #391), design-assessment orchestration (Closes #373), browser-grounded design-improvement iteration (Closes #374), Chrome DevTools MCP provider (Closes #375)
+- **A11y & Figma** — WCAG 2.2 AA accessibility review (Closes #377), Figma ecosystem audit (Closes #376)
+- **Security** — MCP config + implementation audit (Closes #379), OWASP agentic review (Closes #380), STRIDE threat-modeling + agentic threats (Closes #381)
+- **Quality** — MegaLinter coding-agent orchestration v10 (Closes #382), CodeQL operational workflow (Closes #383), cloud Well-Architected + Mermaid/C4 diagrams (Closes #384, #385)
+- **Governance** — upstream provenance schema/trust tiers + validate-upstream (Closes #364), external provenance lock + integrity validation (Closes #370), supply-chain audit skill (Closes #378), update discovery for provenance lock (Closes #428), ADRs 0004/0005
+- **CLI** — `doctor` provenance/pack/MCP + matrix + context-cost + audit surface (Closes #387, #388, Refs #395, Closes #397), skill-catalog 73→77 + pack validation (Closes #390, #451, #450)
+
+### Fixed
+- **CI green** — MegaLinter PYTHON_RUFF + v10.0.0 alignment + `providers.yaml` empty-line fix (Closes #453, #454), Required CI aggregate gate, branch protection `Required CI` (app_id 15368) enforcement
+- **Swarm** — tear down tmux server on cleanup to stop orphan-socket leak
+- **Workspace/Packs** — validate nested packs, warn on unknown profile keys, regenerate catalogs
+
+### Changed
+- **Docs** — addyosmani documentation-and-adrs vs adr/docs-generator diff (Closes #394), third-party UI UX Pro Max as optional external (REJECT vendoring) per #392
+
 ## [1.9.0] — 2026-08-10
 
 ### Added
