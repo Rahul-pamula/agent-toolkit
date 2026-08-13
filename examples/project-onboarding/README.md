@@ -8,13 +8,11 @@ This covers four AI tools: Claude Code, Cursor, GitHub Copilot, and OpenCode. Do
 
 ## Prerequisites
 
-- **agent-toolkit installed** on your machine (preferred: Python CLI):
+- **agent-toolkit installed** on your machine (native V CLI — any channel in [`docs/INSTALLATION.md`](../../docs/INSTALLATION.md)):
   ```bash
-  uvx --from agent-toolkit-cli agent-toolkit install --dry-run    # Preview (auto-detects tools)
-  uvx --from agent-toolkit-cli agent-toolkit install              # Install
-  # Legacy/offline fallback (deprecated, see docs/adrs/ADR-007-install-sh-deprecation.md):
-  # git clone https://github.com/ulises-jeremias/agent-toolkit ~/.agent-toolkit
-  # bash ~/.agent-toolkit/scripts/install.sh --dry-run
+  uvx --from 'agent-toolkit-cli>=1.11.0' agent-toolkit install --dry-run
+  uvx --from 'agent-toolkit-cli>=1.11.0' agent-toolkit install
+  # also: brew / AUR agent-toolkit-bin / GitHub Release / npm i -g agent-toolkit-cli
   ```
 
 - **Your project cloned** and the working directory set to its root:
@@ -165,44 +163,15 @@ The template from agent-toolkit covers:
 
 ---
 
-## Step 4: Verify with doctor.sh
-
-Run the built-in doctor script to confirm all installed profiles are correctly configured:
+## Step 4: Verify with doctor
 
 ```bash
-bash ~/.agent-toolkit/scripts/doctor.sh
+agent-toolkit doctor
 ```
 
-Expected output:
+Expected: detected tools show profiles installed and healthy. See [`docs/TROUBLESHOOTING.md`](../../docs/TROUBLESHOOTING.md) if not.
 
-```
-agent-toolkit doctor v1.0
-
-Checking installed tools...
-
-  Claude Code
-    CLAUDE.md           ✓  ~/.claude/CLAUDE.md
-    settings.json       ✓  ~/.claude/settings.json
-    agents/             ✓  16 agent files found
-
-  Cursor
-    Global rules        ✓  ~/.cursor/rules/ (8 files)
-    Project rules       ✓  .cursor/rules/ (8 files)
-
-  GitHub Copilot
-    copilot-instructions.md  ✓  .github/copilot-instructions.md
-
-  OpenCode
-    opencode.json       -  not installed (run: install.sh --tools opencode)
-    agents/             -  not installed
-
-Summary: 3 tools configured, 1 not installed.
-
-To install missing tools:
-  bash ~/.agent-toolkit/scripts/install.sh --tools opencode
-```
-
-If a tool shows `✗` (error), the doctor output will explain what is missing and how to fix it.
+If OpenCode is missing, install it and re-run `agent-toolkit install --tools opencode`.
 
 ---
 
@@ -211,12 +180,12 @@ If a tool shows `✗` (error), the doctor output will explain what is missing an
 Once the project files are committed (`.claude/CLAUDE.md`, `.cursor/rules/`, `.github/copilot-instructions.md`), team members need only install agent-toolkit locally:
 
 ```bash
-# One-time install per developer
-git clone https://github.com/ulises-jeremias/agent-toolkit ~/.agent-toolkit
-bash ~/.agent-toolkit/scripts/install.sh
+# One-time install per developer (any V channel — see docs/INSTALLATION.md)
+uv tool install 'agent-toolkit-cli>=1.11.0'
+agent-toolkit install
 ```
 
-The install script detects which AI tools each developer has installed and applies only the relevant profiles. Team members who use Cursor get Cursor rules; Claude Code users get the Claude profile; all Copilot users benefit from the committed instructions without any local steps.
+`agent-toolkit install` detects which AI tools each developer has installed and applies only the relevant profiles. Team members who use Cursor get Cursor rules; Claude Code users get the Claude profile; all Copilot users benefit from the committed instructions without any local steps.
 
 ### Share a setup note in your CONTRIBUTING.md
 
@@ -228,9 +197,9 @@ Add a section to `CONTRIBUTING.md` so new team members know agent-toolkit is ava
 This project uses [agent-toolkit](https://github.com/ulises-jeremias/agent-toolkit)
 for AI-assisted development. To get the full set of agents and skills:
 
-1. Install agent-toolkit: `git clone https://github.com/ulises-jeremias/agent-toolkit ~/.agent-toolkit && bash ~/.agent-toolkit/scripts/install.sh`
+1. Install agent-toolkit: `uv tool install 'agent-toolkit-cli>=1.11.0' && agent-toolkit install` (or brew / AUR `agent-toolkit-bin` / GitHub Release)
 2. Restart your AI coding assistant
-3. Verify: `bash ~/.agent-toolkit/scripts/doctor.sh`
+3. Verify: `agent-toolkit doctor`
 
 Available agents: @code-reviewer, @planner, @security-reviewer, @tdd-guide, and more.
 See `agents/` in the agent-toolkit repo for the full list.
@@ -272,10 +241,10 @@ If the frontmatter is missing or malformed, Cursor silently ignores the file.
 
 GitHub Copilot reads the file only when it is in `.github/copilot-instructions.md` at the repo root. Confirm the path is exact — Copilot does not check subdirectories. Also confirm you have the Copilot extension installed in VS Code or JetBrains (the browser-only Copilot does not load custom instructions).
 
-**doctor.sh shows a tool as not installed that I have installed.**
+**`agent-toolkit doctor` shows a tool as not installed that I have installed.**
 
-The doctor script detects tools by looking for their executables in `$PATH`. If your tool is installed in a non-standard location, the script may not find it. Run the manual install for that tool:
+Doctor detects tools by looking for their executables in `$PATH`. If your tool is installed in a non-standard location, it may not find it. Install profiles explicitly:
 
 ```bash
-bash ~/.agent-toolkit/scripts/install.sh --tools cursor
+agent-toolkit install --tools cursor
 ```
