@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- markdownlint-disable MD024 -->
 ## [Unreleased]
 
+- **Docs** — Docker adapter: debian-slim + GitHub Release V binary; git/gh MUST (Closes #537)
 - **Docs** — macOS Gatekeeper / Windows SmartScreen / code signing policy (Closes #543)
 - **Docs** — V migration risk register with ADR status (Closes #478)
 - **Docs** — Python architecture map & subsystem classification for V waves (Closes #477)
