@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- markdownlint-disable MD024 -->
 ## [Unreleased]
 
+## [1.12.0] — 2026-08-13
+
+Inventory-honest docs and V-first install/upgrade paths. Ships Unreleased work since `v1.11.0` (completions, Docker `TARGETARCH`, PyPI launcher/`doctor` root, Python CLI quarantine as `agent-toolkit-py`).
+
 - **Docs** — Align inventory counts (77 skills / 17 agents / 7 MCP / 7 packs), V-first install/update/uninstall, and collapse stale wiki mirrors that still described Python/`install.sh` as the product
 - **Docs** — Quarantine Python CLI as named `agent-toolkit-py` fallback (ADR-021 launcher stays; #540/#470). Product path remains V.
 - **Docs** — Contributor how-tos are V-first: `docs/HOW_TO_DEVELOP_V.md` (V 0.5.2, `import json`, Makefile), install matrix GitHub/brew/AUR/PyPI/npm, GitHub Release adapter no longer claims PyInstaller, `uv run agent-toolkit` removed from HOW_TO/certification docs
@@ -420,7 +424,8 @@ The canonical compiler pipeline now generates native artifacts for 9 AI coding t
 
 ---
 
-[Unreleased]: https://github.com/ulises-jeremias/agent-toolkit/compare/v1.11.0...HEAD
+[Unreleased]: https://github.com/ulises-jeremias/agent-toolkit/compare/v1.12.0...HEAD
+[1.12.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.12.0
 [1.11.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.11.0
 [1.2.2]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.2.2
 [1.2.1]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.2.1
