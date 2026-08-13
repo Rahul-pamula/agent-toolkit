@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- markdownlint-disable MD024 -->
 ## [Unreleased]
 
+- **Docs** — AUR adapter contract: `agent-toolkit-bin` consumes GitHub Release V binaries (Closes #539)
 - **Docs** — Homebrew adapter contract: Formula consumes GitHub Release V binaries (Closes #538)
 - **Docs** — ADR-024 AUR `agent-toolkit-bin` installs GitHub Release V binaries (Closes #491)
 - **Feat** — GitHub Releases attach native V binaries, SHA256SUMS, and `manifest.json` (Closes #530)
