@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- markdownlint-disable MD024 -->
 ## [Unreleased]
 
+- **Feat** — PyPI `agent-toolkit` is a thin launcher over the bundled V binary (Closes #535)
 - **Docs** — ADR-021 PyPI ships platform wheels with bundled V binary + thin launcher (Closes #486)
 - **Docs** — Add `distribution/` adapter contracts (GitHub Release canonical; no Formula/PKGBUILD copies) (Closes #534)
 - **Docs** — CI cost tiers (PR/main/release) with path filters, timeouts, Python-lane retirement trigger (Closes #532)
