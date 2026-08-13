@@ -63,7 +63,7 @@ make install-cli    # PREFIX/bin/agent-toolkit, default ~/.local/bin
 agent-toolkit doctor --json
 ```
 
-See [docs/v/cutover.md](v/cutover.md) and [docs/v/rollback.md](v/rollback.md). PyPI/`uvx` still ships the Python wheel until native wrappers.
+See [docs/v/cutover.md](v/cutover.md) and [docs/v/rollback.md](v/rollback.md). PyPI/`uvx` ships a thin Python launcher over the V binary ([ADR-021](adrs/ADR-021-pypi-binary.md)); `agent-toolkit-py` remains as fallback until [#540](https://github.com/ulises-jeremias/agent-toolkit/issues/540).
 
 ```bash
 # Run without installing the CLI (preferred for PyPI)
@@ -76,8 +76,7 @@ uvx --from agent-toolkit-cli agent-toolkit doctor
 ### Persistent CLI install
 
 ```bash
-uv tool install agent-toolkit-cli    # preferred when using uv
-# uv tool install agent-toolkit-cli      # alternative
+uv tool install agent-toolkit-cli
 
 agent-toolkit install                # auto-detect all tools
 agent-toolkit doctor                 # verify setup
@@ -187,7 +186,8 @@ npx skills add ulises-jeremias/agent-toolkit -g
 
 ```bash
 brew tap ulises-jeremias/homebrew-tap && brew install agent-toolkit
-yay -S agent-toolkit   # Arch Linux (AUR)
+yay -S agent-toolkit-bin   # Arch Linux (AUR) — GitHub Release V binary
+npm i -g agent-toolkit-cli # npm optionalDependencies platform packages @1.11.0
 ```
 
 ### Git clone + legacy script fallback (deprecated — see ADR-007)
