@@ -50,6 +50,11 @@ fn main() {
 	if out.len == 0 {
 		out = 'release-assets'
 	}
+	// Absolute out path: zip after `cd` into a temp dir must not resolve relative
+	// archive paths against the temp dir (I/O error: No such file or directory).
+	if !out.starts_with('/') {
+		out = join_path(getwd(), out)
+	}
 	version := getenv('RELEASE_VERSION')
 	if version.len == 0 {
 		eprintln('RELEASE_VERSION is required')

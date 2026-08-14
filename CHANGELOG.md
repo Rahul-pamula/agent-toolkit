@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Audit cleanup and V-first ops: CI gates, Docker/Release coupling, scripts→`.vsh`, docs/packaging nits.
 
+- **Fixed** — `pack_release_assets.vsh` uses an absolute `RELEASE_OUT_DIR` so Windows zip packing after `cd` into a temp dir does not fail with I/O error
 - **Docs** — Replace remaining ai-workspace brand with agentic-harness in skills/packs (Fixes #681)
 - **Tests** — Parity harness V_SEMANTIC disposition fixtures for insights/release; widen docs/v paths (Fixes #691)
 - **Docs** — Teach `agent-toolkit loop` instead of obsolete `bin/loop` in skills/packs/loop.yaml (Fixes #680)
@@ -439,13 +440,6 @@ The canonical compiler pipeline now generates native artifacts for 9 AI coding t
 - README Key Concepts table; Windsurf rule parity with Cursor
 - Blocking YAML lint in validate CI; docs/TARGETS and trust boundary guides
 
-## [Unreleased]
-
-- **Chore** — Migrate repo tooling scripts from Python to V (`.vsh`); add `make.vsh` with thin Makefile forwarder; keep `provenance.py` / `validate-upstream.py` and PyPI launcher Python; host skills use CLI / Grep (repo-root `scripts/` is checkout/CI only)
-### Added
-- **Agent Plugins 1.0** portable plugin standard — every plugin in `plugins/` now ships as `plugin.json` (`$schema: https://agent-plugins.org/schemas/1.0.0/plugin.schema.json`) + `skills/` + `mcp.json` for Cursor, VS Code, GitHub Copilot, ChatGPT/Codex, Kiro. Dual emit keeps `.claude-plugin/plugin.json` for Claude Code (which does not yet support the spec). See `docs/AGENT_PLUGINS.md`, `plugins/README.md`, and `schemas/agent-plugins/1.0.0/`. Compiler target `agent-plugins`, validator `scripts/validate-agent-plugins.vsh`, and CI job `validate-agent-plugins` added; `scripts/bump-version.vsh` now preserves `$schema`/`extensions`.
-
-
 ## [1.2.2] — 2026-08-05
 
 ### Changed
@@ -461,7 +455,9 @@ The canonical compiler pipeline now generates native artifacts for 9 AI coding t
 
 ---
 
-[Unreleased]: https://github.com/ulises-jeremias/agent-toolkit/compare/v1.12.0...HEAD
+[Unreleased]: https://github.com/ulises-jeremias/agent-toolkit/compare/v1.12.2...HEAD
+[1.12.2]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.12.2
+[1.12.1]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.12.1
 [1.12.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.12.0
 [1.11.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.11.0
 [1.2.2]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.2.2
