@@ -39,7 +39,10 @@ jobs:
 
       - name: Read VERSION
         id: ver
-        run: echo "version=$(tr -d '[:space:]' < VERSION)" >> "$GITHUB_OUTPUT"
+        run: |
+          v=$(tr -d '[:space:]' < VERSION)
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+          echo "mm=${v%.*}" >> "$GITHUB_OUTPUT"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4
@@ -60,6 +63,10 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
+            # Always tag from VERSION file — semver tags only fire on git tag refs,
+            # so workflow_call/dispatch from a branch would otherwise miss :x.y.z.
+            type=raw,value=${{ steps.ver.outputs.version }}
+            type=raw,value=${{ steps.ver.outputs.mm }}
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=ref,event=branch
