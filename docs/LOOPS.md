@@ -120,7 +120,7 @@ In practice, most teams run all loops at L1 or L2. Reserve L3 for proven, tightl
 
 ### changelog-drafter
 
-**Tier:** L1 | **Cadence:** daily | **Max tokens:** 20,000
+**Tier:** L1 | **Cadence:** daily | **Max tokens:** 20,000 | **[README](../loops/changelog-drafter/README.md)**
 
 Collects all PRs merged since the last git tag and drafts a release notes entry in keep-a-changelog format. Writes to `report.md` only. Never commits, pushes, or tags. Useful for maintaining a changelog without manual effort.
 
@@ -130,7 +130,7 @@ Allowlist: none (read-only). Deny: merge, push, commit, tag.
 
 ### ci-sweeper
 
-**Tier:** L2 | **Cadence:** every 15 minutes | **Max tokens:** 100,000 per run, 48 runs/day max
+**Tier:** L2 | **Cadence:** every 15 minutes | **Max tokens:** 100,000 per run, 48 runs/day max | **[README](../loops/ci-sweeper/README.md)**
 
 Monitors failing CI runs on open PRs and the main branch. For straightforward failures (less than 20 lines, no design impact), opens a draft PR with a minimal fix. For complex failures, posts a diagnosis comment only. Caps at 2 draft PRs per run to avoid spam.
 
@@ -142,7 +142,7 @@ Allowlist: comment, create_draft_pr. Deny: merge, approve, close, force-push, de
 
 ### daily-triage
 
-**Tier:** L1 | **Cadence:** daily | **Max tokens:** 30,000
+**Tier:** L1 | **Cadence:** daily | **Max tokens:** 30,000 | **[README](../loops/daily-triage/README.md)**
 
 Reviews all open issues created in the last 24 hours. Proposes labels and priority scores. Does not apply anything — writes a report only. The lowest-cost loop for staying on top of a single repo.
 
@@ -152,7 +152,7 @@ Allowlist: none (report-only). Deny: merge, close, label, comment, push.
 
 ### dep-sweeper
 
-**Tier:** L2 | **Cadence:** daily | **Max tokens:** 50,000
+**Tier:** L2 | **Cadence:** daily | **Max tokens:** 50,000 | **[README](../loops/dep-sweeper/README.md)**
 
 Detects available patch-level dependency updates across npm, pip, cargo, and other ecosystems. Groups updates by ecosystem. For each ecosystem with patch updates, creates a worktree, applies the updates, runs the test suite, and opens a draft PR if tests pass. Never bumps major or minor versions.
 
@@ -162,7 +162,7 @@ Allowlist: create_draft_pr, comment. Deny: merge, approve, major-version-bump, m
 
 ### issue-triage
 
-**Tier:** L1 | **Cadence:** every 4 hours | **Max tokens:** 25,000 per run, 6 runs/day
+**Tier:** L1 | **Cadence:** every 4 hours | **Max tokens:** 25,000 per run, 6 runs/day | **[README](../loops/issue-triage/README.md)**
 
 Finds open issues with no labels and proposes label assignments and triage routing. Flags security issues immediately for human escalation. Writes proposals to `report.md`. Does not apply labels directly.
 
@@ -172,7 +172,7 @@ Allowlist: none (propose-only). Deny: label, comment, close, merge.
 
 ### oss-daily-briefing
 
-**Tier:** L1 | **Cadence:** daily | **Max tokens:** 80,000
+**Tier:** L1 | **Cadence:** daily | **Max tokens:** 80,000 | **[README](../loops/oss-daily-briefing/README.md)**
 
 Produces a daily read-only briefing across all repos in the configured OSS ecosystem. Covers new PRs in the last 24 hours, issues needing attention, and CI health on main. Supports resumability via `STATE.md` checkpointing. No mutations of any kind.
 
@@ -184,7 +184,7 @@ See the [OSS Maintenance Patterns](#oss-maintenance-patterns) section below for 
 
 ### oss-pr-monitor
 
-**Tier:** L3 | **Cadence:** daily | **Max tokens:** 300,000
+**Tier:** L3 | **Cadence:** daily | **Max tokens:** 300,000 | **[README](../loops/oss-pr-monitor/README.md)**
 
 The most powerful loop in the toolkit. Monitors all open PRs across every configured OSS repo. Merges Dependabot PRs with passing CI, closes dirty Dependabot PRs (they regenerate automatically), and reports on human PRs with CI failures or conflicts. Never merges or closes human PRs. Requires **L3** because `loop-gh-gate` forbids merge/close at L2.
 
@@ -198,7 +198,7 @@ See the [OSS Maintenance Patterns](#oss-maintenance-patterns) section below for 
 
 ### oss-triage
 
-**Tier:** L1 | **Cadence:** daily | **Max tokens:** 150,000
+**Tier:** L1 | **Cadence:** daily | **Max tokens:** 150,000 | **[README](../loops/oss-triage/README.md)**
 
 Scans open issues across all configured OSS repos. Applies labels, responds to questions where the right answer is obvious, asks for minimal reproducers on bug reports, and escalates security reports. Supports resumability. Uses roughly half the budget of `oss-pr-monitor`.
 
@@ -210,7 +210,7 @@ See the [OSS Maintenance Patterns](#oss-maintenance-patterns) section below for 
 
 ### post-merge-cleanup
 
-**Tier:** L2 | **Cadence:** every 6 hours | **Max tokens:** 20,000 per run, 4 runs/day
+**Tier:** L2 | **Cadence:** every 6 hours | **Max tokens:** 20,000 per run, 4 runs/day | **[README](../loops/post-merge-cleanup/README.md)**
 
 Off-peak housekeeping after merges. Deletes branches that have been merged into main for more than 7 days (skips main, develop, release/*). Closes issues that were closed by merged PRs but not yet marked closed. Posts stale comments on issues with no activity in 90+ days (does not close them). Skips any action it is uncertain about.
 
@@ -220,7 +220,7 @@ Allowlist: delete_merged_branch, close_stale_issue, comment. Deny: merge, approv
 
 ### pr-babysitter
 
-**Tier:** L2 | **Cadence:** every 15 minutes | **Max tokens:** 80,000 per run, 96 runs/day
+**Tier:** L2 | **Cadence:** every 15 minutes | **Max tokens:** 80,000 per run, 96 runs/day | **[README](../loops/pr-babysitter/README.md)**
 
 Reviews open PRs that have not received a review in the last hour. Posts a constructive review comment with a summary and 1–3 specific suggestions. Never approves, requests changes, merges, or closes. Escalates on security issues.
 
