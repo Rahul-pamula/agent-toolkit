@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- markdownlint-disable MD024 -->
 ## [Unreleased]
 
+- **Fixed** — `bump-version.vsh` updates `generatorVersion` in `plugins/*/.provenance.json` (not only digests / `"version"` sidecars)
+
 ## [1.14.1] — 2026-08-14
 
 Patch release for post-`v1.14.0` release hygiene that landed on `main` after the tag.

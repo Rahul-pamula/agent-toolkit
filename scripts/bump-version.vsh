@@ -175,12 +175,23 @@ fn main() {
 				raw := read_file(pl) or { continue }
 				mut dirty := false
 				mut t := raw
-				mut vre := regex.regex_opt(r'"version"\s*:\s*"[^"]*"') or { continue }
-				new_t := vre.replace_simple(t, '"version": "${version}"')
-				if new_t != t {
-					println('bumped ${rel_to(root, pl)}')
-					dirty = true
-					t = new_t
+				// .provenance.json uses generatorVersion, not version.
+				if rel.ends_with('.provenance.json') {
+					mut gre := regex.regex_opt(r'"generatorVersion"\s*:\s*"[^"]*"') or { continue }
+					new_t := gre.replace_simple(t, '"generatorVersion": "${version}"')
+					if new_t != t {
+						println('bumped ${rel_to(root, pl)}')
+						dirty = true
+						t = new_t
+					}
+				} else {
+					mut vre := regex.regex_opt(r'"version"\s*:\s*"[^"]*"') or { continue }
+					new_t := vre.replace_simple(t, '"version": "${version}"')
+					if new_t != t {
+						println('bumped ${rel_to(root, pl)}')
+						dirty = true
+						t = new_t
+					}
 				}
 				// Top-level Agent Plugins plugin.json: ensure $schema
 				if rel.ends_with('${plugin}/plugin.json') && !t.contains('"\$schema"') {
