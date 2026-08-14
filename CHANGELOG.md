@@ -10,7 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- markdownlint-disable MD024 -->
 ## [Unreleased]
 
-- **Fixed** — Refresh `plugins/*/.provenance.json` digests (and remaining Codex/Gemini/pi manifests + Dockerfile `ARG VERSION`) after `bump-version.vsh` so `plugin check` stays green
+## [1.14.1] — 2026-08-14
+
+Patch release for post-`v1.14.0` release hygiene that landed on `main` after the tag.
+
+- **Fixed** — `bump-version.vsh` now bumps Dockerfile `ARG VERSION`, Codex/Gemini/pi plugin sidecars, and refreshes `plugins/*/.provenance.json` digests for `plugin.json` so `plugin check` stays green after a version bump
+- **Chore** — Sync leftover 1.14.0 sidecars that the previous bump missed; tighten Dockerfile `ARG VERSION` regex in the bump script
+
 ## [1.14.0] — 2026-08-14
 
 - **Docs** — Align `docs/v/*` and ADR-012/021 amendments with launcher-only PyPI (no `agent-toolkit-py`); scrub leftover CONTRIBUTING / distribution present-tense quarantine wording
@@ -470,7 +476,8 @@ The canonical compiler pipeline now generates native artifacts for 9 AI coding t
 
 ---
 
-[Unreleased]: https://github.com/ulises-jeremias/agent-toolkit/compare/v1.14.0...HEAD
+[Unreleased]: https://github.com/ulises-jeremias/agent-toolkit/compare/v1.14.1...HEAD
+[1.14.1]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.14.1
 [1.14.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.14.0
 [1.13.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.13.0
 [1.12.2]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.12.2
