@@ -12,7 +12,7 @@ v_entry: cmd/agent-toolkit
 notes:
   - Exit-code classes follow ADR-010; bad flags remain exit 2; --help/version exit 0.
   - Disposition values: keep | rewrite-v | wrapper | defer | retire
-  - `module:` fields below are historical labels; implementation is modules/agent_toolkit_*.v
+  - "`module:` fields below are historical labels; implementation is modules/agent_toolkit_*.v"
 
 commands:
   - name: help
