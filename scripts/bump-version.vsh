@@ -151,6 +151,9 @@ fn main() {
 			}
 		}
 	}
+	if bump_regex(root, 'Dockerfile', r'ARG VERSION=\d+\.\d+\.\d+', 'ARG VERSION=${version}', check) {
+		changed++
+	}
 	plugins_dir := join_path(root, 'plugins')
 	if is_dir(plugins_dir) {
 		plugins := ls(plugins_dir) or { []string{} }
@@ -159,6 +162,10 @@ fn main() {
 				join_path(plugin, 'plugin.json'),
 				join_path(plugin, '.claude-plugin', 'plugin.json'),
 				join_path(plugin, '.cursor-plugin', 'plugin.json'),
+				join_path(plugin, '.codex-plugin', 'plugin.json'),
+				join_path(plugin, 'pi-package.json'),
+				join_path(plugin, 'gemini-extension.json'),
+				join_path(plugin, '.provenance.json'),
 			] {
 				pl := join_path(plugins_dir, rel)
 				if !is_file(pl) {

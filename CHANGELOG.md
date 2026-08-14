@@ -469,7 +469,8 @@ The canonical compiler pipeline now generates native artifacts for 9 AI coding t
 
 ---
 
-[Unreleased]: https://github.com/ulises-jeremias/agent-toolkit/compare/v1.13.0...HEAD
+[Unreleased]: https://github.com/ulises-jeremias/agent-toolkit/compare/v1.14.0...HEAD
+[1.14.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.14.0
 [1.13.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.13.0
 [1.12.2]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.12.2
 [1.12.1]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.12.1
