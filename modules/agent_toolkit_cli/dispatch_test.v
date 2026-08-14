@@ -20,6 +20,16 @@ fn test_dispatch_unknown_flag_exit_two() {
 	assert code == 2
 }
 
+fn test_dispatch_leading_json_before_command() {
+	code := dispatch(['agent-toolkit', '--json', 'matrix'])
+	assert code == 0
+}
+
+fn test_dispatch_leading_quiet_before_command() {
+	code := dispatch(['agent-toolkit', '--quiet', 'matrix'])
+	assert code == 0
+}
+
 fn test_dispatch_dc_alias_not_unknown() {
 	code := dispatch(['agent-toolkit', 'dc'])
 	assert code == 0
@@ -156,6 +166,15 @@ fn test_grouped_help_mentions_consumer_and_advanced() {
 	assert h.contains('alias: rollback')
 	assert h.contains('alias: dc')
 	assert !h.contains('install (consumer)')
+}
+
+fn test_dispatch_uses_cli_command_tree() {
+	root := build_root_command()
+	assert root.name == 'agent-toolkit'
+	_ := find_command(root, 'skills') or {
+		assert false
+		return
+	}
 }
 
 fn test_inventory_help_is_implemented() {
