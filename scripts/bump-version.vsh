@@ -220,16 +220,20 @@ fn refresh_plugin_provenance_digest(plugins_dir string, plugin string) {
 	bytes := read_bytes(pj) or { return }
 	dig := sha256_hex12(bytes)
 	raw := read_file(prov) or { return }
-	// Replace generatedDigest for the plugin.json artifact entry only.
 	needle := '"path":"${plugin}/plugin.json"'
 	idx := raw.index(needle) or { return }
-	rest := raw[idx..]
+	// Only rewrite the first generatedDigest after this path (plugin.json artifact).
+	tail := raw[idx..]
 	mut dre := regex.regex_opt(r'"generatedDigest"\s*:\s*"[0-9a-f]+"') or { return }
-	updated_rest := dre.replace_simple(rest, '"generatedDigest":"${dig}"')
-	if updated_rest == rest {
+	start, end := dre.find_from(tail, 0)
+	if start < 0 {
 		return
 	}
-	new_raw := raw[..idx] + updated_rest
+	replacement := '"generatedDigest":"${dig}"'
+	new_raw := raw[..idx + start] + replacement + raw[idx + end..]
+	if new_raw == raw {
+		return
+	}
 	write_file(prov, new_raw) or {}
 	println('refreshed provenance digest ${plugin}/plugin.json -> ${dig}')
 }

@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- markdownlint-disable MD024 -->
 ## [Unreleased]
 
+- **Fixed** — Refresh `plugins/*/.provenance.json` digests (and remaining Codex/Gemini/pi manifests + Dockerfile `ARG VERSION`) after `bump-version.vsh` so `plugin check` stays green
 ## [1.14.0] — 2026-08-14
 
 - **Docs** — Align `docs/v/*` and ADR-012/021 amendments with launcher-only PyPI (no `agent-toolkit-py`); scrub leftover CONTRIBUTING / distribution present-tense quarantine wording
