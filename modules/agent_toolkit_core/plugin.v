@@ -9,7 +9,7 @@ pub:
 	toolkit_root string
 }
 
-// PluginReport summarizes surface sync/check vs gen-surfaces mapping.
+// PluginReport summarizes surface sync/check for plugin products (core/agents/forge).
 pub struct PluginReport {
 pub mut:
 	ok      bool
@@ -18,7 +18,7 @@ pub mut:
 }
 
 // run_plugin syncs or checks canonical agents/skills into plugin bundles.
-// Distinct from `build --check` (compiler drift): this is gen-surfaces copy/compare.
+// Distinct from `build --check` (compiler drift): this is plugin surface copy/compare (core/agents/forge).
 pub fn run_plugin(opts PluginOptions) PluginReport {
 	sub := opts.subcommand
 	if sub.len == 0 || sub in ['help', '-h', '--help'] {
@@ -67,7 +67,7 @@ Subcommands:
 Options:
     --json   Structured CommandResult JSON
 
-This is gen-surfaces copy/compare (core/agents/forge). Compiler emit drift is `build --check`.
+This is plugin surface copy/compare (core/agents/forge). Compiler emit drift is `build --check`.
 '
 }
 
@@ -180,9 +180,7 @@ fn sync_or_check_surface(src string, dst string, root string, check bool) (bool,
 	if check {
 		return false, '  ✗  DRIFT: ${src_rel} → ${dst_rel}'
 	}
-	copy_tree(src, dst) or {
-		return false, '  ✗  Failed to sync ${src} → ${dst}: ${err}'
-	}
+	copy_tree(src, dst) or { return false, '  ✗  Failed to sync ${src} → ${dst}: ${err}' }
 	return true, '  ✓  synced: ${src_rel} → ${dst_rel}'
 }
 
