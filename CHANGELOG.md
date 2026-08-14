@@ -10,7 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- markdownlint-disable MD024 -->
 ## [Unreleased]
 
+## [1.13.0] — 2026-08-14
+
 - **Breaking** — Remove quarantined Python CLI (`agent-toolkit-py` and `src/agent_toolkit/{cli,compiler,installer,…}`). PyPI is an npm-style trampoline over the V binary; CLI tests live in V (`modules/**/*_test.v`) and CI
+
+## [1.12.2] — 2026-08-13
 
 ## [1.12.2] — 2026-08-13
 
@@ -458,7 +462,8 @@ The canonical compiler pipeline now generates native artifacts for 9 AI coding t
 
 ---
 
-[Unreleased]: https://github.com/ulises-jeremias/agent-toolkit/compare/v1.12.2...HEAD
+[Unreleased]: https://github.com/ulises-jeremias/agent-toolkit/compare/v1.13.0...HEAD
+[1.13.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.13.0
 [1.12.2]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.12.2
 [1.12.1]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.12.1
 [1.12.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.12.0
