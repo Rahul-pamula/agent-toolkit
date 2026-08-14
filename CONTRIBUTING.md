@@ -352,12 +352,12 @@ This project follows the [Contributor Covenant Code of Conduct](https://www.cont
 
 ## V modules (canonical consumer CLI)
 
-The in-repo canonical `agent-toolkit` implementation is the V binary ([#555](https://github.com/ulises-jeremias/agent-toolkit/issues/555), [`docs/v/cutover.md`](docs/v/cutover.md)). PyPI is a thin launcher over GitHub Release binaries ([ADR-021](docs/adrs/ADR-021-pypi-binary.md)); `agent-toolkit-py` is a quarantined fallback ([`docs/v/python-fallback.md`](docs/v/python-fallback.md)).
+The in-repo canonical `agent-toolkit` implementation is the V binary ([#555](https://github.com/ulises-jeremias/agent-toolkit/issues/555), [`docs/v/cutover.md`](docs/v/cutover.md)). PyPI is a thin launcher over GitHub Release binaries ([ADR-021](docs/adrs/ADR-021-pypi-binary.md)); there is no Python CLI fallback ([`docs/v/python-fallback.md`](docs/v/python-fallback.md)).
 
 - Pin: root [`.v-version`](.v-version) — see [`docs/v/upgrade-policy.md`](docs/v/upgrade-policy.md)
 - Layout: `modules/agent_toolkit_core` + `modules/agent_toolkit_cli` ([ADR-009](docs/adrs/ADR-009-v-module-architecture.md))
 - Local toolchain: install V matching `.v-version`, then `./make.vsh test`, `./make.vsh fmt-check`, `./make.vsh build-cli` → `build/agent-toolkit`
-- DEPRECATE/REMOVE advanced commands (`insights`, `release`): quarantined `agent-toolkit-py` ([ADR-012](docs/adrs/ADR-012-python-v-coexistence.md); no mixed-engine binary)
+- DEPRECATE/REMOVE advanced commands (`insights`, `release`): disposition-only in V ([ADR-012](docs/adrs/ADR-012-python-v-coexistence.md); no mixed-engine binary)
 
 ## Getting Help
 
@@ -378,17 +378,16 @@ v run scripts/validate-manifests.vsh
 v run scripts/gen-surfaces.vsh --check
 AGENT_TOOLKIT_ROOT=$PWD ./build/agent-toolkit build --check
 
-# Python adapter tests (launcher + fallback; not the product)
+# Python adapter tests (launcher / packaging; not the product CLI)
 uv sync --project packages/pypi/agent-toolkit-cli --all-extras
 AGENT_TOOLKIT_ROOT=$PWD uv run --project packages/pypi/agent-toolkit-cli --directory . pytest -c tests/pytest.ini tests/ -v
 ```
 
 ## Adding a new compiler target
 
-Canonical emitters live in V (`modules/agent_toolkit_core`). The Python `compiler/targets/` tree is quarantined fallback for pytest only ([`docs/v/python-fallback.md`](docs/v/python-fallback.md)).
+Canonical emitters live in V (`modules/agent_toolkit_core`). There is no Python compiler tree ([`docs/v/python-fallback.md`](docs/v/python-fallback.md)).
 
 1. Add `distributions/targets/<target>.yaml` with capability declarations
 2. Implement the V emitter next to existing targets in `modules/agent_toolkit_core`
-3. Add contract tests under `tests/compiler/` (and V tests under `modules/`)
-4. Optionally mirror a Python adapter in `packages/pypi/agent-toolkit-cli/src/agent_toolkit/compiler/targets/<target>.py` for parity tests — not the product path
-5. Ensure unsupported capabilities are reported explicitly (`build --check`)
+3. Add V tests under `modules/` (and packaging/docs pytest under `tests/` where needed)
+4. Ensure unsupported capabilities are reported explicitly (`build --check`)

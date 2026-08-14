@@ -48,7 +48,7 @@ Never `uv run agent-toolkit` from repo root (there is no product uv workspace). 
 
 ```bash
 uv run --project packages/pypi/agent-toolkit-cli --directory . agent-toolkit --version
-# quarantined fallback (Python business logic, not the product):
+# launcher smoke (still execs the V binary via AGENT_TOOLKIT_BIN / wheel bin):
 uv run --project packages/pypi/agent-toolkit-cli --directory . agent-toolkit --help
 ```
 

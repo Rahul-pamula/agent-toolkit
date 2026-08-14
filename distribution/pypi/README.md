@@ -6,7 +6,7 @@
 
 | Path | Role |
 |------|------|
-| `packages/pypi/agent-toolkit-cli/` | Hatchling project **`agent-toolkit-cli`**: thin launcher + quarantined `agent-toolkit-py` fallback |
+| `packages/pypi/agent-toolkit-cli/` | Hatchling project **`agent-toolkit-cli`**: thin launcher over the V binary (no Python CLI) |
 | `packages/pypi/agent-toolkit-cli/platforms.json` | GitHub Release asset → PEP 425/600 wheel tag |
 | `scripts/pack_pypi.vsh` | Copies Release V binaries into the wheel at CI time (like `scripts/pack_npm.vsh`) |
 | `scripts/prepare-native-bin.sh` | Local/PR helper: copy `build/agent-toolkit` into `src/agent_toolkit/bin/` |
@@ -45,4 +45,4 @@ v run scripts/pack_pypi.vsh   # sdist + one wheel per present asset → dist/
 
   Historical note: `Publish (manual)` (`publish.yml`) can still pack wheels but OIDC fails until that filename is also registered on PyPI — prefer `release.yml`.
 
-Console scripts: `agent-toolkit` / `agent-toolkit-cli` → `agent_toolkit.launcher:main` (exec V). `agent-toolkit-py` is a quarantined fallback ([docs/v/python-fallback.md](../../docs/v/python-fallback.md)).
+Console scripts: `agent-toolkit` / `agent-toolkit-cli` → `agent_toolkit.launcher:main` (exec V). There is no Python CLI fallback ([docs/v/python-fallback.md](../../docs/v/python-fallback.md)).

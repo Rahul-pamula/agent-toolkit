@@ -50,7 +50,7 @@ Experimental and stable binaries should expose engine/language, version, and com
 - Consumer commands (install lifecycle + skills/mcp/plugin) are implemented in V.
 - GitHub Release binaries are **stable native V** since `v1.11.0` ([#530](https://github.com/ulises-jeremias/agent-toolkit/issues/530) / ADR-018). Experimental CI names (`agent-toolkit-v-experimental-*`) remain a separate channel and must not overwrite stable assets.
 - **PyPI/`uvx`:** packaging strategy is [ADR-021](ADR-021-pypi-binary.md) (platform wheels + thin launcher over the V binary). Implementation is [#535](https://github.com/ulises-jeremias/agent-toolkit/issues/535). Not a dual-engine switch (options B/C still rejected).
-- Unfinished advanced commands stay `not_implemented` in V. Fallback is quarantined `agent-toolkit-py` ([python-fallback.md](../v/python-fallback.md)), not option C (V exec of Python).
+- Unfinished advanced commands stay `not_implemented` / disposition-only in V ([python-fallback.md](../v/python-fallback.md)); no Python fallback (option C still rejected).
 - Observability: `doctor --json` and `version --json` include `engine`, `version`, and `commit` without changing human stdout.
 
 Rollback: [docs/v/rollback.md](../v/rollback.md). Cutover narrative: [docs/v/cutover.md](../v/cutover.md).
