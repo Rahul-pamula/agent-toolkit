@@ -11,20 +11,24 @@ Index: [`docs/v/README.md`](v/README.md) · packaging adapters: [`distribution/R
 | V pin | [`.v-version`](../.v-version) — currently **0.5.2** |
 | JSON | `import json` (stdlib). Do **not** `import json2` or run `v fmt` in a way that rewrites `json` → `json2` |
 | Layout | `modules/agent_toolkit_core`, `modules/agent_toolkit_cli`, `cmd/agent-toolkit` ([ADR-009](adrs/ADR-009-v-module-architecture.md)) |
-| Output | `make build-cli` / `v run make.vsh build-cli` → `build/agent-toolkit` |
-| Scripts | Repo tooling is `.vsh` (`v run scripts/…`); thin Makefile forwards to `make.vsh` |
+| Output | `./make.vsh build-cli` → `build/agent-toolkit` |
+| Scripts | Repo tooling is `.vsh` (`v run scripts/…`); task runner is `make.vsh` ([vlib `build`](https://github.com/vlang/v/tree/master/vlib/build), [example](https://github.com/vlang/v/blob/master/examples/build_system/build.vsh)) — no Makefile |
 
 ```bash
 v version          # second field must match .v-version
-make fmt-check
-make vet
-make test
-make build-cli
+./make.vsh --tasks   # list targets (or `./make.vsh help`)
+./make.vsh fmt-check
+./make.vsh vet
+./make.vsh test
+./make.vsh build-cli
 ./build/agent-toolkit --version
 ./build/agent-toolkit doctor
+# optional: precompile the task runner → ./make (gitignored)
+# ./make.vsh compile-make && ./make test
+# install: ./make.vsh install-cli [--prefix=/usr/local]  (PREFIX env also works)
 ```
 
-`VMODULES` is set by `make.vsh` / the thin Makefile (`$PWD/modules`). For a raw `v` invocation:
+`VMODULES` is set by `make.vsh` (`$PWD/modules`). For a raw `v` invocation:
 
 ```bash
 export VMODULES="$PWD/modules"
@@ -67,7 +71,7 @@ v run scripts/validate-skills.vsh
 v run scripts/validate-agents.vsh
 v run scripts/generate-catalogs.vsh
 v run scripts/gen-surfaces.vsh --check
-make build-cli
+./make.vsh build-cli
 AGENT_TOOLKIT_ROOT=$PWD ./build/agent-toolkit build --check
 ```
 
