@@ -16,8 +16,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.12.2] — 2026-08-13
 
-## [1.12.2] — 2026-08-13
-
 Audit cleanup and V-first ops: CI gates, Docker/Release coupling, scripts→`.vsh`, docs/packaging nits.
 
 - **Fixed** — `pack_release_assets.vsh` uses an absolute `RELEASE_OUT_DIR` so Windows zip packing after `cd` into a temp dir does not fail with I/O error
