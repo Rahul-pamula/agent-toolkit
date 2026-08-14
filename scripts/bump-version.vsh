@@ -4,6 +4,7 @@
 
 import json
 import regex
+import crypto.sha256
 
 fn repo_root() string {
 	mut d := dir(@FILE)
@@ -195,6 +196,10 @@ fn main() {
 					}
 				}
 			}
+			// Refresh plugin.json digests in .provenance.json after version edits.
+			if !check {
+				refresh_plugin_provenance_digest(plugins_dir, plugin)
+			}
 		}
 	}
 	if check && changed > 0 {
@@ -204,4 +209,36 @@ fn main() {
 	if !check {
 		println('bumped ${changed} files to ${version}')
 	}
+}
+
+fn refresh_plugin_provenance_digest(plugins_dir string, plugin string) {
+	prov := join_path(plugins_dir, plugin, '.provenance.json')
+	pj := join_path(plugins_dir, plugin, 'plugin.json')
+	if !is_file(prov) || !is_file(pj) {
+		return
+	}
+	bytes := read_bytes(pj) or { return }
+	dig := sha256_hex12(bytes)
+	raw := read_file(prov) or { return }
+	// Replace generatedDigest for the plugin.json artifact entry only.
+	needle := '"path":"${plugin}/plugin.json"'
+	idx := raw.index(needle) or { return }
+	rest := raw[idx..]
+	mut dre := regex.regex_opt(r'"generatedDigest"\s*:\s*"[0-9a-f]+"') or { return }
+	updated_rest := dre.replace_simple(rest, '"generatedDigest":"${dig}"')
+	if updated_rest == rest {
+		return
+	}
+	new_raw := raw[..idx] + updated_rest
+	write_file(prov, new_raw) or {}
+	println('refreshed provenance digest ${plugin}/plugin.json -> ${dig}')
+}
+
+fn sha256_hex12(data []u8) string {
+	sum := sha256.sum(data)
+	mut hex := ''
+	for b in sum[..6] {
+		hex += '${b:02x}'
+	}
+	return hex
 }
