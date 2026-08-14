@@ -302,7 +302,8 @@ for f in sorted(Path("loops").rglob("loop.yaml")):
     print(f"  OK: {f}")
 PYEOF
 v run scripts/generate-catalogs.vsh   # Regenerates and checks catalogs
-v run scripts/gen-surfaces.vsh --check  # Asserts plugin surfaces are in sync
+AGENT_TOOLKIT_ROOT=$PWD ./build/agent-toolkit build --check  # primary surface check (ADR-003)
+v run scripts/gen-surfaces.vsh --check  # legacy dual-run until removed
 make test && make build-cli
 AGENT_TOOLKIT_ROOT=$PWD ./build/agent-toolkit build --check
 AGENT_TOOLKIT_ROOT=$PWD uv run --project packages/pypi/agent-toolkit-cli --directory . pytest -c tests/pytest.ini tests/ -v

@@ -2,6 +2,7 @@
 // Sync canonical agents/ and skills/ into plugin bundle surfaces.
 // Run with --check to fail on drift (used in CI).
 // Deprecated: prefer `agent-toolkit build --check` (ADR-003).
+// Dual-run CI keeps this script until build --check is the sole required gate (target: v1.14.0+).
 // Usage: v run scripts/gen-surfaces.vsh [--check]
 
 fn repo_root() string {

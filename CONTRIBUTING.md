@@ -96,7 +96,8 @@ PY
 v run scripts/validate-manifests.vsh
 
 # Detect plugin surface drift
-v run scripts/gen-surfaces.vsh --check
+AGENT_TOOLKIT_ROOT=$PWD ./build/agent-toolkit build --check  # primary (ADR-003)
+v run scripts/gen-surfaces.vsh --check  # legacy dual-run
 
 # Regenerate catalogs and verify they match source files
 v run scripts/generate-catalogs.vsh

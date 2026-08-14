@@ -173,6 +173,29 @@ jobs:
         run: v run scripts/gen-surfaces.vsh --check
 
 
+
+  # ── ADR-003 dual-run: compiler build --check alongside gen-surfaces ─────────
+  check-build:
+    name: Check Build (compiler)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup pinned V
+        uses: ./.github/actions/setup-v
+
+      - name: Build V CLI
+        env:
+          VMODULES: ${{ github.workspace }}/modules
+        run: make build-cli
+
+      - name: agent-toolkit build --check
+        env:
+          AGENT_TOOLKIT_ROOT: ${{ github.workspace }}
+          VMODULES: ${{ github.workspace }}/modules
+        run: ./build/agent-toolkit build --check
+
   check-catalogs:
     name: Check Generated Catalogs
     runs-on: ubuntu-latest
@@ -764,6 +787,7 @@ jobs:
       - validate-agent-plugins
       - validate-upstream
       - check-surfaces
+      - check-build
       - check-catalogs
       - check-skill-matrix
       - validate-loops
@@ -788,6 +812,7 @@ jobs:
           if [[ "${{ needs.validate-agent-plugins.result }}" != "success" ]]; then echo "validate-agent-plugins failed: ${{ needs.validate-agent-plugins.result }}"; failed="true"; fi
           if [[ "${{ needs.validate-upstream.result }}" != "success" ]]; then echo "validate-upstream failed: ${{ needs.validate-upstream.result }}"; failed="true"; fi
           if [[ "${{ needs.check-surfaces.result }}" != "success" ]]; then echo "check-surfaces failed: ${{ needs.check-surfaces.result }}"; failed="true"; fi
+          if [[ "${{ needs.check-build.result }}" != "success" ]]; then echo "check-build failed: ${{ needs.check-build.result }}"; failed="true"; fi
           if [[ "${{ needs.check-catalogs.result }}" != "success" ]]; then echo "check-catalogs failed: ${{ needs.check-catalogs.result }}"; failed="true"; fi
           if [[ "${{ needs.check-skill-matrix.result }}" != "success" ]]; then echo "check-skill-matrix failed: ${{ needs.check-skill-matrix.result }}"; failed="true"; fi
           if [[ "${{ needs.validate-loops.result }}" != "success" ]]; then echo "validate-loops failed: ${{ needs.validate-loops.result }}"; failed="true"; fi

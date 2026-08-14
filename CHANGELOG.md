@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- markdownlint-disable MD024 -->
 ## [Unreleased]
 
+- **CI** — ADR-003 dual-run: add `check-build` (`build --check`) alongside gen-surfaces (Fixes #678)
 - **Products** — Include `agentic-security-reviewer` in `agent-toolkit-agents` (Fixes #689)
 - **CI** — Drop stale `packaging` path from MegaLinter FILTER_REGEX_EXCLUDE
 - **Chore** — Migrate repo tooling scripts from Python to V (`.vsh`); add `make.vsh` with thin Makefile forwarder; keep `provenance.py` / `validate-upstream.py` and PyPI launcher Python; host skills use CLI / Grep (repo-root `scripts/` is checkout/CI only)
