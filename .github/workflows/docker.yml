@@ -3,7 +3,15 @@ name: Docker
 on:
   # GITHUB_TOKEN creating a GitHub Release does not fire `release: published`
   # for other workflows. Release.yml calls this after upload-assets instead.
+  # Note: when invoked via workflow_call, github.event_name is still the
+  # *caller* event (usually push) — never "workflow_call". Use inputs.publish.
   workflow_call:
+    inputs:
+      publish:
+        description: Push multi-arch image to ghcr after Release assets exist
+        type: boolean
+        required: false
+        default: false
   release:
     types: [published]
   push:
@@ -16,6 +24,8 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  # Caller event_name stays "push" under workflow_call; gate on inputs.publish.
+  DOCKER_PUBLISH: ${{ inputs.publish == true || github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
 
 jobs:
   build-push:
@@ -71,11 +81,10 @@ jobs:
         if: github.event_name == 'pull_request'
         run: docker run --rm agent-toolkit:ci version
 
-      # Push only when Release assets exist (workflow_call from release.yml),
-      # a published release, or an explicit workflow_dispatch. Push-to-main is
-      # smoke-only so VERSION bumps cannot publish before GitHub Release assets.
+      # Push-to-main is smoke-only so VERSION bumps cannot publish before
+      # GitHub Release assets. Release.yml passes publish=true via workflow_call.
       - name: Build native image (main smoke)
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' && env.DOCKER_PUBLISH != 'true'
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -87,11 +96,11 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Smoke native image (main)
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' && env.DOCKER_PUBLISH != 'true'
         run: docker run --rm agent-toolkit:ci version
 
       - name: Require Release assets before push
-        if: github.event_name == 'workflow_call' || github.event_name == 'release' || github.event_name == 'workflow_dispatch'
+        if: env.DOCKER_PUBLISH == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -105,7 +114,7 @@ jobs:
           }
 
       - name: Build and push
-        if: github.event_name == 'workflow_call' || github.event_name == 'release' || github.event_name == 'workflow_dispatch'
+        if: env.DOCKER_PUBLISH == 'true'
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -117,7 +126,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Smoke published amd64 image
-        if: github.event_name == 'workflow_call' || github.event_name == 'release' || github.event_name == 'workflow_dispatch'
+        if: env.DOCKER_PUBLISH == 'true'
         env:
           IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.ver.outputs.version }}
         run: |

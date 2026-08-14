@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Audit cleanup and V-first ops: CI gates, Docker/Release coupling, scripts→`.vsh`, docs/packaging nits.
 
 - **Fixed** — `pack_release_assets.vsh` uses an absolute `RELEASE_OUT_DIR` so Windows zip packing after `cd` into a temp dir does not fail with I/O error
+- **Fixed** — Docker reusable workflow publishes via `inputs.publish` (caller `event_name` stays `push`, so `event_name == workflow_call` never matched)
 - **Docs** — Replace remaining ai-workspace brand with agentic-harness in skills/packs (Fixes #681)
 - **Tests** — Parity harness V_SEMANTIC disposition fixtures for insights/release; widen docs/v paths (Fixes #691)
 - **Docs** — Teach `agent-toolkit loop` instead of obsolete `bin/loop` in skills/packs/loop.yaml (Fixes #680)

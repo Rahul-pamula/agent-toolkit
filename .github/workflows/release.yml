@@ -373,6 +373,10 @@ jobs:
     if: github.event_name == 'push'
     needs: [upload-assets]
     uses: ./.github/workflows/docker.yml
+    with:
+      # Caller github.event_name stays "push"; docker.yml must not gate on
+      # event_name == workflow_call (that never matches).
+      publish: true
     permissions:
       contents: read
       packages: write
