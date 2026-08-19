@@ -7,8 +7,8 @@ Human-readable provenance for third-party capability content. Canonical sources:
 - **Resolution:** `capabilities/upstream.lock` (`version: 2`, `provenance_digest`) — see `schemas/upstream-lock.schema.json` and `docs/adr/0001-*.md`
 - **Vendored bytes:** `skills/<domain>/<name>/SKILL.md` + `LICENSE.txt`
 
-Generated: 2026-08-19T06:51:41.110380Z
-Capabilities with external provenance: 9 (first-party omitted; lock is sparse)
+Generated: 2026-08-19T16:15:03.682133Z
+Capabilities with external provenance: 10 (first-party omitted; lock is sparse)
 
 ## `design/frontend-design`
 
@@ -109,6 +109,29 @@ Capabilities with external provenance: 9 (first-party omitted; lock is sparse)
 - **Resolved at:** `2026-08-19T06:48:31.471103Z` version=`?`
 
 - **Per-skill attribution:** `skills/quality/blast-radius/UPSTREAM.md`
+
+## `quality/deslop`
+
+- **Trust:** `reviewed` reviewed_at=2026-08-19 by=ulises-jeremias
+  - `reviewed_provenance:` `sha256:7b61bbc5400565b3da44417658b7f6be1c0104f9f216b0a6965345293f8bd130` (must equal `provenance_digest` below)
+- **Maintenance:** `active` last_activity=?
+- **Distribution:** `vendored` redistribution_allowed=True
+- **Security (declared):** scripts=False shell=False network=False cve_policy=not-applicable mcp=[] hooks=[]
+- **Provenance digest:** `sha256:7b61bbc5400565b3da44417658b7f6be1c0104f9f216b0a6965345293f8bd130`
+
+### Source `upstream` — `cursor/plugins/cursor-team-kit/skills/deslop`
+
+- **Repository:** `cursor/plugins`
+- **Path:** `cursor-team-kit/skills/deslop`
+- **Requested:** `commit` `60c641e4fad674784b30abcf9f8915dea39df38d` (declaration intent)
+- **Resolved commit:** `60c641e4fad674784b30abcf9f8915dea39df38d`
+- **Content checksum:** `sha256:d94afacd406d42d0badf0e76a85ef1f6e3628f60ae1c23f77303d3ca6974b3f0`
+- **Body checksum:** `sha256:2d8979b16620fd27c6034554afafcf133b76c172a4e0061500d2959baa18603d` (must match local SKILL.md body)
+- **Observed license:** `MIT` source_path=`skills/quality/deslop/LICENSE` checksum=`sha256:702f5f331b56aff0e33d8c7826df5202559f894145eb70355c6477b55b5bb8a0`
+  - Declaration expected `license: MIT` — mismatch requires review
+- **Resolved at:** `2026-08-19T16:08:49.669596Z` version=`?`
+
+- **Per-skill attribution:** `skills/quality/deslop/UPSTREAM.md`
 
 ## `quality/megalinter`
 
