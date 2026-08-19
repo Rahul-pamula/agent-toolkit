@@ -86,6 +86,7 @@
       "skills/megalinter-check/SKILL.md",
       "skills/megalinter-fix/SKILL.md",
       "skills/codeql/SKILL.md",
+      "skills/unslop/SKILL.md",
       "skills/chrome-devtools/SKILL.md",
       "skills/playwright-cli/SKILL.md",
       "skills/project/SKILL.md",

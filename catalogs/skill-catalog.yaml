@@ -1,6 +1,6 @@
 version: 1
 generated: true
-count: 80
+count: 81
 skills:
   - id: accessibility/review
     name: review
@@ -371,6 +371,11 @@ skills:
     name: megalinter-setup
     domain: quality
     description: 'Install or upgrade MegaLinter on a repository. Use when the user wants to add MegaLinter to a project, set up linting CI, update MegaLinter configuration or version, or says "install megalinter", "set'
+    stability: stable
+  - id: quality/unslop
+    name: unslop
+    domain: quality
+    description: Cut AI tells from any writing. Must always apply.
     stability: stable
   - id: tooling/chrome-devtools
     name: chrome-devtools

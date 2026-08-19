@@ -10,7 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- markdownlint-disable MD024 -->
 ## [Unreleased]
 
-## [1.15.1] — 2026-08-17
+- **Docs** — Add upstream vs first-party governance (`docs/UPSTREAM_VS_FIRST_PARTY.md`), skill integration checklist, and `ORCHESTRATION.md` routing table (Epic #743, Wave 0)
+- **Feat** — Vendor `quality/unslop` from cursor/plugins (complete product only; provenance lock)
 
 - **Docs** — Make `static/*.svg` command-accurate: real `agent-toolkit install` / documented install paths and per-tool dests from `install.v`; drop invented `~/toolkit --mode=production`, `muse skills install`, Copilot/OpenCode agents-or-skills checkmarks, Cursor `marketplace.json` as an install dest, Pi loops, and L3 `agentic-harness`
 

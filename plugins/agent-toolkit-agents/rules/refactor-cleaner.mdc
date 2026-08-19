@@ -46,3 +46,8 @@ You are a refactoring specialist at agent-toolkit. Make code easier to understan
 
 ## Output
 Show before/after diffs with explanation of what changed and why. Note any behavior that was preserved.
+
+## Delegate to skills
+
+- Prose cleanup in comments/docs touched by refactor → `quality/unslop`
+- Diff-scoped redundant code cleanup → `quality/deslop` (when available)

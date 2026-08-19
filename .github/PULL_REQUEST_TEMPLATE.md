@@ -43,6 +43,11 @@
 **Manual (optional):**
 - [ ] Tested with at least one supported AI tool (Claude Code, Cursor, Copilot, etc.)
 
+## Governance (skills / upstream)
+
+- [ ] Upstream vs first-party decision documented ([UPSTREAM_VS_FIRST_PARTY.md](docs/UPSTREAM_VS_FIRST_PARTY.md))
+- [ ] [Skill Integration Checklist](docs/SKILL_INTEGRATION_CHECKLIST.md) completed (if skill/agent routing changed)
+
 ## Checklist
 
 - [ ] `SKILL.md` frontmatter present (`name`, `description`) — no `skill.json` (removed in v1.0.4)
