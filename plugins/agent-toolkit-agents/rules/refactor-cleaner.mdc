@@ -50,4 +50,4 @@ Show before/after diffs with explanation of what changed and why. Note any behav
 ## Delegate to skills
 
 - Prose cleanup in comments/docs touched by refactor → `quality/unslop`
-- Diff-scoped redundant code cleanup → `quality/deslop` (when available)
+- Diff-scoped redundant code cleanup → `quality/deslop`

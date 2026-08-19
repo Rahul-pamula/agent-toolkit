@@ -68,6 +68,24 @@ capabilities:
           license:
             spdx: NOASSERTION
           resolved_at: '2026-08-14T18:56:03.313181Z'
+  quality/deslop:
+    provenance_digest: sha256:7b61bbc5400565b3da44417658b7f6be1c0104f9f216b0a6965345293f8bd130
+    sources:
+      upstream:
+        path: cursor-team-kit/skills/deslop
+        repository: cursor/plugins
+        requested:
+          ref: 60c641e4fad674784b30abcf9f8915dea39df38d
+          type: commit
+        resolved:
+          body_checksum: sha256:2d8979b16620fd27c6034554afafcf133b76c172a4e0061500d2959baa18603d
+          commit: 60c641e4fad674784b30abcf9f8915dea39df38d
+          content_checksum: sha256:d94afacd406d42d0badf0e76a85ef1f6e3628f60ae1c23f77303d3ca6974b3f0
+          license:
+            checksum: sha256:702f5f331b56aff0e33d8c7826df5202559f894145eb70355c6477b55b5bb8a0
+            source_path: skills/quality/deslop/LICENSE
+            spdx: MIT
+          resolved_at: '2026-08-19T05:41:24.669578Z'
   quality/megalinter:
     provenance_digest: sha256:8b16ee6b8b06d23c052b473cd5fee724b51e245891a276912b9a522b4be21ca4
     sources:

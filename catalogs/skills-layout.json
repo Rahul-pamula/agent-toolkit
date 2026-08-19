@@ -85,6 +85,7 @@
     ],
     "quality": [
       "codeql",
+      "deslop",
       "megalinter",
       "megalinter-check",
       "megalinter-fix",
@@ -416,6 +417,11 @@
     {
       "id": "quality/megalinter-setup",
       "name": "megalinter-setup",
+      "domain": "quality"
+    },
+    {
+      "id": "quality/deslop",
+      "name": "deslop",
       "domain": "quality"
     },
     {

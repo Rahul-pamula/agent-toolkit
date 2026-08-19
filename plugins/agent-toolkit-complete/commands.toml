@@ -638,6 +638,15 @@ Follow the `unslop` skill instructions for {{args}}.
 """
 
 [[commands]]
+name = "deslop"
+description = "quality/deslop"
+prompt = """
+Follow the `deslop` skill instructions for {{args}}.
+
+@{skills/deslop/SKILL.md}
+"""
+
+[[commands]]
 name = "chrome_devtools"
 description = "tooling/chrome-devtools"
 prompt = """
