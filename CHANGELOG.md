@@ -10,10 +10,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- markdownlint-disable MD024 -->
 ## [Unreleased]
 
-- **Docs** — Add upstream vs first-party governance (`docs/UPSTREAM_VS_FIRST_PARTY.md`), skill integration checklist, and `ORCHESTRATION.md` routing table (Epic #743, Wave 0)
-- **Feat** — Vendor `quality/unslop` from cursor/plugins (complete product only; provenance lock)
-- **Feat** — Vendor `quality/blast-radius` from cursor/plugins (complete product only; provenance lock)
+## [1.16.0] — 2026-08-19
 
+- **Docs** — Add upstream vs first-party governance (`docs/UPSTREAM_VS_FIRST_PARTY.md`), skill integration checklist, and `ORCHESTRATION.md` routing table (Epic #743, Wave 0) ([#757](https://github.com/ulises-jeremias/agent-toolkit/pull/757))
+- **Feat** — Vendor `quality/unslop`, `quality/deslop`, and `quality/blast-radius` from cursor/plugins (complete product; provenance lock) ([#759](https://github.com/ulises-jeremias/agent-toolkit/pull/759), [#746](https://github.com/ulises-jeremias/agent-toolkit/pull/746))
+- **Fixed** — MCP templates use official servers only; remove all `wrapper.sh` launchers ([#765](https://github.com/ulises-jeremias/agent-toolkit/pull/765))
+  - Slack → `@modelcontextprotocol/server-slack` (`SLACK_BOT_TOKEN` + `SLACK_TEAM_ID`)
+  - Notion → remote OAuth `https://mcp.notion.com/mcp` + local `@notionhq/notion-mcp-server` fallback
+  - GitHub → `ghcr.io/github/github-mcp-server` (Docker)
+- **Docs** — Expand MCP template READMEs for Notion, Slack, and GitHub ([#742](https://github.com/ulises-jeremias/agent-toolkit/pull/742), Resolves [#339](https://github.com/ulises-jeremias/agent-toolkit/issues/339))
+- **Docs** — README footer: star CTA, issue templates, contributors grid ([#764](https://github.com/ulises-jeremias/agent-toolkit/pull/764))
+- **Fixed** — Include `quality/deslop` in `agent-toolkit-complete` product membership
+- **Docs** — Regenerate `docs/UPSTREAM.md` after blast-radius vendor (10 capabilities)
 - **Docs** — Make `static/*.svg` command-accurate: real `agent-toolkit install` / documented install paths and per-tool dests from `install.v`; drop invented `~/toolkit --mode=production`, `muse skills install`, Copilot/OpenCode agents-or-skills checkmarks, Cursor `marketplace.json` as an install dest, Pi loops, and L3 `agentic-harness`
 
 ## [1.15.0] — 2026-08-16
@@ -497,7 +505,8 @@ The canonical compiler pipeline now generates native artifacts for 9 AI coding t
 
 ---
 
-[Unreleased]: https://github.com/ulises-jeremias/agent-toolkit/compare/v1.15.1...HEAD
+[Unreleased]: https://github.com/ulises-jeremias/agent-toolkit/compare/v1.16.0...HEAD
+[1.16.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.16.0
 [1.15.1]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.15.1
 [1.15.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.15.0
 [1.14.1]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.14.1
