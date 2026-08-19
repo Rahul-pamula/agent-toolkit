@@ -77,6 +77,8 @@ agent-toolkit/
 - Use English for all file content, commit messages, and PR descriptions
 - Check `SKILL.md` frontmatter (`tools`, `requires`) before claiming a skill works with a tool
 - Keep secrets out of the repository — MCP templates use placeholder values only
+- When adding or modifying skills, follow [docs/SKILL_INTEGRATION_CHECKLIST.md](docs/SKILL_INTEGRATION_CHECKLIST.md) — orchestration, agents, products, and build verification are mandatory
+- When evaluating third-party skills, follow [docs/UPSTREAM_VS_FIRST_PARTY.md](docs/UPSTREAM_VS_FIRST_PARTY.md) — prefer first-party enhancement over duplicate upstream vendors
 
 **Never:**
 
@@ -144,6 +146,14 @@ Optional frontmatter fields for tool compatibility and discovery:
 
 Run `./scripts/validate-skills.vsh` to validate
 frontmatter against `schemas/skill-md-frontmatter.schema.json`.
+
+### Upstream vs first-party
+
+Before vendoring a third-party skill, read [docs/UPSTREAM_VS_FIRST_PARTY.md](docs/UPSTREAM_VS_FIRST_PARTY.md).
+If a first-party skill already covers the domain, **enhance it** and record `metadata.inspired_by[]`
+instead of adding a duplicate upstream copy. After any skill change, complete
+[docs/SKILL_INTEGRATION_CHECKLIST.md](docs/SKILL_INTEGRATION_CHECKLIST.md) (orchestration in
+`skills/core/assistant/references/ORCHESTRATION.md`, agent delegates, products, `build --check`).
 
 ---
 
