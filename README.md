@@ -520,17 +520,28 @@ See [How to add a skill](docs/HOW_TO_ADD_SKILL.md) for the full authoring guide.
 
 ---
 
+## Showcase
+
+See [SHOWCASE.md](SHOWCASE.md) for community usage examples and pack walkthroughs.
+
+---
+
 <div align="center">
 
-[📖 Docs](docs/) · [🐛 Issues](https://github.com/ulises-jeremias/agent-toolkit/issues) ·
-[💬 Discussions](https://github.com/ulises-jeremias/agent-toolkit/discussions) ·
-[Discord](https://discord.gg/bR5VyATgka) ·
-[MIT License](LICENSE)
+**⭐ Star this repo** if you use it — it helps others discover it.
 
-<sub>Built for the agentic age — one toolkit, every assistant.</sub>
+[Report a bug](https://github.com/ulises-jeremias/agent-toolkit/issues/new?template=bug-report.yml) · [Request a feature](https://github.com/ulises-jeremias/agent-toolkit/issues/new?template=feature-request.yml)
+
+[📖 Docs](docs/) · [💬 Discussions](https://github.com/ulises-jeremias/agent-toolkit/discussions) · [Discord](https://discord.gg/bR5VyATgka) · [MIT License](LICENSE)
+
+<sub>Built with ❤️ for AI-assisted software delivery</sub>
 
 </div>
 
-## Showcase
+## 👥 Contributors
 
-See [SHOWCASE.md](SHOWCASE.md).
+<a href="https://github.com/ulises-jeremias/agent-toolkit/contributors">
+  <img alt="Contributors" src="https://contrib.rocks/image?repo=ulises-jeremias/agent-toolkit"/>
+</a>
+
+Made with [contributors-img](https://contrib.rocks).
