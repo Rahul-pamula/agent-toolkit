@@ -381,7 +381,8 @@ def test_first_party_omitted_from_lock():
     # first-party skills must not appear — lock is sparse
     assert "core/assistant" not in lock["capabilities"], "first-party must not be in lock"
     assert "core/onboarding" not in lock["capabilities"]
-    # Upstream with external content: 3 design + 4 MegaLinter coding-agent skills
+    # Upstream with external content should appear, but lock must remain sparse:
+    # only `origin.type: upstream` skills are included.
     assert "design/frontend-design" in lock["capabilities"]
     assert "design/frontend-design-review" in lock["capabilities"]
     assert "design/web-design-guidelines" in lock["capabilities"]
@@ -389,8 +390,14 @@ def test_first_party_omitted_from_lock():
     assert "quality/megalinter-setup" in lock["capabilities"]
     assert "quality/megalinter-check" in lock["capabilities"]
     assert "quality/megalinter-fix" in lock["capabilities"]
-    assert len(lock["capabilities"]) == 7, (
-        "lock should be sparse: first-party omitted; 7 upstream capabilities"
+    # Expected lock entries == discovered upstream declarations.
+    # This keeps the test stable as we add new upstream vendors.
+    decl = prov._discover_declarations()
+    lock_caps = set(lock["capabilities"].keys())
+    decl_caps = set(decl.keys())
+    assert lock_caps == decl_caps, (
+        "lock should be sparse: first-party omitted; "
+        f"lock_caps={sorted(lock_caps)} decl_caps={sorted(decl_caps)}"
     )
 
 
