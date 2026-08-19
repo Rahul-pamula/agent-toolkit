@@ -7,7 +7,7 @@ agent-toolkit ships MCP configuration templates for the most commonly used servi
 Templates live in `mcp/templates/<provider>/`. Each template directory contains:
 - `config.template.json` — the MCP configuration stub (copy and fill in credentials)
 - `README.md` — provider-specific setup notes
-- `wrapper.sh` — optional shell wrapper for complex launch patterns (not all providers)
+- `config.local.template.json` — optional PAT/stdio fallback (Notion only)
 
 ---
 
@@ -27,9 +27,9 @@ Never substitute real credentials directly into the template files and commit th
 
 | Provider | Type | Transport | Env vars | Description |
 |----------|------|-----------|----------|-------------|
-| GitHub | Command | stdio | `GITHUB_TOKEN` | Repos, PRs, issues, releases, Actions |
-| Slack | Command | stdio | `SLACK_BOT_TOKEN`, `SLACK_APP_TOKEN` | Channels, messages, reactions, canvases |
-| Notion | Command | stdio | `NOTION_API_TOKEN` | Pages, databases, blocks |
+| GitHub | Command | stdio | `GITHUB_PERSONAL_ACCESS_TOKEN` | Repos, PRs, issues, releases, Actions |
+| Slack | Command | stdio | `SLACK_BOT_TOKEN`, `SLACK_TEAM_ID` | Channels, messages, reactions, threads |
+| Notion | HTTP / Command | streamable_http or stdio | OAuth (remote) or `NOTION_TOKEN` (local) | Pages, databases, data sources |
 | Linear | HTTP/SSE | streamable_http | None (OAuth via browser) | Issues, projects, cycles, comments |
 | Figma | HTTP | streamable_http | `FIGMA_OAUTH_TOKEN`, `FIGMA_REGION` | Files, components, design tokens |
 | ClickUp | Command | stdio | `CLICKUP_API_TOKEN` | Tasks, lists, spaces, docs, comments |
@@ -46,9 +46,17 @@ Never substitute real credentials directly into the template files and commit th
 ```json
 {
   "name": "github",
-  "command": "mcp-github-server",
+  "command": "docker",
+  "args": [
+    "run",
+    "-i",
+    "--rm",
+    "-e",
+    "GITHUB_PERSONAL_ACCESS_TOKEN",
+    "ghcr.io/github/github-mcp-server"
+  ],
   "env": {
-    "GITHUB_TOKEN": "${GITHUB_TOKEN}"
+    "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
   }
 }
 ```
@@ -57,14 +65,10 @@ Never substitute real credentials directly into the template files and commit th
 
 1. Create a GitHub personal access token (classic or fine-grained) at https://github.com/settings/tokens
    - Required scopes: `repo`, `read:org`, `workflow` (add `delete_repo` only if needed)
-2. Export the token:
+2. Ensure Docker is available locally.
+3. Export the token:
    ```bash
-   export GITHUB_TOKEN=ghp_your_token_here
-   ```
-3. Install the MCP server:
-   ```bash
-   npm install -g @anthropic-ai/mcp-server-github
-   # or follow your tool's MCP server install instructions
+   export GITHUB_PERSONAL_ACCESS_TOKEN=ghp_your_token_here
    ```
 4. Copy the template to your tool's MCP config location (see [Adding MCP to Your Tool](#adding-mcp-to-your-tool) below)
 
@@ -79,10 +83,11 @@ Never substitute real credentials directly into the template files and commit th
 ```json
 {
   "name": "slack",
-  "command": "mcp-slack-server",
+  "command": "npx",
+  "args": ["-y", "@modelcontextprotocol/server-slack"],
   "env": {
     "SLACK_BOT_TOKEN": "${SLACK_BOT_TOKEN}",
-    "SLACK_APP_TOKEN": "${SLACK_APP_TOKEN}"
+    "SLACK_TEAM_ID": "${SLACK_TEAM_ID}"
   }
 }
 ```
@@ -92,47 +97,58 @@ Never substitute real credentials directly into the template files and commit th
 1. Create a Slack app at https://api.slack.com/apps
 2. Under **OAuth & Permissions**, add bot token scopes:
    - `channels:history`, `channels:read`, `chat:write`, `reactions:write`, `users:read`
-3. Under **Socket Mode**, enable Socket Mode and create an App-Level Token with `connections:write` scope
-4. Install the app to your workspace
-5. Export the tokens:
+3. Install the app to your workspace and copy the **Bot User OAuth Token** (`SLACK_BOT_TOKEN`)
+4. Copy your workspace ID into `SLACK_TEAM_ID` (starts with `T`)
+5. Export both values:
    ```bash
    export SLACK_BOT_TOKEN=xoxb-your-bot-token
-   export SLACK_APP_TOKEN=xapp-your-app-token
+   export SLACK_TEAM_ID=T01234567
    ```
-6. Install the MCP server and copy the template
+6. Copy the template into your MCP client config
 
-**What it enables:** Read channel history, post messages, add reactions, browse Slack canvases.
+**What it enables:** List channels, read history, post messages, reply in threads, add reactions.
 
 ---
 
 ### Notion
 
-**Template:** `mcp/templates/notion/config.template.json`
+**Template (recommended):** `mcp/templates/notion/config.template.json` — remote OAuth
 
 ```json
 {
   "name": "notion",
-  "command": "mcp-notion-server",
+  "transport": "streamable_http",
+  "url": "https://mcp.notion.com/mcp",
+  "auth": "oauth"
+}
+```
+
+**Local PAT fallback:** `mcp/templates/notion/config.local.template.json`
+
+```json
+{
+  "name": "notion",
+  "command": "npx",
+  "args": ["-y", "@notionhq/notion-mcp-server"],
   "env": {
-    "NOTION_API_TOKEN": "${NOTION_API_TOKEN}"
+    "NOTION_TOKEN": "${NOTION_TOKEN}"
   }
 }
 ```
 
-**Setup:**
+**Setup (remote OAuth — recommended):**
 
-1. Create a Notion integration at https://www.notion.so/my-integrations
-   - Select the workspace you want to connect
-   - Grant read/write content access
-2. Copy the Internal Integration Token
-3. In Notion, share each database or page with your integration (use the Share menu → Connect to integration)
-4. Export the token:
-   ```bash
-   export NOTION_API_TOKEN=secret_your_token_here
-   ```
-5. Install the MCP server and copy the template
+1. Copy `config.template.json` to your MCP client
+2. Complete the browser OAuth flow on first connect
+3. See [Notion MCP documentation](https://developers.notion.com/docs/mcp)
 
-**What it enables:** Read and write Notion pages and databases, query blocks, create content.
+**Setup (local stdio fallback):**
+
+1. Create a Notion integration at https://www.notion.so/profile/integrations
+2. Share each page/database with the integration
+3. Export `NOTION_TOKEN` and copy `config.local.template.json`
+
+**What it enables:** Search, read, and write Notion pages, databases, and data sources.
 
 ---
 
@@ -240,16 +256,18 @@ Add your filled-in MCP config to `~/.claude/claude_desktop_config.json` (or the 
 {
   "mcpServers": {
     "github": {
-      "command": "mcp-github-server",
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "-e", "GITHUB_PERSONAL_ACCESS_TOKEN", "ghcr.io/github/github-mcp-server"],
       "env": {
-        "GITHUB_TOKEN": "ghp_your_token"
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_your_token"
       }
     },
     "slack": {
-      "command": "mcp-slack-server",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-slack"],
       "env": {
         "SLACK_BOT_TOKEN": "xoxb-...",
-        "SLACK_APP_TOKEN": "xapp-..."
+        "SLACK_TEAM_ID": "T01234567"
       }
     }
   }
@@ -272,9 +290,10 @@ Add MCP server entries to `~/.config/opencode/opencode.json`:
 {
   "mcp": {
     "github": {
-      "command": "mcp-github-server",
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "-e", "GITHUB_PERSONAL_ACCESS_TOKEN", "ghcr.io/github/github-mcp-server"],
       "env": {
-        "GITHUB_TOKEN": "ghp_your_token"
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_your_token"
       }
     }
   }

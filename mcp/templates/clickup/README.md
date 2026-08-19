@@ -35,11 +35,8 @@ The `clickup-cli` skill is deployed by chezmoi at `~/.local/share/agent-toolkit/
 
 ## Legacy reference
 
-The MCP config template and wrapper script are kept below for reference only.
-Do not use them for new setups.
+The MCP config template below is kept for reference only. Do not use it for new setups.
 
 ### Required environment variables (legacy)
 
 - `CLICKUP_API_TOKEN`
-
-Use `config.template.json` and `wrapper.sh` as legacy examples only.

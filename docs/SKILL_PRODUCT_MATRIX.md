@@ -11,7 +11,7 @@ _Generated from 4 products × 83 skills × 17 agents._
 | `agent-toolkit-core` | stable | claude-code, cursor, requires, security | 6 | 1 |
 | `agent-toolkit-agents` | stable | claude-code, cursor | 0 | 17 |
 | `agent-toolkit-forge` | stable | claude-code, cursor | 7 | 0 |
-| `agent-toolkit-complete` | experimental | — | 82 | 0 |
+| `agent-toolkit-complete` | experimental | — | 83 | 0 |
 
 ## Skills → Products
 
@@ -88,7 +88,7 @@ _Generated from 4 products × 83 skills × 17 agents._
 | `ops/triage` | `agent-toolkit-complete` | — |
 | `quality/blast-radius` | `agent-toolkit-complete` | — |
 | `quality/codeql` | `agent-toolkit-complete` | — |
-| `quality/deslop` | _uncovered_ | — |
+| `quality/deslop` | `agent-toolkit-complete` | — |
 | `quality/megalinter` | `agent-toolkit-complete` | — |
 | `quality/megalinter-check` | `agent-toolkit-complete` | — |
 | `quality/megalinter-fix` | `agent-toolkit-complete` | — |

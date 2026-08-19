@@ -10,8 +10,8 @@
 | Provider | Config | Impl | Package | License | Version policy | Provenance | Verdict | Evidence |
 |----------|--------|------|---------|---------|----------------|------------|---------|----------|
 | github | ✅ auth bearer-env GITHUB_PERSONAL_ACCESS_TOKEN, ghcr.io/github/github-mcp-server pinned digest, no secrets | ✅ no shell, no SSRF, delete_file only where needed | ghcr.io/github/github-mcp-server | MIT | pin image digest | official github/github-mcp-server | ALLOW | mcp/registry/github.yaml + mcp/templates/github/config.template.json |
-| slack | ✅ bearer-env SLACK_* placeholders | ✅ no injection | @anthropic-ai/mcp-server-slack | MIT | pin to minor | official anthropics/mcp-servers | ALLOW |  |
-| notion | ✅ bearer-env | ✅ | mcp-notion-server | MIT | pin to minor | official | ALLOW |  |
+| slack | ✅ bearer-env SLACK_* placeholders | ✅ no injection | @modelcontextprotocol/server-slack | MIT | pin to minor | official modelcontextprotocol/servers | ALLOW |  |
+| notion | ✅ oauth remote + bearer-env local | ✅ | @notionhq/notion-mcp-server / https://mcp.notion.com/mcp | MIT | remote hosted / pin local | official makenotion | ALLOW |  |
 | linear | ✅ bearer-env / OAuth (streamable_http https://mcp.linear.app/mcp) | ✅ no SSRF to metadata | https://mcp.linear.app/mcp | proprietary (Linear) | remote hosted | official Linear | ALLOW |  |
 | figma | ✅ bearer-env FIGMA_OAUTH_TOKEN streamable_http https://mcp.figma.com/mcp | ✅ read-only, no shell | https://mcp.figma.com/mcp | proprietary | remote hosted | official Figma | ALLOW |  |
 | clickup | ✅ bearer-env CLICKUP_API_TOKEN | ✅ | mcp-clickup-server | MIT | pin to minor | community → verified | ALLOW |  |

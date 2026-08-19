@@ -9,7 +9,7 @@
 | Capability | WHAT (verbs) | Preferred HOW per target | Alternative HOW |
 |------------|--------------|--------------------------|-----------------|
 | **Linear** | `list, get, create, update, comment, triage, plan` on `issue, project, cycle` | `mcp` `https://mcp.linear.app/mcp` (OAuth, `streamable_http`) for Claude/Cursor/OpenCode — native, no token env | `community_mcp` `@ibraheem4/linear-mcp` (PAT, `stdio`) for single-workspace; `api` `https://api.linear.app/graphql` (admin, needs approval) for `deleteIssue`; `skill_fallback` `skills/integrations/linear` (delegates) |
-| **Slack** | `list, post, react, create, deploy, api` on `channel, message, reaction, app` | `mcp` `@anthropic-ai/mcp-server-slack` (Socket Mode, `stdio`, `SLACK_BOT_TOKEN`+`SLACK_APP_TOKEN`) for chat automation — native, low latency | `cli` `slack-cli` (`docs.slack.dev/tools/slack-cli`, `Apache-2.0`, admin, needs approval) for app scaffolding; `api` `https://slack.com/api/chat.postMessage` (direct); `skill_fallback` |
+| **Slack** | `list, post, react, create, deploy, api` on `channel, message, reaction, app` | `mcp` `@modelcontextprotocol/server-slack` (`stdio`, `SLACK_BOT_TOKEN`+`SLACK_TEAM_ID`) for chat automation — native, low latency | `cli` `slack-cli` (`docs.slack.dev/tools/slack-cli`, `Apache-2.0`, admin, needs approval) for app scaffolding; `api` `https://slack.com/api/chat.postMessage` (direct); `skill_fallback` |
 | **Figma** | `get_design_context, get_screenshot, get_metadata, implement` on `file, node, component` | `mcp` `https://mcp.figma.com/mcp` (OAuth, `streamable_http`, `FIGMA_OAUTH_TOKEN`+`FIGMA_REGION`) for design-to-code — remote, read-only, low context | `api` `https://api.figma.com/v1/files/:file_key` (PAT, read-only); `api` `figma plugin API` (write, Figma Desktop, needs approval); `skill_fallback` `skills/design/figma` |
 
 ## Detailed per-HOW evaluation
@@ -29,7 +29,7 @@
 
 | HOW | Mechanism | Targets | Auth | Read | Write | Destructive | Trust / Privilege | Runtime | Notes |
 |-----|-----------|---------|------|------|-------|-------------|-------------------|---------|-------|
-| `slack-mcp-official` | `mcp` `@anthropic-ai/mcp-server-slack` | claude-code, cursor, opencode, vscode | `bearer-env` `SLACK_BOT_TOKEN`, `SLACK_APP_TOKEN` | `conversations_history` etc. | `chat_post_message`, `reactions_add` | — | `official` / `read-write` | local `stdio` Socket Mode, low latency | Chat automation |
+| `slack-mcp-official` | `mcp` `@modelcontextprotocol/server-slack` | claude-code, cursor, opencode, vscode | `bearer-env` `SLACK_BOT_TOKEN`, `SLACK_TEAM_ID` | `slack_list_channels` etc. | `slack_post_message`, `slack_add_reaction` | — | `official` / `read-write` | local `stdio`, low latency | Chat automation |
 | `slack-cli-official` | `cli` `slack-cli` (`docs.slack.dev/tools/slack-cli`, Apache-2.0) | universal | `oauth` | `slack list`, `slack api conversations.list` | `slack create`, `slack deploy` | `slack delete` (admin) | `official` / `admin` (needs approval) | local CLI, OAuth | App dev |
 | `slack-api-web` | `api` `https://slack.com/api/chat.postMessage` | universal | `bearer-env` `SLACK_BOT_TOKEN` | `conversations.history` | `chat.postMessage` | — | `official` / `read-write` | remote `https` | Direct |
 | `slack-skill-fallback` | `skill_fallback` | universal | `bearer-env` | via delegates | via delegates | — | `first-party` / `read-only` | hybrid | Skill |
