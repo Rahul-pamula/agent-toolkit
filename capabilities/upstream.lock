@@ -68,6 +68,24 @@ capabilities:
           license:
             spdx: NOASSERTION
           resolved_at: '2026-08-14T18:56:03.313181Z'
+  quality/blast-radius:
+    provenance_digest: sha256:672544bad541446f8de290191079a6fbcd009d5e07393126b20cc9101aa107d1
+    sources:
+      upstream:
+        path: pstack/skills/blast-radius
+        repository: cursor/plugins
+        requested:
+          ref: 60c641e4fad674784b30abcf9f8915dea39df38d
+          type: commit
+        resolved:
+          body_checksum: sha256:d52283c3ef18003fd7927fc31b0f88389b396cbcb93aefc846b00d570cf90a9c
+          commit: 60c641e4fad674784b30abcf9f8915dea39df38d
+          content_checksum: sha256:978d27ec9a82e570511cb5bd0503ae5451f1cf9b3a5c87f14fbd5085aaa01350
+          license:
+            checksum: sha256:bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e
+            source_path: skills/quality/blast-radius/LICENSE
+            spdx: MIT
+          resolved_at: '2026-08-19T06:48:31.471103Z'
   quality/deslop:
     provenance_digest: sha256:7b61bbc5400565b3da44417658b7f6be1c0104f9f216b0a6965345293f8bd130
     sources:
@@ -85,7 +103,7 @@ capabilities:
             checksum: sha256:702f5f331b56aff0e33d8c7826df5202559f894145eb70355c6477b55b5bb8a0
             source_path: skills/quality/deslop/LICENSE
             spdx: MIT
-          resolved_at: '2026-08-19T05:41:24.669578Z'
+          resolved_at: '2026-08-19T16:08:49.669596Z'
   quality/megalinter:
     provenance_digest: sha256:8b16ee6b8b06d23c052b473cd5fee724b51e245891a276912b9a522b4be21ca4
     sources:

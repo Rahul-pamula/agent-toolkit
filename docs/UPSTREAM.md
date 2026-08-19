@@ -7,7 +7,7 @@ Human-readable provenance for third-party capability content. Canonical sources:
 - **Resolution:** `capabilities/upstream.lock` (`version: 2`, `provenance_digest`) — see `schemas/upstream-lock.schema.json` and `docs/adr/0001-*.md`
 - **Vendored bytes:** `skills/<domain>/<name>/SKILL.md` + `LICENSE.txt`
 
-Generated: 2026-08-19T05:44:43.161087Z
+Generated: 2026-08-19T06:51:41.110380Z
 Capabilities with external provenance: 9 (first-party omitted; lock is sparse)
 
 ## `design/frontend-design`
@@ -87,28 +87,28 @@ Capabilities with external provenance: 9 (first-party omitted; lock is sparse)
   - Declaration expected `license: MIT` — mismatch requires review
 - **Resolved at:** `2026-08-14T18:56:03.313181Z` version=`?`
 
-## `quality/deslop`
+## `quality/blast-radius`
 
 - **Trust:** `reviewed` reviewed_at=2026-08-19 by=ulises-jeremias
-  - `reviewed_provenance:` `sha256:7b61bbc5400565b3da44417658b7f6be1c0104f9f216b0a6965345293f8bd130` (must equal `provenance_digest` below)
+  - `reviewed_provenance:` `sha256:672544bad541446f8de290191079a6fbcd009d5e07393126b20cc9101aa107d1` (must equal `provenance_digest` below)
 - **Maintenance:** `active` last_activity=?
 - **Distribution:** `vendored` redistribution_allowed=True
 - **Security (declared):** scripts=False shell=False network=False cve_policy=not-applicable mcp=[] hooks=[]
-- **Provenance digest:** `sha256:7b61bbc5400565b3da44417658b7f6be1c0104f9f216b0a6965345293f8bd130`
+- **Provenance digest:** `sha256:672544bad541446f8de290191079a6fbcd009d5e07393126b20cc9101aa107d1`
 
-### Source `upstream` — `cursor/plugins/cursor-team-kit/skills/deslop`
+### Source `upstream` — `cursor/plugins/pstack/skills/blast-radius`
 
 - **Repository:** `cursor/plugins`
-- **Path:** `cursor-team-kit/skills/deslop`
+- **Path:** `pstack/skills/blast-radius`
 - **Requested:** `commit` `60c641e4fad674784b30abcf9f8915dea39df38d` (declaration intent)
 - **Resolved commit:** `60c641e4fad674784b30abcf9f8915dea39df38d`
-- **Content checksum:** `sha256:d94afacd406d42d0badf0e76a85ef1f6e3628f60ae1c23f77303d3ca6974b3f0`
-- **Body checksum:** `sha256:2d8979b16620fd27c6034554afafcf133b76c172a4e0061500d2959baa18603d` (must match local SKILL.md body)
-- **Observed license:** `MIT` source_path=`skills/quality/deslop/LICENSE` checksum=`sha256:702f5f331b56aff0e33d8c7826df5202559f894145eb70355c6477b55b5bb8a0`
+- **Content checksum:** `sha256:978d27ec9a82e570511cb5bd0503ae5451f1cf9b3a5c87f14fbd5085aaa01350`
+- **Body checksum:** `sha256:d52283c3ef18003fd7927fc31b0f88389b396cbcb93aefc846b00d570cf90a9c` (must match local SKILL.md body)
+- **Observed license:** `MIT` source_path=`skills/quality/blast-radius/LICENSE` checksum=`sha256:bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e`
   - Declaration expected `license: MIT` — mismatch requires review
-- **Resolved at:** `2026-08-19T05:41:24.669578Z` version=`?`
+- **Resolved at:** `2026-08-19T06:48:31.471103Z` version=`?`
 
-- **Per-skill attribution:** `skills/quality/deslop/UPSTREAM.md`
+- **Per-skill attribution:** `skills/quality/blast-radius/UPSTREAM.md`
 
 ## `quality/megalinter`
 

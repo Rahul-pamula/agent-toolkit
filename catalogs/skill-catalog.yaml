@@ -1,6 +1,6 @@
 version: 1
 generated: true
-count: 82
+count: 83
 skills:
   - id: accessibility/review
     name: review
@@ -346,6 +346,11 @@ skills:
     name: triage
     domain: ops
     description: 'Workstation health triage — validate tooling, directory layout, and run doctor with remediation suggestions.'
+    stability: stable
+  - id: quality/blast-radius
+    name: blast-radius
+    domain: quality
+    description: '| Find what a change could break somewhere else before it ships, beyond the diff, and prove the one fact it''s safe because of by running real code instead of writing it up. Use for ''blast radius of X'''
     stability: stable
   - id: quality/codeql
     name: codeql

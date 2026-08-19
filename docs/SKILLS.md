@@ -75,7 +75,7 @@ Skills live under `skills/<domain>/<name>/`. There are **14 domains** (80 skills
 | `cloud` | 2 | `cloud-design-patterns` |
 | `architecture` | 1 | `c4-model` |
 | `accessibility` | 1 | `review` |
-| `quality` | 7 | `megalinter`, `codeql`, `unslop`, `deslop` |
+| `quality` | 7 | `megalinter`, `codeql`, `unslop`, `blast-radius` |
 
 Tool compatibility is declared in each `SKILL.md` `tools:` frontmatter. Do not maintain a second compatibility matrix here — use the catalog.
 

@@ -50,6 +50,7 @@ Include code snippets showing the fix for each critical and warning item.
 
 ## Delegate to skills
 
+- Change impact / blast radius before merge → `quality/blast-radius`
 - Prose/docs anti-slop before final review → `quality/unslop`
 - Diff-scoped code slop cleanup → `quality/deslop`
 - Static quality gates → `quality/megalinter-check` (if configured)

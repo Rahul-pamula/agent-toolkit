@@ -2,7 +2,7 @@
 
 > Generated from `distributions/products.yaml` — do not hand-edit. Run `./scripts/generate-skill-matrix.vsh` to regenerate, or `./scripts/generate-skill-matrix.vsh --check` in CI.
 
-_Generated from 4 products × 82 skills × 17 agents._
+_Generated from 4 products × 83 skills × 17 agents._
 
 ## Products and targets
 
@@ -86,8 +86,9 @@ _Generated from 4 products × 82 skills × 17 agents._
 | `ops/swarm-handoff` | `agent-toolkit-complete` | — |
 | `ops/swarm-observer` | `agent-toolkit-complete` | — |
 | `ops/triage` | `agent-toolkit-complete` | — |
+| `quality/blast-radius` | `agent-toolkit-complete` | — |
 | `quality/codeql` | `agent-toolkit-complete` | — |
-| `quality/deslop` | `agent-toolkit-complete` | — |
+| `quality/deslop` | _uncovered_ | — |
 | `quality/megalinter` | `agent-toolkit-complete` | — |
 | `quality/megalinter-check` | `agent-toolkit-complete` | — |
 | `quality/megalinter-fix` | `agent-toolkit-complete` | — |

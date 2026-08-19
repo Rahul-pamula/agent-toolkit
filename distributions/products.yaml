@@ -176,7 +176,7 @@ products:
         - quality/megalinter-fix
         - quality/codeql
         - quality/unslop
-        - quality/deslop
+        - quality/blast-radius
         - tooling/chrome-devtools
         - tooling/playwright-cli
         - core/project

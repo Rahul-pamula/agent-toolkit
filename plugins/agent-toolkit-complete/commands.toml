@@ -638,12 +638,12 @@ Follow the `unslop` skill instructions for {{args}}.
 """
 
 [[commands]]
-name = "deslop"
-description = "quality/deslop"
+name = "blast_radius"
+description = "quality/blast-radius"
 prompt = """
-Follow the `deslop` skill instructions for {{args}}.
+Follow the `blast-radius` skill instructions for {{args}}.
 
-@{skills/deslop/SKILL.md}
+@{skills/blast-radius/SKILL.md}
 """
 
 [[commands]]

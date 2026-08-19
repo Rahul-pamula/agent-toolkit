@@ -84,8 +84,8 @@
       "playwright-cli"
     ],
     "quality": [
+      "blast-radius",
       "codeql",
-      "deslop",
       "megalinter",
       "megalinter-check",
       "megalinter-fix",
@@ -420,8 +420,8 @@
       "domain": "quality"
     },
     {
-      "id": "quality/deslop",
-      "name": "deslop",
+      "id": "quality/blast-radius",
+      "name": "blast-radius",
       "domain": "quality"
     },
     {
