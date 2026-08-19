@@ -222,8 +222,8 @@ providers:
           - cursor
           - opencode
           - vscode
-        package: '@anthropic-ai/mcp-server-slack'
-        repository: https://docs.slack.dev/ai/mcp-server/
+        package: '@modelcontextprotocol/server-slack'
+        repository: https://github.com/modelcontextprotocol/servers/tree/main/src/slack
         license: MIT
         transport: stdio
         provenance: official
@@ -232,7 +232,8 @@ providers:
           type: bearer-env
           env:
             - SLACK_BOT_TOKEN
-            - SLACK_APP_TOKEN
+            - SLACK_TEAM_ID
+            - SLACK_CHANNEL_IDS
           scopes:
             - channels:history
             - chat:write
@@ -588,13 +589,13 @@ providers:
       - id: notion-mcp-community
         mechanism: community_mcp
         targets: [claude-code, cursor, opencode]
-        package: mcp-notion-server
-        repository: https://github.com/suekou/mcp-notion-server
+        package: '@notionhq/notion-mcp-server'
+        repository: https://github.com/makenotion/notion-mcp-server
         license: MIT
         transport: stdio
-        provenance: community
+        provenance: official
         version_policy: pin to minor
-        auth: {type: bearer-env, env: [NOTION_API_TOKEN], scopes: []}
+        auth: {type: bearer-env, env: [NOTION_TOKEN], scopes: []}
         read: [notion_retrieve_page, notion_query_database]
         write: [notion_create_page, notion_update_page]
         destructive: [notion_delete_block]

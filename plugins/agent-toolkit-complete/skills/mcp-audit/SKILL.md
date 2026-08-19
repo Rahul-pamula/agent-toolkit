@@ -35,7 +35,7 @@ Run the relevant mode per request; for full adoption review, run both and emit a
 ### Version pinning & provenance
 
 - [ ] `implementation.package` is machine-verifiable: npm `chrome-devtools-mcp@latest` / docker `ghcr.io/...` / URL `https://mcp.figma.com/mcp` — not bare `latest` without policy
-- [ ] `implementation.version_policy` declared (`npx-latest`, `pin image digest`, `pin to minor`) and matches template `args` (`-y chrome-devtools-mcp@latest` vs `mcp-notion-server`)
+- [ ] `implementation.version_policy` declared (`npx-latest`, `pin image digest`, `pin to minor`) and matches template `args` (`-y chrome-devtools-mcp@latest` vs `@notionhq/notion-mcp-server`)
 - [ ] `implementation.provenance` = `official` with `repository` URL + `license` verifiable via `gh api` (e.g., ChromeDevTools/chrome-devtools-mcp Apache-2.0, github/github-mcp-server MIT)
 - [ ] Remote vs local decision documented: remote (Figma) for designer-hosted, local (GitHub/Slack/Notion) for on-host execution — no mixed remote + local for same provider without rationale
 
