@@ -169,6 +169,28 @@ origin:
 
 For `first-party`, no provenance is allowed. For `upstream`, one or more sources are required (gate 9).
 
+#### inspired_by vs vendored lock
+
+First-party skills may record upstream inspiration without vendoring:
+
+```yaml
+origin:
+  type: first-party
+metadata:
+  inspired_by:
+    - repository: cursor/plugins
+      path: fix-ci/skills/fix-ci
+      ref: 60c641e4fad674784b30abcf9f8915dea39df38d
+      note: CI log triage patterns absorbed into gh-fix-ci
+```
+
+| Mechanism | When | Provenance lock | Body fidelity |
+|-----------|------|-----------------|---------------|
+| **Vendored upstream** | Literal copy of portable third-party skill | Required in `capabilities/upstream.lock` | Body byte-identical to upstream |
+| **inspired_by** | First-party skill enhanced with third-party ideas | Not in lock | First-party body; attribution in frontmatter only |
+
+See [UPSTREAM_VS_FIRST_PARTY.md](UPSTREAM_VS_FIRST_PARTY.md) for the decision matrix.
+
 #### First-party example
 
 ```yaml

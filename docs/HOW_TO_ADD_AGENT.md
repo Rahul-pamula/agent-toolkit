@@ -21,6 +21,10 @@ Before creating an agent, confirm you need one rather than a skill.
 
 The same domain often has both: a `@tdd-guide` agent (the expert you talk to) and a `development-workflow` skill (the process it follows).
 
+Agents **delegate to skills** for repeatable procedures — add a **"Delegate to skills"** section
+in `AGENT.md` when new skills affect the agent's domain (see
+[SKILL_INTEGRATION_CHECKLIST.md](SKILL_INTEGRATION_CHECKLIST.md) § D).
+
 ---
 
 ## 2. Create the Agent Directory
@@ -139,6 +143,14 @@ Then regenerate catalogs and verify compiler digests (no `gen-surfaces`):
 ./make.vsh build-cli
 AGENT_TOOLKIT_ROOT="$PWD" ./build/agent-toolkit build --check
 ```
+
+### Integration when agents gain skill delegates
+
+When a new skill is routed through an agent:
+
+1. Add **Delegate to skills** bullets with clear triggers in `agents/<name>/AGENT.md`
+2. Cross-check `skills/core/assistant/references/ORCHESTRATION.md` for the skill row
+3. Run `./scripts/validate-agents.vsh` and `build --check`
 
 ---
 

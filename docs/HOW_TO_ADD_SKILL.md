@@ -27,6 +27,19 @@ Skills are organized into domains that reflect the type of work they support:
 
 **Decision rule**: choose the domain whose existing skills feel most similar to yours. If your skill tells an agent *how* to operate a CLI or API, it's likely `forge`, `integrations`, or `tooling`. If it tells an agent *what to do* during a project phase, it's likely `delivery` or `core`.
 
+### Choosing upstream vs first-party
+
+Before creating a skill, read [UPSTREAM_VS_FIRST_PARTY.md](UPSTREAM_VS_FIRST_PARTY.md):
+
+| Situation | Action |
+|-----------|--------|
+| Unique portable skill, no overlap | Vendor upstream (`origin.type: upstream`) |
+| Overlap with existing first-party skill | Enhance first-party; add `metadata.inspired_by[]` |
+| Gap, not suitable for literal vendor | New first-party skill |
+| SaaS MCP / hook-only / bulk packs | Reject for this repo |
+
+Do **not** vendor a duplicate when first-party already covers the use case.
+
 ---
 
 ## 2. Create the Directory
@@ -158,6 +171,16 @@ AGENT_TOOLKIT_ROOT="$PWD" ./build/agent-toolkit build --check
 ```
 
 See [`docs/HOW_TO_DEVELOP_V.md`](HOW_TO_DEVELOP_V.md). There is no `gen-surfaces` step.
+
+### Post-add integration (mandatory)
+
+After layout, products, and catalog regeneration, complete
+[SKILL_INTEGRATION_CHECKLIST.md](SKILL_INTEGRATION_CHECKLIST.md):
+
+- Update `skills/core/assistant/references/ORCHESTRATION.md` routing
+- Update `skills/core/assistant/SKILL.md` "Where to route next" if high-traffic
+- Wire **Delegate to skills** in relevant `agents/*/AGENT.md` files
+- Run `AGENT_TOOLKIT_ROOT=$PWD ./build/agent-toolkit build --check`
 
 ---
 
