@@ -144,4 +144,22 @@ capabilities:
             spdx: AGPL-3.0
           resolved_at: '2026-08-14T18:56:03.313181Z'
           version: v10.0.0
+  quality/unslop:
+    provenance_digest: sha256:81344bee0dcaeef8acb4f8f19e5e781c27020c0dd18d4e27cba092768cc47bc8
+    sources:
+      upstream:
+        path: pstack/skills/unslop
+        repository: cursor/plugins
+        requested:
+          ref: 60c641e4fad674784b30abcf9f8915dea39df38d
+          type: commit
+        resolved:
+          body_checksum: sha256:6003a6a58d0c47a105256f5f0a225703574aa8ecfc404aed8757a6fcae3d97c1
+          commit: 60c641e4fad674784b30abcf9f8915dea39df38d
+          content_checksum: sha256:9fc9ee197ccaf22f6bf091411050c81b34dcc311e43b5bede799b3d9c2446ca6
+          license:
+            checksum: sha256:bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e
+            source_path: skills/quality/unslop/LICENSE
+            spdx: MIT
+          resolved_at: '2026-08-19T05:33:45.120477Z'
 version: 2

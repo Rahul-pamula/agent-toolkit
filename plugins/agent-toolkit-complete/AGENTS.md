@@ -74,6 +74,7 @@ Full stable skill catalog coverage for consumers who want everything (
 - **megalinter-check**: quality/megalinter-check
 - **megalinter-fix**: quality/megalinter-fix
 - **codeql**: quality/codeql
+- **unslop**: quality/unslop
 - **chrome-devtools**: tooling/chrome-devtools
 - **playwright-cli**: tooling/playwright-cli
 - **project**: core/project

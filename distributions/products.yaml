@@ -175,6 +175,7 @@ products:
         - quality/megalinter-check
         - quality/megalinter-fix
         - quality/codeql
+        - quality/unslop
         - tooling/chrome-devtools
         - tooling/playwright-cli
         - core/project

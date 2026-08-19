@@ -47,3 +47,9 @@ Organize by priority:
 **💡 Suggestion** (consider): ...
 
 Include code snippets showing the fix for each critical and warning item.
+
+## Delegate to skills
+
+- Prose/docs anti-slop before final review → `quality/unslop`
+- Diff-scoped code slop cleanup → `quality/deslop` (when available)
+- Static quality gates → `quality/megalinter-check` (if configured)
