@@ -6,7 +6,7 @@ import os
 pub struct ToolkitRoot {
 pub:
 	path string
-	tier string // override | xdg_data | xdg_cache | embedded | checkout | cwd
+	tier string // override | xdg_data | xdg_cache | embedded | fhs | checkout | cwd
 }
 
 // is_offline reports AGENT_TOOLKIT_OFFLINE truthy (1|true|yes).
@@ -48,15 +48,46 @@ pub fn find_toolkit_root() !ToolkitRoot {
 	return find_toolkit_root_with(new_fs())
 }
 
+// is_harness_workspace reports AGENTS.md/knowledge — not toolkit data, but currently
+// passes is_valid_toolkit_root because it has profiles/ + loops/. Used to avoid
+// AI_WORKSPACE hijack for standalone installs.
+fn is_harness_workspace(path string) bool {
+	return os.is_file(os.join_path(path, 'AGENTS.md')) || os.is_dir(os.join_path(path, 'knowledge'))
+}
+
+fn has_toolkit_tool_data(path string) bool {
+	// real toolkit data has at least one tool-specific profile dir or top-level skills
+	if os.is_dir(os.join_path(path, 'skills')) {
+		return true
+	}
+	if os.is_dir(os.join_path(path, 'plugins')) {
+		return true
+	}
+	profiles_dir := os.join_path(path, 'profiles')
+	if os.is_dir(profiles_dir) {
+		for entry in os.ls(profiles_dir) or { return false } {
+			if os.is_dir(os.join_path(profiles_dir, entry)) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 // find_toolkit_root_with is the injectable variant for tests.
 pub fn find_toolkit_root_with(fs FsService) !ToolkitRoot {
-	// 1. Explicit override
+	// 1. Explicit override — but do not let a harness workspace masquerade as toolkit data.
+	// Fresh agentic workstations have ~/.ai-workspace/profiles/oss-contrib.yaml + loops/ which
+	// falsely qualifies as is_valid_toolkit_root; for standalone UX standalone we must sanitize.
 	for env in ['AGENT_TOOLKIT_ROOT', 'AI_WORKSPACE'] {
 		val := os.getenv(env).trim_space()
 		if val.len == 0 {
 			continue
 		}
 		if is_valid_toolkit_root(val) {
+			if is_harness_workspace(val) && !has_toolkit_tool_data(val) {
+				continue
+			}
 			return ToolkitRoot{
 				path: val
 				tier: 'override'
@@ -81,7 +112,27 @@ pub fn find_toolkit_root_with(fs FsService) !ToolkitRoot {
 		}
 	}
 
-	// 3. Embedded baseline — next to executable (ADR-011).
+	// 3a. In-memory embedded baseline (full-embed, standalone without XDG/network).
+	// This is the “binario ya tiene todo” tier — populated at compile time via
+	// modules/agent_toolkit_core/embedded_data.v (#766). Wins over checkout/CWD
+	// but after XDG so a fresher user update can override.
+	if embedded_is_valid_root() {
+		return ToolkitRoot{
+			path: 'embedded'
+			tier: 'embedded'
+		}
+	}
+
+	// 3b. FHS system sidecar for AUR/Homebrew (aur-packages installs to /usr/share).
+	// Allows PKGBUILD `agent-toolkit-bin` to ship data artifact without ELF bloat.
+	if is_valid_toolkit_root('/usr/share/agent-toolkit/data') {
+		return ToolkitRoot{
+			path: '/usr/share/agent-toolkit/data'
+			tier: 'fhs'
+		}
+	}
+
+	// 3c. Embedded baseline — next to executable (ADR-011).
 	// Wheel layout: agent_toolkit/bin/agent-toolkit + agent_toolkit/data/.
 	exe := os.executable()
 	if exe.len > 0 {

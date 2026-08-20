@@ -20,12 +20,12 @@ pub:
 // UpdateReport summarizes profile refresh outcomes.
 pub struct UpdateReport {
 pub mut:
-	ok             bool
-	message        string
-	data_root      string
-	files_updated  int
-	tools_planned  int
-	warnings       []string
+	ok            bool
+	message       string
+	data_root     string
+	files_updated int
+	tools_planned int
+	warnings      []string
 }
 
 // run_update refreshes installed AI-tool profiles from toolkit capability data (#516).
@@ -72,7 +72,8 @@ pub fn run_update(opts UpdateOptions) UpdateReport {
 		tools = detect_update_tools(home)
 		if tools.len == 0 {
 			report.ok = false
-			report.message = lines.join('\n') + '\n  ⚠  No installed tools detected. Use --tools to specify targets.'
+			report.message = lines.join('\n') +
+				'\n  ⚠  No installed tools detected. Use --tools to specify targets.'
 			return report
 		}
 		lines << '  Tools: ${tools.join(', ')}'
@@ -161,7 +162,8 @@ fn detect_update_tools(home string) []string {
 	if os.exists(os.join_path(home, '.config', 'opencode')) {
 		out << 'opencode'
 	}
-	if os.exists(os.join_path(home, '.codeium', 'windsurf')) || os.exists(os.join_path(home, '.windsurf')) {
+	if os.exists(os.join_path(home, '.codeium', 'windsurf'))
+		|| os.exists(os.join_path(home, '.windsurf')) {
 		out << 'windsurf'
 	}
 	if os.exists(os.join_path(home, '.pi')) {
@@ -188,35 +190,40 @@ fn mappings_for_tool(tool string, data_root string, home string) []FileMapping {
 		'claude-code' {
 			src := os.join_path(data_root, 'profiles', 'claude-code')
 			claude_md := os.join_path(src, 'CLAUDE.md')
-			if os.is_file(claude_md) {
+			if data_is_file(data_root, claude_md) {
 				mappings << FileMapping{claude_md, os.join_path(home, '.claude', 'CLAUDE.md')}
 			}
 			agents := os.join_path(src, 'agents')
-			mappings << map_tree_files(agents, os.join_path(home, '.claude', 'agents'))
+			mappings << data_map_tree_files(data_root, agents, os.join_path(home, '.claude',
+				'agents'))
 		}
 		'cursor' {
 			src := os.join_path(data_root, 'profiles', 'cursor', 'rules')
-			mappings << map_tree_files(src, os.join_path(home, '.cursor', 'rules'))
+			mappings << data_map_tree_files(data_root, src, os.join_path(home, '.cursor', 'rules'))
 		}
 		'opencode' {
 			src := os.join_path(data_root, 'profiles', 'opencode')
 			cfg := os.join_path(src, 'opencode.json')
-			if os.is_file(cfg) {
-				mappings << FileMapping{cfg, os.join_path(home, '.config', 'opencode', 'opencode.json')}
+			if data_is_file(data_root, cfg) {
+				mappings << FileMapping{cfg, os.join_path(home, '.config', 'opencode',
+					'opencode.json')}
 			}
 			agents := os.join_path(src, 'agents')
-			mappings << map_tree_files(agents, os.join_path(home, '.config', 'opencode', 'agents'))
+			mappings << data_map_tree_files(data_root, agents, os.join_path(home, '.config',
+				'opencode', 'agents'))
 		}
 		'windsurf' {
 			src := os.join_path(data_root, 'profiles', 'windsurf')
 			cfg := windsurf_config_dir(home)
 			for sub in ['rules', 'memories'] {
-				mappings << map_tree_files(os.join_path(src, sub), os.join_path(cfg, sub))
+				mappings << data_map_tree_files(data_root, os.join_path(src, sub),
+					os.join_path(cfg, sub))
 			}
 		}
 		'pi' {
 			src := os.join_path(data_root, 'profiles', 'pi', 'skills')
-			mappings << map_tree_files(src, os.join_path(home, '.pi', 'agent', 'skills'))
+			mappings << data_map_tree_files(data_root, src, os.join_path(home, '.pi', 'agent',
+				'skills'))
 		}
 		else {}
 	}
@@ -247,7 +254,12 @@ fn plan_tool_update(tool string, data_root string, home string) ?ToolUpdatePlan 
 		mappings: mappings
 	}
 	for m in mappings {
-		if !os.is_file(m.src) {
+		is_src := if is_embedded_src(m.src) {
+			embedded_is_file(strip_embedded_prefix(m.src))
+		} else {
+			os.is_file(m.src)
+		}
+		if !is_src {
 			continue
 		}
 		src_hash := update_file_hash(m.src)
@@ -264,7 +276,7 @@ fn plan_tool_update(tool string, data_root string, home string) ?ToolUpdatePlan 
 	return plan
 }
 
-fn apply_tool_update(plan ToolUpdatePlan, data_root string, home string, check_only bool) (int, []string) {
+fn apply_tool_update(plan ToolUpdatePlan, _data_root string, home string, check_only bool) (int, []string) {
 	mut lines := []string{}
 	mut updated := 0
 	mut targets := map[string]bool{}
@@ -280,15 +292,27 @@ fn apply_tool_update(plan ToolUpdatePlan, data_root string, home string, check_o
 			continue
 		}
 		rel := relative_to(m.dst, home) or { m.dst }
-		display := if rel.starts_with('/') || rel.contains(':') { rel } else { '~/${rel.replace('\\', '/')}' }
+		display := if rel.starts_with('/') || rel.contains(':') {
+			rel
+		} else {
+			'~/${rel.replace('\\', '/')}'
+		}
 		if check_only {
 			lines << '  ~ would update: ${display}'
 			updated++
 			continue
 		}
-		content := os.read_file(m.src) or {
-			lines << '  ✗  failed to read ${m.src}: ${err}'
-			continue
+		mut content := ''
+		if is_embedded_src(m.src) {
+			content = embedded_read_file(strip_embedded_prefix(m.src)) or {
+				lines << '  ✗  failed to read ${m.src}: ${err}'
+				continue
+			}
+		} else {
+			content = os.read_file(m.src) or {
+				lines << '  ✗  failed to read ${m.src}: ${err}'
+				continue
+			}
 		}
 		fs.write_atomic(m.dst, content) or {
 			lines << '  ✗  failed to write ${m.dst}: ${err}'
@@ -297,11 +321,14 @@ fn apply_tool_update(plan ToolUpdatePlan, data_root string, home string, check_o
 		lines << '  ✓ updated: ${display}'
 		updated++
 	}
-	_ = data_root
 	return updated, lines
 }
 
 fn update_file_hash(path string) string {
-	data := os.read_file(path) or { return '' }
+	data := if is_embedded_src(path) {
+		embedded_read_file(strip_embedded_prefix(path)) or { return '' }
+	} else {
+		os.read_file(path) or { return '' }
+	}
 	return sha256.hexhash(data)
 }
