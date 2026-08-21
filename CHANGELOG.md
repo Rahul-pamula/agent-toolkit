@@ -10,11 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- markdownlint-disable MD024 -->
 ## [Unreleased]
 
+## [1.18.0] — 2026-08-21
+
 - **Feat** — Complete Epic #743 (cursor/plugins adoption): vendor `tooling/cli-for-agents` ([#779](https://github.com/ulises-jeremias/agent-toolkit/pull/779)), absorb fix-ci patterns into `forge/gh-fix-ci` ([#780](https://github.com/ulises-jeremias/agent-toolkit/pull/780)), add `forge/fix-merge-conflicts` ([#781](https://github.com/ulises-jeremias/agent-toolkit/pull/781)), extend `core/workspace-knowledge-sync` with learned facts ([#792](https://github.com/ulises-jeremias/agent-toolkit/pull/792)), and add first-party `quality/deep-review` rubric ([#808](https://github.com/ulises-jeremias/agent-toolkit/pull/808))
 - **Feat** — Emit `hooks/hooks.json` for Cursor from the canonical `capabilities/hooks/*.yaml` registry ([#794](https://github.com/ulises-jeremias/agent-toolkit/pull/794))
 - **Feat** — Spec-complete Cursor/Claude `plugin.json` manifests (`$schema` + `author.url` per Agent Plugins 1.0.0) ([#795](https://github.com/ulises-jeremias/agent-toolkit/pull/795))
 - **Feat** — New stable `agent-toolkit-craft` product (unslop + deslop + blast-radius), registered in Claude Code and Cursor marketplaces ([#796](https://github.com/ulises-jeremias/agent-toolkit/pull/796))
-- **Chore** — Integration audit: inventory counts (86 skills / 17 agents / 5 products), marketplace docs (four plugins) ([#756](https://github.com/ulises-jeremias/agent-toolkit/issues/756))
+- **Chore** — Integration audit: inventory counts (84 skills / 17 agents / 5 products), marketplace docs (four plugins) ([#756](https://github.com/ulises-jeremias/agent-toolkit/issues/756))
+- **Fixed** — Catalog/profile/docs drift audit (20 issues): sync `skills-layout.json` ghost `ui-ux-pro-max` → 84 skills ([#799](https://github.com/ulises-jeremias/agent-toolkit/issues/799), [#810](https://github.com/ulises-jeremias/agent-toolkit/pull/810)), remove `ORCHESTRATION.md` ghost ([#800](https://github.com/ulises-jeremias/agent-toolkit/issues/800), [#811](https://github.com/ulises-jeremias/agent-toolkit/pull/811)), remove 3 dangling pack loops + phantom agent ([#801](https://github.com/ulises-jeremias/agent-toolkit/issues/801), [#812](https://github.com/ulises-jeremias/agent-toolkit/pull/812)), fix `SKILLS.md` domain counts ([#802](https://github.com/ulises-jeremias/agent-toolkit/issues/802), [#813](https://github.com/ulises-jeremias/agent-toolkit/pull/813)), expand `AGENTS.md` allowlist 9→14 domains ([#803](https://github.com/ulises-jeremias/agent-toolkit/issues/803), [#814](https://github.com/ulises-jeremias/agent-toolkit/pull/814)), fix MCP dead links 7→8 ([#804](https://github.com/ulises-jeremias/agent-toolkit/issues/804), [#815](https://github.com/ulises-jeremias/agent-toolkit/pull/815)), badge drift 80→84 + ADR-026 + wiki links ([#805](https://github.com/ulises-jeremias/agent-toolkit/issues/805), [#816](https://github.com/ulises-jeremias/agent-toolkit/pull/816)), add `test_skills_layout` coverage ([#806](https://github.com/ulises-jeremias/agent-toolkit/issues/806), [#817](https://github.com/ulises-jeremias/agent-toolkit/pull/817)), Pi/Muse-code profile parity ([#807](https://github.com/ulises-jeremias/agent-toolkit/issues/807), [#818](https://github.com/ulises-jeremias/agent-toolkit/pull/818))
+- **Fixed** — `CHANGELOG` missing 1.17.0 ([#782](https://github.com/ulises-jeremias/agent-toolkit/issues/782), [#819](https://github.com/ulises-jeremias/agent-toolkit/pull/819)), Cursor `README` heredoc ([#783](https://github.com/ulises-jeremias/agent-toolkit/issues/783), [#820](https://github.com/ulises-jeremias/agent-toolkit/pull/820)), duplicate `forge/workflow-*` stubs ([#791](https://github.com/ulises-jeremias/agent-toolkit/issues/791), [#821](https://github.com/ulises-jeremias/agent-toolkit/pull/821)), `complete` missing 17 agents ([#793](https://github.com/ulises-jeremias/agent-toolkit/issues/793), [#822](https://github.com/ulises-jeremias/agent-toolkit/pull/822)), profile parity `contribution-planner` + inline `settings.json` ([#784](https://github.com/ulises-jeremias/agent-toolkit/issues/784), [#785](https://github.com/ulises-jeremias/agent-toolkit/issues/785), [#823](https://github.com/ulises-jeremias/agent-toolkit/pull/823)), `PROFILES.md` Cursor per-agent ([#788](https://github.com/ulises-jeremias/agent-toolkit/issues/788), [#824](https://github.com/ulises-jeremias/agent-toolkit/pull/824)), `muse-code`/`codex`/`gemini` profiles ([#789](https://github.com/ulises-jeremias/agent-toolkit/issues/789), [#790](https://github.com/ulises-jeremias/agent-toolkit/issues/790), [#825](https://github.com/ulises-jeremias/agent-toolkit/pull/825)), Pi docs ([#787](https://github.com/ulises-jeremias/agent-toolkit/issues/787))
+
 
 ## [1.17.0] — 2026-08-21
 
@@ -515,7 +520,8 @@ The canonical compiler pipeline now generates native artifacts for 9 AI coding t
 
 ---
 
-[Unreleased]: https://github.com/ulises-jeremias/agent-toolkit/compare/v1.17.0...HEAD
+[Unreleased]: https://github.com/ulises-jeremias/agent-toolkit/compare/v1.18.0...HEAD
+[1.18.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.18.0
 [1.17.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.17.0
 [1.16.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.16.0
 [1.15.1]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.15.1
