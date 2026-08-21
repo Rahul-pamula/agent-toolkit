@@ -164,7 +164,6 @@ products:
         - ops/swarm-observer
         - ops/triage
         - tooling/herdr
-        - tooling/cli-for-agents
         - tooling/inventory
         - tooling/jupyter-notebook
         - accessibility/review

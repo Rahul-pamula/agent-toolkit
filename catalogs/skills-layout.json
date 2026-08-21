@@ -78,7 +78,6 @@
       "triage"
     ],
     "tooling": [
-      "cli-for-agents",
       "herdr",
       "inventory",
       "jupyter-notebook",
@@ -429,11 +428,6 @@
       "id": "quality/unslop",
       "name": "unslop",
       "domain": "quality"
-    },
-    {
-      "id": "tooling/cli-for-agents",
-      "name": "cli-for-agents",
-      "domain": "tooling"
     },
     {
       "id": "tooling/herdr",
