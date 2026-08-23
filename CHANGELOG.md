@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- markdownlint-disable MD024 -->
 ## [Unreleased]
 
+## [1.19.0] — 2026-08-23
+
+- **Feat** — Feature-complete `serve` (unified platform, SSOT contract): codegen `generate_surface.py` emitting `openapi.json`/`cli-help.md`/`web_nav.json`/`tui_registry.v` from `cli-contract.yaml` with parity tests ([#831](https://github.com/ulises-jeremias/agent-toolkit/pull/840)), ADRs 027-029 (thin adapter, security defaults, surface-parity SSOT) ([#832](https://github.com/ulises-jeremias/agent-toolkit/pull/841)), `serve` skeleton via `veb` (`/health`, `/version`, `/openapi.json`, remote bearer gate) ([#833](https://github.com/ulises-jeremias/agent-toolkit/pull/842), [#844](https://github.com/ulises-jeremias/agent-toolkit/pull/844)), read-only APIs (`/inventory`, `/doctor`, `/matrix`, `/diff`, `/loops`) ([#834](https://github.com/ulises-jeremias/agent-toolkit/pull/843)), Jobs API with process-per-run + SSE (`POST /jobs`, `GET /jobs`, `GET /jobs/:id/log`) ([#835](https://github.com/ulises-jeremias/agent-toolkit/pull/845)), gated writes for full CLI parity (`install`, `update`, `uninstall`, `skills`, `mcp`, `plugin`, `workspace`, `memory`, `project`, `build`, `swarms`, `loops/:name/run|schedule`) ([#836](https://github.com/ulises-jeremias/agent-toolkit/pull/846), [#847](https://github.com/ulises-jeremias/agent-toolkit/pull/847))
+- **Docs** — `docs/LOOPS.md` remote execution via `schedule --platform github-actions` + `examples/remote-loops`, `docs/security/threat-model-serve.md` (STRIDE, 7 threats, abuse checklist) for #541
+- **Fixed** — `serve` now uses `vlib/veb` per maintainer decision (was `net.http` stub)
+
 ## [1.18.0] — 2026-08-21
 
 - **Feat** — Complete Epic #743 (cursor/plugins adoption): vendor `tooling/cli-for-agents` ([#779](https://github.com/ulises-jeremias/agent-toolkit/pull/779)), absorb fix-ci patterns into `forge/gh-fix-ci` ([#780](https://github.com/ulises-jeremias/agent-toolkit/pull/780)), add `forge/fix-merge-conflicts` ([#781](https://github.com/ulises-jeremias/agent-toolkit/pull/781)), extend `core/workspace-knowledge-sync` with learned facts ([#792](https://github.com/ulises-jeremias/agent-toolkit/pull/792)), and add first-party `quality/deep-review` rubric ([#808](https://github.com/ulises-jeremias/agent-toolkit/pull/808))
@@ -520,7 +526,8 @@ The canonical compiler pipeline now generates native artifacts for 9 AI coding t
 
 ---
 
-[Unreleased]: https://github.com/ulises-jeremias/agent-toolkit/compare/v1.18.0...HEAD
+[Unreleased]: https://github.com/ulises-jeremias/agent-toolkit/compare/v1.19.0...HEAD
+[1.19.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.19.0
 [1.18.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.18.0
 [1.17.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.17.0
 [1.16.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.16.0
