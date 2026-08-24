@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- markdownlint-disable MD024 -->
 ## [Unreleased]
 
+## [1.22.2] — 2026-08-24
+
+- **Fix** — TUI: support legacy `LOOP.md`, add `--workspace` flag, fallback to bundled templates when workspace empty (fixes `tui` showing no loops in `my-ai-workspace`)
+- **Fix** — TUI: `resolve_workspace` now honors `AGENT_TOOLKIT_WORKSPACE`/`HARNESS_DIR` and walk-up `loops/.git/AGENTS.md/knowledge`
+
 ## [1.22.1] — 2026-08-24
 
 - **Fix** — Server embed: use `to_string()` not `str()` for $embed_file — web was returning `EmbedFileData{...}` debug struct instead of HTML (affects `/`, `/openapi.json`, `/help`)
@@ -548,7 +553,8 @@ The canonical compiler pipeline now generates native artifacts for 9 AI coding t
 
 ---
 
-[Unreleased]: https://github.com/ulises-jeremias/agent-toolkit/compare/v1.22.1...HEAD
+[Unreleased]: https://github.com/ulises-jeremias/agent-toolkit/compare/v1.22.2...HEAD
+[1.22.2]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.22.2
 [1.22.1]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.22.1
 [1.22.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.22.0
 [1.21.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.21.0
