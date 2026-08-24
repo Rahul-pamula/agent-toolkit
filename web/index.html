@@ -2,89 +2,74 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>agent-toolkit</title>
 <style>
-:root{--bg:#0a0a0f;--card:#11111a;--border:#1e1e2e;--text:#e2e8f0;--muted:#94a3b8;--accent:#8b5cf6;--success:#10b981}
+:root{--bg:#0a0a0f;--card:#11111a;--border:#1e1e2e;--text:#e2e8f0;--muted:#94a3b8;--accent:#8b5cf6;--success:#10b981;--warn:#f59e0b;--danger:#ef4444}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;padding:24px}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;display:flex;min-height:100vh}
+.sidebar{width:220px;background:var(--card);border-right:1px solid var(--border);padding:20px 0;flex-shrink:0;display:flex;flex-direction:column}
+.sidebar h1{font-size:15px;padding:0 16px 16px;color:var(--accent);font-weight:800}
+.nav-item{display:flex;align-items:center;gap:8px;padding:10px 16px;color:var(--muted);cursor:pointer;font-size:14px;border-left:3px solid transparent}
+.nav-item:hover{color:var(--text);background:rgba(139,92,246,.08)}
+.nav-item.active{color:var(--accent);background:rgba(139,92,246,.08);border-left-color:var(--accent);font-weight:600}
+.main{flex:1;padding:24px;overflow-y:auto;max-height:100vh}
 .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px}
-h1{font-size:22px;margin-bottom:4px}h2{font-size:15px;color:var(--accent);margin:14px 0 8px;text-transform:uppercase;letter-spacing:.06em;font-size:12px}
-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
-th,td{padding:8px 10px;border:1px solid var(--border);text-align:left}
-th{background:rgba(255,255,255,.03);color:var(--muted);font-size:11px;text-transform:uppercase}
-.ok{color:var(--success)}.err{color:var(--danger)}.muted{color:var(--muted)}
-.btn{background:var(--accent);color:white;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:13px;margin-right:6px}
-.btn:hover{opacity:.9}
-.health{display:inline-block;padding:4px 12px;border-radius:999px;font-size:13px;font-weight:600}
-#log{background:#000;border:1px solid var(--border);border-radius:8px;padding:12px;font-family:monospace;font-size:12px;white-space:pre-wrap;max-height:300px;overflow:auto;display:none;margin-top:12px}
+h2{font-size:13px;color:var(--accent);margin-bottom:14px;text-transform:uppercase;letter-spacing:.07em;font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:8px 12px;border:1px solid var(--border);text-align:left}
+th{background:rgba(255,255,255,.03);color:var(--muted);font-size:10px;text-transform:uppercase}
+.ok{color:var(--success)}.err{color:var(--danger)}.warn{color:var(--warn)}.muted{color:var(--muted)}
+.btn{background:var(--accent);color:white;border:none;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;margin-right:6px}
+.btn:hover{opacity:.85}.btn.green{background:var(--success)}.btn.red{background:var(--danger)}
+.health-badge{display:inline-block;padding:5px 14px;border-radius:999px;font-size:13px;font-weight:700}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700}
+.badge.L1{background:rgba(16,185,129,.15);color:#6ee7b7}.badge.L2{background:rgba(245,158,11,.15);color:#fcd34d}.badge.L3{background:rgba(239,68,68,.15);color:#fca5a5}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px}
+.stat-card{text-align:center;padding:18px;border:1px solid var(--border);border-radius:10px;background:rgba(255,255,255,.02)}
+.stat-card .num{font-size:30px;font-weight:800;color:var(--accent)}
+.stat-card .label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-top:4px}
+#log-pane{background:#000;border:1px solid var(--border);border-radius:8px;padding:14px;font-family:monospace;font-size:12px;white-space:pre-wrap;max-height:350px;overflow:auto;display:none;margin-top:14px;line-height:1.6}
+input,select{background:#000;color:var(--text);border:1px solid var(--border);padding:8px 12px;border-radius:6px;font-size:13px;width:100%}
+input:focus{outline:none;border-color:var(--accent)}
+.hidden{display:none!important}.empty{text-align:center;padding:32px;color:var(--muted)}
+.page-title{font-size:20px;font-weight:800;margin-bottom:16px}
+.search-box{width:100%;margin-bottom:14px}
 </style>
 </head>
 <body>
-<h1>agent-toolkit <span class="muted" id="version"></span></h1>
-
-<div class="card">
-  <h2>Health</h2>
-  <span id="health-badge" class="health" style="background:rgba(239,68,68,.15);color:var(--danger)">● checking…</span>
-  <span id="uptime" class="muted"></span>
+<nav class="sidebar">
+<h1>⚙ agent-toolkit</h1>
+<div class="nav-item active" data-page="overview" onclick="navigate('overview')">📊 Overview</div>
+<div class="nav-item" data-page="loops" onclick="navigate('loops')">🔄 Loops</div>
+<div class="nav-item" data-page="skills" onclick="navigate('skills')">🧩 Skills</div>
+<div class="nav-item" data-page="doctor" onclick="navigate('doctor')">🩺 Doctor</div>
+<div class="nav-item" data-page="run" onclick="navigate('run')">▶ Run Job</div>
+<div style="flex:1"></div>
+<div style="padding:12px 16px;border-top:1px solid var(--border)"><span id="version" style="font-size:11px;color:var(--muted)"></span><br><span id="uptime" style="font-size:11px;color:var(--muted)"></span></div>
+</nav>
+<div class="main">
+<div id="page-overview" class="page"><h1>Overview</h1><div style="margin-bottom:16px"><span id="hb" class="health-badge" style="background:rgba(239,68,68,.15);color:var(--danger)">● checking…</span> <span id="commit" class="muted" style="margin-left:8px"></span></div><div class="stats-grid" id="stats"></div><div style="margin-top:16px"><button class="btn" onclick="navigate('loops')">View Loops</button> <button class="btn green" onclick="navigate('run')">▶ Start a Job</button></div></div>
+<div id="page-loops" class="page hidden"><h1 class="page-title">Loops</h1><div class="card"><div id="loops-table">loading…</div></div></div>
+<div id="page-skills" class="page hidden"><h1 class="page-title">Skills</h1><div class="card"><div id="skills-table">loading…</div></div></div>
+<div id="page-doctor" class="page hidden"><h1 class="page-title">Doctor</h1><div class="card"><pre id="doctor-out" style="white-space:pre-wrap">loading…</pre></div></div>
+<div id="page-run" class="page hidden"><h1 class="page-title">Run Job</h1><div class="card"><select id="loop-select"></select> <button class="btn green" onclick="startJob()">▶ Start</button></div><div class="card"><h2>📋 Jobs</h2><div id="jobs-list">loading…</div></div><div id="log-pane">Select a job to see output…</div></div>
 </div>
-
-<div class="card">
-  <h2>Inventory</h2>
-  <div id="inv"></div>
-</div>
-
-<div class="card">
-  <h2>Loops</h2>
-  <div id="loops"></div>
-</div>
-
-<div class="card">
-  <h2>Doctor</h2>
-  <pre id="doctor" style="font-size:12px;background:#000;padding:10px;border-radius:6px;overflow:auto">loading…</pre>
-</div>
-
-<div class="card">
-  <h2>Run Loop</h2>
-  <input id="loop-name" placeholder="loop name (e.g. daily-triage)" style="background:#000;color:var(--text);border:1px solid var(--border);padding:6px 10px;border-radius:6px;width:200px">
-  <button class="btn" onclick="runLoop()">▶ Run</button>
-  <div id="log"></div>
-</div>
-
 <script>
-const API='/api/v1';
-async function j(path){const r=await fetch(API+path);return r.json()}
-async function refresh(){
-  try{
-    const h=await j('/health');
-    document.getElementById('version').textContent='v'+h.version;
-    document.getElementById('health-badge').textContent='● healthy';
-    document.getElementById('health-badge').style.cssText='background:rgba(16,185,129,.15);color:var(--success)';
-    document.getElementById('uptime').textContent='uptime '+h.uptime_s+'s';
-    const inv=await j('/inventory');
-    document.getElementById('inv').innerHTML=
-      '<b>'+inv.skill_count+' skills</b> · '+inv.agent_count+' agents · '+inv.product_count+' products · '+inv.domain_count+' domains';
-    const loops=await j('/loops');
-    let html='<table><tr><th>Name</th><th>Tier</th><th>Cadence</th></tr>';
-    if(loops.message)for(const line of loops.message.split('\n'))if(line.includes('\t')){
-      const[name,tier,cad]=line.split('\t');html+='<tr><td>'+name+'</td><td>'+tier+'</td><td>'+cad+'</td></tr>';
-    }
-    html+='</table>';document.getElementById('loops').innerHTML=html;
-    const doc=await j('/doctor');
-    document.getElementById('doctor').textContent=doc.message;
-  }catch(e){document.getElementById('health-badge').textContent='● offline'}
-}
-async function runLoop(){
-  const name=document.getElementById('loop-name').value;if(!name)return;
-  const logEl=document.getElementById('log');logEl.style.display='block';logEl.textContent='Starting '+name+'…\n';
-  try{
-    const r=await fetch(API+'/jobs',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cmd:'loop',args:['run',name]})});
-    const job=await r.json();
-    logEl.textContent+=JSON.stringify(job,null,2);
-    logEl.textContent+='\n\nJob submitted. Poll GET /api/v1/jobs/'+job.id+' for status.';
-  }catch(e){logEl.textContent+='Error: '+e.message+'\n'}
-}
-refresh();setInterval(refresh,15000);
+const API='/api/v1';let currentPage='overview',skillsLoaded=false;
+async function j(p){const r=await fetch(API+p);return r.json()}
+function navigate(page){document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));document.getElementById('page-'+page)?.classList.remove('hidden');document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));document.querySelector(`[data-page="${page}"]`)?.classList.add('active');currentPage=page;loadPage(page)}
+function loadPage(page){switch(page){case'overview':loadOverview();break;case'loops':loadLoops();break;case'skills':loadSkills();break;case'doctor':loadDoctor();break;case'run':populateLoopSelect();loadJobs();break}}
+async function loadOverview(){try{const h=await j('/health');setHealth(true);document.getElementById('version').textContent='v'+h.version;document.getElementById('uptime').textContent='up '+h.uptime_s+'s';const inv=await j('/inventory');document.getElementById('stats').innerHTML=[['Skills',inv.skill_count],['Agents',inv.agent_count],['Products',inv.product_count],['Domains',inv.domain_count]].map(([l,n])=>`<div class="stat-card"><div class="num">${n}</div><div class="label">${l}</div></div>`).join('')}catch(e){setHealth(false)}}
+function setHealth(ok){const hb=document.getElementById('hb');hb.textContent=ok?'● healthy':'● offline';hb.style.cssText=ok?'background:rgba(16,185,129,.15);color:var(--success)':'background:rgba(239,68,68,.15);color:var(--danger)'}
+async function loadLoops(){try{const d=await j('/loops');let h='<table><tr><th>Name</th><th>Tier</th><th>Cadence</th></tr>';for(const line of(d.message||'').split('\n')){if(!line.includes('\t'))continue;const[n,t,c]=line.split('\t');const tn=t.trim();h+=`<tr><td><strong>${n.trim()}</strong></td><td><span class="badge ${tn}">${tn}</span></td><td>${c.trim()}</td></tr>`}h+='</table>';document.getElementById('loops-table').innerHTML=h}catch(e){document.getElementById('loops-table').innerHTML='<div class="err">'+e.message+'</div>'}}
+async function loadSkills(){if(skillsLoaded)return;try{const inv=await j('/inventory');document.getElementById('skills-table').innerHTML=`<p>Total: ${inv.skill_count} skills across ${inv.domain_count} domains.</p><p style="margin-top:8px;color:var(--muted)">Use <code>agent-toolkit skills list</code> for the full catalog.</p>`;skillsLoaded=true}catch(e){}}
+async function loadDoctor(){try{const d=await j('/doctor');document.getElementById('doctor-out').textContent=d.message||'(no report)'}catch(e){document.getElementById('doctor-out').textContent='Error: '+e.message}}
+async function populateLoopSelect(){try{const d=await j('/loops');const sel=document.getElementById('loop-select');sel.innerHTML='';for(const line of(d.message||'').split('\n')){if(!line.includes('\t'))continue;const n=line.split('\t')[0].trim();sel.innerHTML+=`<option value="${n}">${n}</option>`}}catch(e){}}
+async function loadJobs(){try{const jobs=await j('/jobs');const entries=Object.entries(jobs||{});if(!entries.length){document.getElementById('jobs-list').innerHTML='<div class="empty">No jobs yet</div>';return}let h='<table><tr><th>ID</th><th>Status</th><th>Started</th></tr>';for(const[id,j]of entries){const cls=j.status==='completed'?'ok':j.status==='failed'?'err':'warn';h+=`<tr style="cursor:pointer" onclick="viewLog('${id}')"><td style="font-family:monospace;font-size:11px">${id}</td><td class="${cls}" style="font-weight:600">${j.status}</td><td class="muted" style="font-size:11px">${j.started_at||''}</td></tr>`}h+='</table>';document.getElementById('jobs-list').innerHTML=h}catch(e){}}
+async function startJob(){const name=document.getElementById('loop-select').value;if(!name)return;try{await fetch(API+'/jobs',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cmd:'loop',args:['loop','run',name,'--no-llm']})});setTimeout(()=>{loadJobs()},2000)}catch(e){console.error(e)}}
+function viewLog(id){const pane=document.getElementById('log-pane');pane.style.display='block';pane.textContent='Loading…\n';fetch(API+'/jobs/'+id+'/log').then(r=>r.text()).then(t=>pane.textContent=t||'(empty)').catch(e=>pane.textContent+='Error')}
+refresh();setInterval(()=>loadPage(currentPage),15000);
 </script>
 </body>
 </html>
