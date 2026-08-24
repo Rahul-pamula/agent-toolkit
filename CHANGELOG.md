@@ -10,6 +10,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- markdownlint-disable MD024 -->
 ## [Unreleased]
 
+## [1.22.0] — 2026-08-24
+
+- **Feat** — Real interactive TUI: ANSI colors, 4 screens (dashboard/loops/skills/doctor), j/k navigation, reverse-video selection, loop browser with goal preview, doctor checks with ✓/!/✗ colors, help screen, in-process core calls per ADR-494
+- **Feat** — Full Web dashboard SPA (330 lines): sidebar nav Overview/Loops/Skills/Doctor/Run, stats grid, loops table tier badges L1/L2/L3 color-coded, searchable skills table, doctor report, jobs list with status colors, log viewer monospace, toast system, hash navigation, 15s auto-refresh with AbortController
+- **Fix** — Embed web assets at compile time via $embed_file for self-contained serve, fix web tier= stripping, esc() XSS protection, refresh() undefined, pad_right negative panic, AbortError handling
+- **Chore** — Unify terminal help for tui/serve, workspace walk-up resolution
+
+## [1.21.0] — 2026-08-24
+
+- **Fix** — Embed web/index.html, openapi.json, cli-help.md at compile time so `serve` works from any directory ([#850](https://github.com/ulises-jeremias/agent-toolkit/pull/850), [#851](https://github.com/ulises-jeremias/agent-toolkit/pull/851))
+
 ## [1.20.0] — 2026-08-24
 
 - **Feat** — TUI MVP: `agent-toolkit tui` dashboard with loops table (tier, cadence, status), in-process core calls, offline-first ([#837](https://github.com/ulises-jeremias/agent-toolkit/issues/837), [#848](https://github.com/ulises-jeremias/agent-toolkit/pull/848))
@@ -533,7 +544,9 @@ The canonical compiler pipeline now generates native artifacts for 9 AI coding t
 
 ---
 
-[Unreleased]: https://github.com/ulises-jeremias/agent-toolkit/compare/v1.20.0...HEAD
+[Unreleased]: https://github.com/ulises-jeremias/agent-toolkit/compare/v1.22.0...HEAD
+[1.22.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.22.0
+[1.21.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.21.0
 [1.20.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.20.0
 [1.19.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.19.0
 [1.18.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.18.0
