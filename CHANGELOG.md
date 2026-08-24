@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- markdownlint-disable MD024 -->
 ## [Unreleased]
 
+## [1.22.3] — 2026-08-24
+
+- **Fix** — TUI Skills: use `find_toolkit_root()` + embedded fallback (was `lookup_checkout_root` only, failed from `~/.ai-workspace` with `skills not found`)
+- **Fix** — Server: jobs log not found — `watch()` now captures stdout/stderr and writes `log_path`, handles `workspace` param and `--workspace` injection, fixes arg duplication `loop loop`
+- **Fix** — Server: workspace routing — `jobs_create`/`loops_*` now honor `workspace` field / `AGENT_TOOLKIT_WORKSPACE` / walk-up instead of hardcoded `os.getwd()` (fixes `other campu` without `--workspace`)
+
 ## [1.22.2] — 2026-08-24
 
 - **Fix** — TUI: support legacy `LOOP.md`, add `--workspace` flag, fallback to bundled templates when workspace empty (fixes `tui` showing no loops in `my-ai-workspace`)
@@ -553,7 +559,8 @@ The canonical compiler pipeline now generates native artifacts for 9 AI coding t
 
 ---
 
-[Unreleased]: https://github.com/ulises-jeremias/agent-toolkit/compare/v1.22.2...HEAD
+[Unreleased]: https://github.com/ulises-jeremias/agent-toolkit/compare/v1.22.3...HEAD
+[1.22.3]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.22.3
 [1.22.2]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.22.2
 [1.22.1]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.22.1
 [1.22.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.22.0
