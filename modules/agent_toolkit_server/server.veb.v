@@ -123,7 +123,7 @@ pub fn (app &App) openapi(mut ctx Ctx) veb.Result {
 	if deny != none {
 		return ctx.json(deny)
 	}
-	return ctx.text(openapi_json.str())
+	return ctx.text(openapi_json.to_string())
 }
 
 @['/api/v1/inventory'; get]
@@ -209,7 +209,7 @@ pub fn (app &App) help_route(mut ctx Ctx) veb.Result {
 	if deny != none {
 		return ctx.json(deny)
 	}
-	return ctx.text(cli_help_md.str())
+	return ctx.text(cli_help_md.to_string())
 }
 
 fn cmd_resp(res agent_toolkit_core.CommandResult) CmdResp {
@@ -325,7 +325,7 @@ const cli_help_md = $embed_file('../../docs/surface/cli-help.md')
 
 @['/'; get]
 pub fn (app &App) index(mut ctx Ctx) veb.Result {
-	return ctx.html(web_index_html.str())
+	return ctx.html(web_index_html.to_string())
 }
 
 
