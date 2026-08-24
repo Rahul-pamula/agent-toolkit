@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- markdownlint-disable MD024 -->
 ## [Unreleased]
 
+## [1.20.0] — 2026-08-24
+
+- **Feat** — TUI MVP: `agent-toolkit tui` dashboard with loops table (tier, cadence, status), in-process core calls, offline-first ([#837](https://github.com/ulises-jeremias/agent-toolkit/issues/837), [#848](https://github.com/ulises-jeremias/agent-toolkit/pull/848))
+- **Feat** — Web UI SPA: single-page dashboard served at `/` by `serve` (health badge, inventory counts, loops table, doctor report, run loop via Jobs API) ([#838](https://github.com/ulises-jeremias/agent-toolkit/issues/838), [#849](https://github.com/ulises-jeremias/agent-toolkit/pull/849))
+- **Feat** — Full CLI parity: 21/21 contract commands now have HTTP routes via `serve` (install, update, uninstall, skills, mcp, plugin, workspace, memory, project, build, swarms) ([#836](https://github.com/ulises-jeremias/agent-toolkit/issues/836), [#846](https://github.com/ulises-jeremias/agent-toolkit/pull/846), [#847](https://github.com/ulises-jeremias/agent-toolkit/pull/847))
+- **Docs** — `docs/security/threat-model-serve.md` with STRIDE analysis and abuse-case checklist ([#541](https://github.com/ulises-jeremias/agent-toolkit/issues/541), [#847](https://github.com/ulises-jeremias/agent-toolkit/pull/847))
+
 ## [1.19.0] — 2026-08-23
 
 - **Feat** — Feature-complete `serve` (unified platform, SSOT contract): codegen `generate_surface.py` emitting `openapi.json`/`cli-help.md`/`web_nav.json`/`tui_registry.v` from `cli-contract.yaml` with parity tests ([#831](https://github.com/ulises-jeremias/agent-toolkit/pull/840)), ADRs 027-029 (thin adapter, security defaults, surface-parity SSOT) ([#832](https://github.com/ulises-jeremias/agent-toolkit/pull/841)), `serve` skeleton via `veb` (`/health`, `/version`, `/openapi.json`, remote bearer gate) ([#833](https://github.com/ulises-jeremias/agent-toolkit/pull/842), [#844](https://github.com/ulises-jeremias/agent-toolkit/pull/844)), read-only APIs (`/inventory`, `/doctor`, `/matrix`, `/diff`, `/loops`) ([#834](https://github.com/ulises-jeremias/agent-toolkit/pull/843)), Jobs API with process-per-run + SSE (`POST /jobs`, `GET /jobs`, `GET /jobs/:id/log`) ([#835](https://github.com/ulises-jeremias/agent-toolkit/pull/845)), gated writes for full CLI parity (`install`, `update`, `uninstall`, `skills`, `mcp`, `plugin`, `workspace`, `memory`, `project`, `build`, `swarms`, `loops/:name/run|schedule`) ([#836](https://github.com/ulises-jeremias/agent-toolkit/pull/846), [#847](https://github.com/ulises-jeremias/agent-toolkit/pull/847))
@@ -526,7 +533,8 @@ The canonical compiler pipeline now generates native artifacts for 9 AI coding t
 
 ---
 
-[Unreleased]: https://github.com/ulises-jeremias/agent-toolkit/compare/v1.19.0...HEAD
+[Unreleased]: https://github.com/ulises-jeremias/agent-toolkit/compare/v1.20.0...HEAD
+[1.20.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.20.0
 [1.19.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.19.0
 [1.18.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.18.0
 [1.17.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.17.0
