@@ -493,6 +493,49 @@ If the matrix file is missing, prints where it is expected (research pipeline).
 	if name == 'swarm' {
 		return agent_toolkit_core.swarm_help_text()
 	}
+	if name == 'tui' {
+		return 'Usage: agent-toolkit tui [--help]
+
+Interactive TUI dashboard (loops, skills, doctor) — ANSI colors, keyboard nav.
+
+Screens:
+  1 dashboard  Overview + workspace + loops preview
+  2 loops      Browser with tier colors, selection highlight, run (no-llm)
+  3 skills     Inventory grouped by domain
+  4 doctor     Health checks with status colors
+  h help       This keyboard reference
+
+Keys:
+  1/2/3/4  switch screens    j/k or down/up  navigate list
+  r/enter  run selected loop (no-llm, safe)   h/?  help   q/quit/exit  quit
+
+Runs in-process core calls (no HTTP), offline-first per ADR-494.
+Workspace auto-detected via walk-up (loops/.git/AGENTS.md/knowledge).
+
+Examples:
+  agent-toolkit tui
+  printf "2\nj\nr\nq\n" | agent-toolkit tui   # batch navigation
+
+See: docs/v/advanced-command-disposition.md
+'
+	}
+	if name == 'serve' {
+		return 'Usage: agent-toolkit serve [--port PORT] [--host HOST] [--no-browser] [--json]
+
+Serve the web dashboard (glassmorphism SPA) — loops, skills, doctor, jobs.
+
+  --port PORT    Port to listen on (default: 8787)
+  --host HOST    Host to bind (default: 127.0.0.1)
+  --no-browser   Don\'t open browser on start
+  --json         Structured CommandResult JSON
+
+Examples:
+  agent-toolkit serve
+  agent-toolkit serve --port 3000 --no-browser
+
+See: docs/v/advanced-command-disposition.md
+'
+	}
 	if name == 'completion' {
 		return completion_help_text()
 	}
