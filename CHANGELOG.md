@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- markdownlint-disable MD024 -->
 ## [Unreleased]
 
+## [1.22.1] — 2026-08-24
+
+- **Fix** — Server embed: use `to_string()` not `str()` for $embed_file — web was returning `EmbedFileData{...}` debug struct instead of HTML (affects `/`, `/openapi.json`, `/help`)
+
 ## [1.22.0] — 2026-08-24
 
 - **Feat** — Real interactive TUI: ANSI colors, 4 screens (dashboard/loops/skills/doctor), j/k navigation, reverse-video selection, loop browser with goal preview, doctor checks with ✓/!/✗ colors, help screen, in-process core calls per ADR-494
@@ -544,7 +548,8 @@ The canonical compiler pipeline now generates native artifacts for 9 AI coding t
 
 ---
 
-[Unreleased]: https://github.com/ulises-jeremias/agent-toolkit/compare/v1.22.0...HEAD
+[Unreleased]: https://github.com/ulises-jeremias/agent-toolkit/compare/v1.22.1...HEAD
+[1.22.1]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.22.1
 [1.22.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.22.0
 [1.21.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.21.0
 [1.20.0]: https://github.com/ulises-jeremias/agent-toolkit/releases/tag/v1.20.0
