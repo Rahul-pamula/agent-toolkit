@@ -7,73 +7,70 @@ Human-readable provenance for third-party capability content. Canonical sources:
 - **Resolution:** `capabilities/upstream.lock` (`version: 2`, `provenance_digest`) — see `schemas/upstream-lock.schema.json` and `docs/adr/0001-*.md`
 - **Vendored bytes:** `skills/<domain>/<name>/SKILL.md` + `LICENSE.txt`
 
-Generated: 2026-08-26T00:24:01.490427Z
+Generated: 2026-08-31T12:54:30.000922Z
 Capabilities with external provenance: 11 (first-party omitted; lock is sparse)
 
 ## `design/frontend-design`
 
-- **Trust:** `reviewed` reviewed_at=2026-08-14 by=ulises-jeremias
-  - `reviewed_provenance:` `sha256:a58fd159210cf5773748b973cbda5dcdb0bb04c42b47422b19ec523bb880f748` (must equal `provenance_digest` below)
+- **Trust:** `experimental` reviewed_at=2026-08-31 by=ulises-jeremias
 - **Maintenance:** `active` last_activity=2026-08-07
 - **Distribution:** `vendored` redistribution_allowed=True
 - **Security (declared):** scripts=False shell=False network=False cve_policy=not-applicable mcp=[] hooks=[]
-- **Provenance digest:** `sha256:a58fd159210cf5773748b973cbda5dcdb0bb04c42b47422b19ec523bb880f748`
+- **Provenance digest:** `sha256:deaed39f016b0f6ccff737badabd1ef4d70e6fceb56b1da3da965cba295c1fea`
 
 ### Source `upstream` — `anthropics/skills/skills/frontend-design`
 
 - **Repository:** `anthropics/skills`
 - **Path:** `skills/frontend-design`
-- **Requested:** `commit` `f17010c9bb483898c1d9c9f42dde2b3a98889434` (declaration intent)
-- **Resolved commit:** `f17010c9bb483898c1d9c9f42dde2b3a98889434`
-- **Content checksum:** `sha256:31aae178b8fb590f608a2524687934594607ddd995535d5571c988f1c951ffb9`
+- **Requested:** `commit` `2235be7c60b551f5de82ade908fd3816455afcda` (declaration intent)
+- **Resolved commit:** `2235be7c60b551f5de82ade908fd3816455afcda`
+- **Content checksum:** `sha256:dbb4416cd94f48aed1cca88f657997abbe96627be1bbee41f1b4d071d0fa6cba`
 - **Body checksum:** `sha256:0df36fd5b075c15a2948a233edfb5ada7ffe34309ada32b2fd6d248522a4e9a7` (must match local SKILL.md body)
 - **Observed license:** `Apache-2.0` source_path=`skills/design/frontend-design/LICENSE.txt` checksum=`sha256:0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594`
   - Declaration expected `license: Apache-2.0` — mismatch requires review
-- **Resolved at:** `2026-08-14T18:56:03.313181Z` version=`f17010c`
+- **Resolved at:** `2026-08-31T12:54:29.590499Z` version=`2235be7`
 
 - **Per-skill attribution:** `skills/design/frontend-design/UPSTREAM.md`
 
 ## `design/frontend-design-review`
 
-- **Trust:** `reviewed` reviewed_at=2026-08-14 by=ulises-jeremias
-  - `reviewed_provenance:` `sha256:73a3738779cb374d505c889bddb8fbb0020a42a6f428a74fdd7990d6550d01bf` (must equal `provenance_digest` below)
+- **Trust:** `experimental` reviewed_at=2026-08-31 by=ulises-jeremias
 - **Maintenance:** `active` last_activity=2026-08-11
 - **Distribution:** `vendored` redistribution_allowed=True
 - **Security (declared):** scripts=False shell=False network=False cve_policy=not-applicable mcp=[] hooks=[]
-- **Provenance digest:** `sha256:73a3738779cb374d505c889bddb8fbb0020a42a6f428a74fdd7990d6550d01bf`
+- **Provenance digest:** `sha256:43d02aa54a0d86752b526a920d653bfd26e4c7803e2a7459f7ca3188dff0bdb2`
 
 ### Source `upstream` — `microsoft/skills/.github/skills/frontend-design-review`
 
 - **Repository:** `microsoft/skills`
 - **Path:** `.github/skills/frontend-design-review`
-- **Requested:** `commit` `e58528db9a006528a5fb0a2c029790fa6a9a7c0e` (declaration intent)
-- **Resolved commit:** `e58528db9a006528a5fb0a2c029790fa6a9a7c0e`
-- **Content checksum:** `sha256:9e6b4ccf09d56866875e86463643b654484751536aabd7558f307cfa032455cc`
+- **Requested:** `commit` `cbfd1b6652debe08f9d329d713b382a1a0db2e3e` (declaration intent)
+- **Resolved commit:** `cbfd1b6652debe08f9d329d713b382a1a0db2e3e`
+- **Content checksum:** `sha256:483a82fdec2ee2af31091fedf83113ed5dddde8072f7a3cc2e824c8365fff8a1`
 - **Body checksum:** `sha256:13029dfb9274aac92db5869c5977ff4923af1f213ab9571cd4f0b701829c1a78` (must match local SKILL.md body)
 - **Observed license:** `MIT` source_path=`skills/design/frontend-design-review/LICENSE` checksum=`sha256:d9a1b1e30d633d5732ea18e3cba9538d293ebc53e1a9e4e96ab739e0c5c4f1cb`
   - Declaration expected `license: MIT` — mismatch requires review
-- **Resolved at:** `2026-08-14T18:56:03.313181Z` version=`e58528d`
+- **Resolved at:** `2026-08-31T12:54:29.590499Z` version=`cbfd1b6`
 
 ## `design/web-design-guidelines`
 
-- **Trust:** `reviewed` reviewed_at=2026-08-26 by=ulises-jeremias
-  - `reviewed_provenance:` `sha256:9803737469498d520b8c06994dec3142b0e5a2db48fe8edbf8f7fe61cfcae2d9` (must equal `provenance_digest` below)
+- **Trust:** `experimental` reviewed_at=2026-08-31 by=ulises-jeremias
 - **Maintenance:** `active` last_activity=2026-08-18
 - **Distribution:** `vendored` redistribution_allowed=False
 - **Security (declared):** scripts=False shell=False network=True cve_policy=not-applicable mcp=[] hooks=[]
-- **Provenance digest:** `sha256:9803737469498d520b8c06994dec3142b0e5a2db48fe8edbf8f7fe61cfcae2d9`
+- **Provenance digest:** `sha256:8e27939e81ef6ef5870a8c541488d898919451ddc65531ea839aa05eec660360`
 
 ### Source `wrapper` — `vercel-labs/agent-skills/skills/web-design-guidelines`
 
 - **Repository:** `vercel-labs/agent-skills`
 - **Path:** `skills/web-design-guidelines`
-- **Requested:** `commit` `7c180d9044c9ae2b442b567aad4e42a28dd5ed62` (declaration intent)
-- **Resolved commit:** `7c180d9044c9ae2b442b567aad4e42a28dd5ed62`
-- **Content checksum:** `sha256:27b9d72c7695d33f642dadfcaa1156ab5ca960da7c93aac1283b27ab337613bb`
+- **Requested:** `commit` `ba46938889d4e58635362fb8f618e1178ac3ec46` (declaration intent)
+- **Resolved commit:** `ba46938889d4e58635362fb8f618e1178ac3ec46`
+- **Content checksum:** `sha256:8140e9d7a7e703cb156f1cf99b5bf62d74d505671a3ed01114908b61b2a55c09`
 - **Body checksum:** `sha256:17d7239c9233292386c96805dd2182708e594b0a6bec9c385fb201b3e5977b3f` (must match local SKILL.md body)
 - **Observed license:** `NOASSERTION` source_path=`?` checksum=`?`
   - Declaration expected `license: NOASSERTION` — mismatch requires review
-- **Resolved at:** `2026-08-26T00:22:55.556053Z` version=`?`
+- **Resolved at:** `2026-08-31T12:54:29.590499Z` version=`ba46938`
 
 ### Source `rules` — `vercel-labs/web-interface-guidelines/command.md`
 
@@ -89,47 +86,45 @@ Capabilities with external provenance: 11 (first-party omitted; lock is sparse)
 
 ## `quality/blast-radius`
 
-- **Trust:** `reviewed` reviewed_at=2026-08-19 by=ulises-jeremias
-  - `reviewed_provenance:` `sha256:672544bad541446f8de290191079a6fbcd009d5e07393126b20cc9101aa107d1` (must equal `provenance_digest` below)
+- **Trust:** `experimental` reviewed_at=2026-08-31 by=ulises-jeremias
 - **Maintenance:** `active` last_activity=?
 - **Distribution:** `vendored` redistribution_allowed=True
 - **Security (declared):** scripts=False shell=False network=False cve_policy=not-applicable mcp=[] hooks=[]
-- **Provenance digest:** `sha256:672544bad541446f8de290191079a6fbcd009d5e07393126b20cc9101aa107d1`
+- **Provenance digest:** `sha256:9544092db72820a44103b614ef29abf7d11d079d437765698c5b4d5d36f8b68c`
 
 ### Source `upstream` — `cursor/plugins/pstack/skills/blast-radius`
 
 - **Repository:** `cursor/plugins`
 - **Path:** `pstack/skills/blast-radius`
-- **Requested:** `commit` `60c641e4fad674784b30abcf9f8915dea39df38d` (declaration intent)
-- **Resolved commit:** `60c641e4fad674784b30abcf9f8915dea39df38d`
-- **Content checksum:** `sha256:978d27ec9a82e570511cb5bd0503ae5451f1cf9b3a5c87f14fbd5085aaa01350`
+- **Requested:** `commit` `e46364b8be46000b7df0f260550cd712afbb8d36` (declaration intent)
+- **Resolved commit:** `e46364b8be46000b7df0f260550cd712afbb8d36`
+- **Content checksum:** `sha256:8a0ee99321741f511fd48e713ed464c0e0ea82a3130340d7b70ddb945f53efd2`
 - **Body checksum:** `sha256:d52283c3ef18003fd7927fc31b0f88389b396cbcb93aefc846b00d570cf90a9c` (must match local SKILL.md body)
 - **Observed license:** `MIT` source_path=`skills/quality/blast-radius/LICENSE` checksum=`sha256:bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e`
   - Declaration expected `license: MIT` — mismatch requires review
-- **Resolved at:** `2026-08-19T06:48:31.471103Z` version=`?`
+- **Resolved at:** `2026-08-31T12:54:29.590499Z` version=`e46364b`
 
 - **Per-skill attribution:** `skills/quality/blast-radius/UPSTREAM.md`
 
 ## `quality/deslop`
 
-- **Trust:** `reviewed` reviewed_at=2026-08-19 by=ulises-jeremias
-  - `reviewed_provenance:` `sha256:7b61bbc5400565b3da44417658b7f6be1c0104f9f216b0a6965345293f8bd130` (must equal `provenance_digest` below)
+- **Trust:** `experimental` reviewed_at=2026-08-31 by=ulises-jeremias
 - **Maintenance:** `active` last_activity=?
 - **Distribution:** `vendored` redistribution_allowed=True
 - **Security (declared):** scripts=False shell=False network=False cve_policy=not-applicable mcp=[] hooks=[]
-- **Provenance digest:** `sha256:7b61bbc5400565b3da44417658b7f6be1c0104f9f216b0a6965345293f8bd130`
+- **Provenance digest:** `sha256:0b7b364a670a5cb81ed30790faead5d43e9fadf0c8ba472f56a0dcde3383887b`
 
 ### Source `upstream` — `cursor/plugins/cursor-team-kit/skills/deslop`
 
 - **Repository:** `cursor/plugins`
 - **Path:** `cursor-team-kit/skills/deslop`
-- **Requested:** `commit` `60c641e4fad674784b30abcf9f8915dea39df38d` (declaration intent)
-- **Resolved commit:** `60c641e4fad674784b30abcf9f8915dea39df38d`
-- **Content checksum:** `sha256:d94afacd406d42d0badf0e76a85ef1f6e3628f60ae1c23f77303d3ca6974b3f0`
-- **Body checksum:** `sha256:2d8979b16620fd27c6034554afafcf133b76c172a4e0061500d2959baa18603d` (must match local SKILL.md body)
+- **Requested:** `commit` `b21ab167c8d6aad6e4d91bc0de429eedd49665ed` (declaration intent)
+- **Resolved commit:** `b21ab167c8d6aad6e4d91bc0de429eedd49665ed`
+- **Content checksum:** `sha256:29089f45390a7472a714c8ec5968d621489affcb4c568d22bb388ea9e1a04b50`
+- **Body checksum:** `sha256:d40e71977da3326f996903185a7337c40ec00a38dde68db96603d9cef5f891b3` (must match local SKILL.md body)
 - **Observed license:** `MIT` source_path=`skills/quality/deslop/LICENSE` checksum=`sha256:702f5f331b56aff0e33d8c7826df5202559f894145eb70355c6477b55b5bb8a0`
   - Declaration expected `license: MIT` — mismatch requires review
-- **Resolved at:** `2026-08-19T16:08:49.669596Z` version=`?`
+- **Resolved at:** `2026-08-31T12:54:29.590499Z` version=`b21ab16`
 
 - **Per-skill attribution:** `skills/quality/deslop/UPSTREAM.md`
 
@@ -219,47 +214,45 @@ Capabilities with external provenance: 11 (first-party omitted; lock is sparse)
 
 ## `quality/unslop`
 
-- **Trust:** `reviewed` reviewed_at=2026-08-19 by=ulises-jeremias
-  - `reviewed_provenance:` `sha256:81344bee0dcaeef8acb4f8f19e5e781c27020c0dd18d4e27cba092768cc47bc8` (must equal `provenance_digest` below)
+- **Trust:** `experimental` reviewed_at=2026-08-31 by=ulises-jeremias
 - **Maintenance:** `active` last_activity=?
 - **Distribution:** `vendored` redistribution_allowed=True
 - **Security (declared):** scripts=False shell=False network=False cve_policy=not-applicable mcp=[] hooks=[]
-- **Provenance digest:** `sha256:81344bee0dcaeef8acb4f8f19e5e781c27020c0dd18d4e27cba092768cc47bc8`
+- **Provenance digest:** `sha256:ace4b7a3af381a87b588aca54b7f62d85bcc79f89257ad37f2f07988979c8295`
 
 ### Source `upstream` — `cursor/plugins/pstack/skills/unslop`
 
 - **Repository:** `cursor/plugins`
 - **Path:** `pstack/skills/unslop`
-- **Requested:** `commit` `60c641e4fad674784b30abcf9f8915dea39df38d` (declaration intent)
-- **Resolved commit:** `60c641e4fad674784b30abcf9f8915dea39df38d`
-- **Content checksum:** `sha256:9fc9ee197ccaf22f6bf091411050c81b34dcc311e43b5bede799b3d9c2446ca6`
+- **Requested:** `commit` `99559f2f52047978602ef365589275831e76af07` (declaration intent)
+- **Resolved commit:** `99559f2f52047978602ef365589275831e76af07`
+- **Content checksum:** `sha256:afb8a7ee1aff94873dff892fa00c0b61f0e2a31d56c17562e6c082749883c462`
 - **Body checksum:** `sha256:6003a6a58d0c47a105256f5f0a225703574aa8ecfc404aed8757a6fcae3d97c1` (must match local SKILL.md body)
 - **Observed license:** `MIT` source_path=`skills/quality/unslop/LICENSE` checksum=`sha256:bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e`
   - Declaration expected `license: MIT` — mismatch requires review
-- **Resolved at:** `2026-08-19T05:33:45.120477Z` version=`?`
+- **Resolved at:** `2026-08-31T12:54:29.590499Z` version=`99559f2`
 
 - **Per-skill attribution:** `skills/quality/unslop/UPSTREAM.md`
 
 ## `tooling/cli-for-agents`
 
-- **Trust:** `reviewed` reviewed_at=2026-08-19 by=ulises-jeremias
-  - `reviewed_provenance:` `sha256:8a04cbe405bced60ca66cc792a51dca4d2991f094d21ec0997ad85911212d3be` (must equal `provenance_digest` below)
+- **Trust:** `experimental` reviewed_at=2026-08-31 by=ulises-jeremias
 - **Maintenance:** `active` last_activity=?
 - **Distribution:** `vendored` redistribution_allowed=True
 - **Security (declared):** scripts=False shell=False network=False cve_policy=not-applicable mcp=[] hooks=[]
-- **Provenance digest:** `sha256:8a04cbe405bced60ca66cc792a51dca4d2991f094d21ec0997ad85911212d3be`
+- **Provenance digest:** `sha256:a16b391d7353b2f41840a0c155336c4ac0096392490fd203b1eef3fee587cdb0`
 
 ### Source `upstream` — `cursor/plugins/cli-for-agent/skills/cli-for-agents`
 
 - **Repository:** `cursor/plugins`
 - **Path:** `cli-for-agent/skills/cli-for-agents`
-- **Requested:** `commit` `60c641e4fad674784b30abcf9f8915dea39df38d` (declaration intent)
-- **Resolved commit:** `60c641e4fad674784b30abcf9f8915dea39df38d`
-- **Content checksum:** `sha256:f80e1e61532df792fdd05b1eec6d4bfa0d677377b33a16106655c93850ed1d85`
-- **Body checksum:** `sha256:2209fe1d8853f769c5e5b1385788d3d3ee0a790caa82fe0544c8a648e380bca9` (must match local SKILL.md body)
+- **Requested:** `commit` `26a1497493298e36d8bf39208a57bb59252a811e` (declaration intent)
+- **Resolved commit:** `26a1497493298e36d8bf39208a57bb59252a811e`
+- **Content checksum:** `sha256:c6679ca84ff0aecda79a72f1381e376b7b9f211a02561246a6a8c68b68a3efc4`
+- **Body checksum:** `sha256:ba559d5f67ab0ea98d5d2668581ebadba3d160cc96fda0e6a3ad1f13bd8c0b60` (must match local SKILL.md body)
 - **Observed license:** `MIT` source_path=`skills/tooling/cli-for-agents/LICENSE` checksum=`sha256:702f5f331b56aff0e33d8c7826df5202559f894145eb70355c6477b55b5bb8a0`
   - Declaration expected `license: MIT` — mismatch requires review
-- **Resolved at:** `2026-08-21T03:22:56.753015Z` version=`?`
+- **Resolved at:** `2026-08-31T12:54:29.590499Z` version=`26a1497`
 
 - **Per-skill attribution:** `skills/tooling/cli-for-agents/UPSTREAM.md`
 
